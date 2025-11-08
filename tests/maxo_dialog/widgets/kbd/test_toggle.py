@@ -2,7 +2,6 @@ import operator
 
 import pytest
 from aiogram.types import TelegramObject
-
 from aiogram_dialog.widgets.kbd import Toggle
 from aiogram_dialog.widgets.text import Format
 
@@ -17,7 +16,8 @@ async def test_render_toggle(mock_manager) -> None:
     )
 
     keyboard = await toggle.render_keyboard(
-        data={}, manager=mock_manager,
+        data={},
+        manager=mock_manager,
     )
 
     assert keyboard[0][0].text == "Apple"
@@ -25,7 +25,8 @@ async def test_render_toggle(mock_manager) -> None:
     await toggle.set_checked(TelegramObject(), "2", mock_manager)
 
     keyboard = await toggle.render_keyboard(
-        data={}, manager=mock_manager,
+        data={},
+        manager=mock_manager,
     )
 
     assert keyboard[0][0].text == "Banana"

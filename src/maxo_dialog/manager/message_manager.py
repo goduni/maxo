@@ -65,6 +65,7 @@ class MessageManager(MessageManagerProtocol):
         try:
             await bot.callback_answer(
                 callback_id=callback.callback_id,
+                notification="",
             )
         except MaxBotApiError as e:
             if _INVALID_QUERY_ID_MSG in e.message.lower():

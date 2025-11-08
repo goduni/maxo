@@ -5,14 +5,15 @@ import pytest
 from aiogram import Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.test_tools import BotClient, MockMessageManager
 from aiogram_dialog.test_tools.memory_storage import JsonMemoryStorage
 
 
 async def start(
-        message: Message, data: list, event_common: Event,
+    message: Message,
+    data: list,
+    event_common: Event,
 ):
     data.append(1)
     await event_common.wait()

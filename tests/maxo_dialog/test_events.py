@@ -5,7 +5,6 @@ from aiogram import Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import ChatMemberMember, ChatMemberOwner
-
 from aiogram_dialog import (
     Dialog,
     DialogManager,

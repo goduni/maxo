@@ -5,7 +5,6 @@ from aiogram import Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
-
 from aiogram_dialog import (
     Dialog,
     DialogManager,
@@ -107,12 +106,14 @@ async def test_click_buttons_in_group() -> None:
 
     # click first button
     await client.click(
-        message, InlineButtonTextLocator("1"),
+        message,
+        InlineButtonTextLocator("1"),
     )
     on_click_first_button.assert_called_once()
 
     # click third button
     await client.click(
-        message, InlineButtonTextLocator("3"),
+        message,
+        InlineButtonTextLocator("3"),
     )
     on_click_third_button.assert_called_once()

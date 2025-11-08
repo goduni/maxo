@@ -5,7 +5,6 @@ import pytest
 from aiogram import Dispatcher
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.state import State, StatesGroup
-
 from aiogram_dialog import (
     Dialog,
     DialogManager,
@@ -42,9 +41,12 @@ async def start_shared(event: Any, dialog_manager: DialogManager):
 
 
 async def add_shared(event: Any, dialog_manager: DialogManager):
-    await dialog_manager.start(MainSG.start, access_settings=AccessSettings(
-        user_ids=[1, 2],
-    ))
+    await dialog_manager.start(
+        MainSG.start,
+        access_settings=AccessSettings(
+            user_ids=[1, 2],
+        ),
+    )
 
 
 @pytest.fixture
@@ -80,7 +82,8 @@ async def test_second_user(dp, client, second_client, message_manager):
     await second_client.send("test")
     assert not message_manager.sent_messages
     await second_client.click(
-        first_message, InlineButtonTextLocator("Button"),
+        first_message,
+        InlineButtonTextLocator("Button"),
     )
     assert not message_manager.sent_messages
 
@@ -98,7 +101,8 @@ async def test_change_settings(dp, client, second_client, message_manager):
     message_manager.reset_history()
 
     await second_client.click(
-        window_message, InlineButtonTextLocator("Button"),
+        window_message,
+        InlineButtonTextLocator("Button"),
     )
     window_message = message_manager.one_message()
     message_manager.reset_history()
@@ -109,7 +113,8 @@ async def test_change_settings(dp, client, second_client, message_manager):
     message_manager.reset_history()
 
     await second_client.click(
-        window_message, InlineButtonTextLocator("Button"),
+        window_message,
+        InlineButtonTextLocator("Button"),
     )
     assert not message_manager.sent_messages
 
@@ -127,7 +132,8 @@ async def test_change_settings_bg(dp, client, second_client, message_manager):
     message_manager.reset_history()
 
     await second_client.click(
-        window_message, InlineButtonTextLocator("Button"),
+        window_message,
+        InlineButtonTextLocator("Button"),
     )
     window_message = message_manager.one_message()
     message_manager.reset_history()
@@ -138,7 +144,8 @@ async def test_change_settings_bg(dp, client, second_client, message_manager):
     message_manager.reset_history()
 
     await second_client.click(
-        window_message, InlineButtonTextLocator("Button"),
+        window_message,
+        InlineButtonTextLocator("Button"),
     )
     assert not message_manager.sent_messages
 
@@ -153,7 +160,8 @@ async def test_same_user(dp, client, message_manager):
     await client.send("test")
     assert not message_manager.sent_messages  # no resend
     await client.click(
-        first_message, InlineButtonTextLocator("Button"),
+        first_message,
+        InlineButtonTextLocator("Button"),
     )
     first_message = message_manager.one_message()
     assert first_message.text == "stub"
@@ -171,7 +179,8 @@ async def test_shared_stack(dp, client, second_client, message_manager):
     await second_client.send("test")
     assert not message_manager.sent_messages
     await second_client.click(
-        first_message, InlineButtonTextLocator("Button"),
+        first_message,
+        InlineButtonTextLocator("Button"),
     )
     second_message = message_manager.one_message()
     assert second_message.text == "stub"

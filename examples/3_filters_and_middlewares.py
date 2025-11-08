@@ -58,7 +58,10 @@ dispatcher.message_created.middleware.inner(InnerMiddleware())
 dispatcher.message_created.middleware.outer(OuterMiddleware())
 
 
-@dispatcher.message_created((ContainsTextFilter("gojo") & ContainsTextFilter("maki")) | ContainsTextFilter("sukuna"))
+@dispatcher.message_created(
+    (ContainsTextFilter("gojo") & ContainsTextFilter("maki"))
+    | ContainsTextFilter("sukuna")
+)
 async def echo_handler(
     update: MessageCreated,
     ctx: Ctx[MessageCreated],

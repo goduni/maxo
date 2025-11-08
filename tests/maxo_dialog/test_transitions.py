@@ -44,7 +44,11 @@ def message_manager() -> MockMessageManager:
 def dp(message_manager: MockMessageManager):
     key_builder = DefaultKeyBuilder(with_destiny=True)
     event_isolation = SimpleEventIsolation(key_builder=key_builder)
-    dp = Dispatcher(storage=JsonMemoryStorage(), event_isolation=event_isolation, key_builder=key_builder,)
+    dp = Dispatcher(
+        storage=JsonMemoryStorage(),
+        event_isolation=event_isolation,
+        key_builder=key_builder,
+    )
     dp.message_created.handler(start, CommandStart())
     dp.include(
         Dialog(

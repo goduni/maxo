@@ -4,7 +4,6 @@ from unittest.mock import AsyncMock
 
 import pytest
 from aiogram.types import TelegramObject
-
 from aiogram_dialog.widgets.kbd import Radio
 from aiogram_dialog.widgets.text import Format
 
@@ -49,12 +48,12 @@ async def test_validation_radio(mock_manager) -> None:
     assert current_checked_date is None
 
     await radio.set_checked(
-        TelegramObject(), int(datetime(2024, 5, 30).timestamp()),
+        TelegramObject(),
+        int(datetime(2024, 5, 30).timestamp()),
         mock_manager,
     )
 
-    assert radio.is_checked(int(datetime(2024, 5, 30).timestamp()),
-                            mock_manager)
+    assert radio.is_checked(int(datetime(2024, 5, 30).timestamp()), mock_manager)
 
     current_checked_date = radio.get_checked(mock_manager)
     assert current_checked_date == datetime(2024, 5, 30)

@@ -19,8 +19,8 @@ def _partial_middleware(
 ) -> NextMiddleware[_UpdateT]:
     async def wrapper(ctx: Ctx[_UpdateT]) -> Any:
         return await middleware(
-            ctx=ctx,
             update=ctx.update,
+            ctx=ctx,
             next=next,
         )
 

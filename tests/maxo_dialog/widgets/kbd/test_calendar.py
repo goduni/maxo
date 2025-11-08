@@ -1,5 +1,4 @@
 import pytest
-
 from aiogram_dialog.widgets.kbd import Calendar, CalendarScope
 
 

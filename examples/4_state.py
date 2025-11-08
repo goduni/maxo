@@ -33,7 +33,9 @@ async def start_handler(
     await state.set_state(UserRegistatorStatesGroup.INPUT_NAME)
 
 
-@router.message_created(MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_NAME))
+@router.message_created(
+    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_NAME)
+)
 async def input_name_handler(
     update: MessageCreated,
     ctx: Ctx[MessageCreated],
@@ -57,7 +59,9 @@ async def input_name_handler(
     await state.set_state(UserRegistatorStatesGroup.INPUT_AGE)
 
 
-@router.message_created(MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_AGE))
+@router.message_created(
+    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_AGE)
+)
 async def input_age_handler(
     update: MessageCreated,
     ctx: Ctx[MessageCreated],

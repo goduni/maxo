@@ -1,5 +1,4 @@
 import pytest
-
 from aiogram_dialog.widgets.kbd import Button, Column
 from aiogram_dialog.widgets.text import Const
 

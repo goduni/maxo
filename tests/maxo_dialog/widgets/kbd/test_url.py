@@ -1,5 +1,4 @@
 import pytest
-
 from aiogram_dialog.widgets.kbd import Url
 from aiogram_dialog.widgets.text import Const
 

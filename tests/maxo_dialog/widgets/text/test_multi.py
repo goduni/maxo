@@ -1,5 +1,4 @@
 import pytest
-
 from aiogram_dialog.widgets.text import Const, Multi
 
 
@@ -12,7 +11,8 @@ async def test_render_multi(mock_manager) -> None:
     )
 
     rendered_text = await multi.render_text(
-        data={}, manager=mock_manager,
+        data={},
+        manager=mock_manager,
     )
 
     assert rendered_text == "Hello! And goodbye!"

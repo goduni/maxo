@@ -3,7 +3,6 @@ from aiogram import Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
-
 from aiogram_dialog import (
     Dialog,
     DialogManager,
@@ -61,29 +60,35 @@ def dp(message_manager: MockMessageManager):
     dp = Dispatcher(storage=JsonMemoryStorage())
     dp.message.register(start, CommandStart())
 
-    dp.include_router(Dialog(
-        Window(
-            Const("First"),
-            state=MainSG.start,
-        ),
-        on_start=on_start_main,
-    ))
-    dp.include_router(Dialog(
-        Window(
-            Format("Subdialog"),
-            Cancel(),
-            state=SecondarySG.start,
-        ),
-        on_process_result=on_process_result_sub,
-        on_start=on_start_sub,
-    ))
-    dp.include_router(Dialog(
-        Window(
-            Format("Third"),
-            Cancel(),
-            state=ThirdSG.start,
-        ),
-    ))
+    dp.include_router(
+        Dialog(
+            Window(
+                Const("First"),
+                state=MainSG.start,
+            ),
+            on_start=on_start_main,
+        )
+    )
+    dp.include_router(
+        Dialog(
+            Window(
+                Format("Subdialog"),
+                Cancel(),
+                state=SecondarySG.start,
+            ),
+            on_process_result=on_process_result_sub,
+            on_start=on_start_sub,
+        )
+    )
+    dp.include_router(
+        Dialog(
+            Window(
+                Format("Third"),
+                Cancel(),
+                state=ThirdSG.start,
+            ),
+        )
+    )
     setup_dialogs(dp, message_manager=message_manager)
     return dp
 

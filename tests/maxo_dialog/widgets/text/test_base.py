@@ -1,6 +1,5 @@
 import pytest
 from aiogram import F
-
 from aiogram_dialog.widgets.text import Const
 
 
@@ -48,11 +47,7 @@ async def test_ror_str(mock_manager):
 
 @pytest.mark.asyncio
 async def test_or_condition(mock_manager):
-    text = (
-        Const("A", when=F["a"]) |
-        Const("B", when=F["b"]) |
-        Const("C")
-    )
+    text = Const("A", when=F["a"]) | Const("B", when=F["b"]) | Const("C")
     res = await text.render_text({"a": True}, mock_manager)
     assert res == "A"
     res = await text.render_text({"b": True}, mock_manager)

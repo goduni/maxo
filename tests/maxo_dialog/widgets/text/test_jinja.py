@@ -1,5 +1,4 @@
 import pytest
-
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.text import Jinja
 
@@ -12,12 +11,14 @@ def mock_manager(mock_manager) -> DialogManager:
 
 @pytest.mark.asyncio
 async def test_render_jinja(mock_manager) -> None:
-    jinja = Jinja("""
+    jinja = Jinja(
+        """
 <b>{{title}}</b>
 {% for animal in animals %}
 * <a href="https://yandex.ru/search/?text={{ animal }}">{{ animal|capitalize }}</a>
 {% endfor %}
-""")
+"""
+    )
 
     data = {
         "title": "Animals list",
@@ -25,12 +26,16 @@ async def test_render_jinja(mock_manager) -> None:
     }
 
     rendered_text = await jinja.render_text(
-        data=data, manager=mock_manager,
+        data=data,
+        manager=mock_manager,
     )
 
-    assert rendered_text == """
+    assert (
+        rendered_text
+        == """
 <b>Animals list</b>
 * <a href="https://yandex.ru/search/?text=cat">Cat</a>
 * <a href="https://yandex.ru/search/?text=dog">Dog</a>
 * <a href="https://yandex.ru/search/?text=my brother&#39;s tortoise">My brother&#39;s tortoise</a>
 """
+    )

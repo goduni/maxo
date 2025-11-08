@@ -1,3 +1,5 @@
+__all__ = ("CONTAINER_NAME", "MaxoProvider", "inject", "setup_dishka")
+
 from typing import Any, Callable, Concatenate, ParamSpec, TypeVar, overload
 
 from dishka import AsyncContainer
@@ -22,6 +24,8 @@ from maxo.routing.ctx import Ctx
 from maxo.routing.dispatcher import Dispatcher
 from maxo.routing.updates.base import BaseUpdate
 from maxo.types.update_context import UpdateContext
+
+CONTAINER_NAME = "dishka_container"
 
 _ReturnT = TypeVar("_ReturnT")
 _ParamsP = ParamSpec("_ParamsP")
@@ -48,7 +52,7 @@ def inject(func: Any) -> Any:
     return wrap_injection(
         func=func,
         is_async=True,
-        container_getter=lambda args, kwargs: kwargs["ctx"].data.dishka_container,
+        container_getter=lambda args, kwargs: getattr(kwargs["ctx"], CONTAINER_NAME),
     )
 
 
@@ -87,7 +91,7 @@ class DishkaMiddleware(BaseMiddleware[Update[Any]]):
             }
             | self._extra_context,
         ) as container:
-            ctx.dishka_container = container
+            setattr(ctx, CONTAINER_NAME, container)
             return await next(ctx)
 
 

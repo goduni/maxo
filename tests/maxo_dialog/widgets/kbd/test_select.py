@@ -1,7 +1,6 @@
 import operator
 
 import pytest
-
 from aiogram_dialog.widgets.kbd import Select
 from aiogram_dialog.widgets.text import Format
 

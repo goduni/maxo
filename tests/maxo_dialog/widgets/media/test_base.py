@@ -1,7 +1,6 @@
 import pytest
 from aiogram import F
 from aiogram.enums import ContentType
-
 from aiogram_dialog import DialogManager
 from aiogram_dialog.api.entities import MediaAttachment
 from aiogram_dialog.widgets.common import WhenCondition
@@ -14,9 +13,9 @@ class Static(Media):
         self.path = path
 
     async def _render_media(
-            self,
-            data,
-            manager: DialogManager,
+        self,
+        data,
+        manager: DialogManager,
     ) -> MediaAttachment:
         return MediaAttachment(ContentType.PHOTO, path=self.path)
 
@@ -30,11 +29,7 @@ async def test_or(mock_manager):
 
 @pytest.mark.asyncio
 async def test_or_condition(mock_manager):
-    text = (
-        Static("A", when=F["a"]) |
-        Static("B", when=F["b"]) |
-        Static("C")
-    )
+    text = Static("A", when=F["a"]) | Static("B", when=F["b"]) | Static("C")
     res = await text.render_media({"a": True}, mock_manager)
     assert res == MediaAttachment(ContentType.PHOTO, path="A")
     res = await text.render_media({"b": True}, mock_manager)

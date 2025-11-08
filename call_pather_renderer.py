@@ -84,7 +84,9 @@ class DefaultCallPathRenderer(CallPathRenderer):
             elif index == last_call_path_node_index:
                 context_path = config.connector
                 location_path = (
-                    config.transition_path if has_returned_call_path else config.continue_call_path
+                    config.transition_path
+                    if has_returned_call_path
+                    else config.continue_call_path
                 )
             else:
                 context_path = config.connector
@@ -156,7 +158,10 @@ class DefaultCallPathRenderer(CallPathRenderer):
 
     def _render_node_context(self, indent: int, node: CallPathNode, path: str) -> str:
         return (
-            self._render_indent(indent) + path + self._render_indent(5) + f"Context: {node.context}"
+            self._render_indent(indent)
+            + path
+            + self._render_indent(5)
+            + f"Context: {node.context}"
         )
 
     def _render_node_location(self, indent: int, node: CallPathNode, path: str) -> str:
@@ -169,7 +174,12 @@ class DefaultCallPathRenderer(CallPathRenderer):
             + self._config.right_pointing
         )
 
-        return self._render_indent(indent) + path + self._render_indent(2) + f"Location: {location}"
+        return (
+            self._render_indent(indent)
+            + path
+            + self._render_indent(2)
+            + f"Location: {location}"
+        )
 
     def _render_node_error(self, indent: int, node: CallPathNode) -> str:
         return (

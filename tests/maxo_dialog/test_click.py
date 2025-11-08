@@ -6,7 +6,6 @@ from aiogram import Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
-
 from aiogram_dialog import (
     Dialog,
     DialogManager,
@@ -65,7 +64,8 @@ async def test_click():
     usecase = Mock()
     user_getter = Mock(side_effect=["Username"])
     dp = Dispatcher(
-        usecase=usecase, user_getter=user_getter,
+        usecase=usecase,
+        user_getter=user_getter,
         storage=JsonMemoryStorage(),
     )
     dp.include_router(dialog)
@@ -92,7 +92,8 @@ async def test_click():
     # click next
     message_manager.reset_history()
     callback_id = await client.click(
-        first_message, InlineButtonTextLocator("Button"),
+        first_message,
+        InlineButtonTextLocator("Button"),
     )
 
     message_manager.assert_answered(callback_id)

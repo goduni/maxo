@@ -1,7 +1,6 @@
 from unittest.mock import AsyncMock
 
 import pytest
-
 from aiogram_dialog.widgets.kbd import Counter
 
 

@@ -1,7 +1,6 @@
 from unittest.mock import Mock
 
 import pytest
-
 from aiogram_dialog.widgets.media import MediaScroll, StaticMedia
 from aiogram_dialog.widgets.text import Format
 

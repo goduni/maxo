@@ -3,7 +3,6 @@ from unittest.mock import AsyncMock
 
 import pytest
 from aiogram.types import TelegramObject
-
 from aiogram_dialog.widgets.kbd import Multiselect
 from aiogram_dialog.widgets.text import Format
 

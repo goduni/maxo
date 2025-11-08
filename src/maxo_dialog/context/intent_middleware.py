@@ -94,7 +94,6 @@ def event_context_from_error(event: ExceptionEvent, ctx: Ctx) -> EventContext:
     raise ValueError("Unsupported event type in ErrorEvent.update")
 
 
-# TODO: Починить все функции
 class IntentMiddlewareFactory:
     def __init__(
         self,

@@ -3,7 +3,8 @@ requires = ["uv_build==0.7.19"]
 build-backend = "uv_build"
 
 [tool.uv]
-packages = ["src/maxo", "src/maxo_dialog"]
+maxo = { path = "./src/maxo" }
+maxo_dialog = { path = "./src/maxo_dialog" }
 
 [tool.uv.sources]
 packages = [

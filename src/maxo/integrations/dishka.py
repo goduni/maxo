@@ -1,3 +1,5 @@
+# ruff: noqa: SLF001
+
 __all__ = ("CONTAINER_NAME", "MaxoProvider", "inject", "setup_dishka")
 
 from collections.abc import Container, Generator
@@ -39,19 +41,19 @@ _SignalT = TypeVar("_SignalT", bound=BaseSignal)
 _Handler = TypeVar("_Handler", bound=UpdateHandler | SignalHandler)
 
 
-# FIXME
+# FIXME: Типы женерики функции сигналы хендлеры
 # _SignalHandlerFn = Callable[_ParamsP, _ReturnT]
 # _UpdateHandlerFn = Callable[[Concatenate[_UpdateT, _ParamsP]], _ReturnT]
 
 
-# FIXME
+# FIXME: Типы женерики функции сигналы хендлеры
 @overload
 def inject(
     func,  # _SignalHandlerFn[_SignalT, _ParamsP, _ReturnT],
 ) -> SignalHandlerFn[_SignalT, _ReturnT]: ...
 
 
-# FIXME
+# FIXME: Типы женерики функции сигналы хендлеры
 @overload
 def inject(
     func,  # : _UpdateHandlerFn[_UpdateT, _ParamsP, _ReturnT],
@@ -67,14 +69,14 @@ def inject(func):
                 name=CONTAINER_NAME,
                 annotation=Container,
                 kind=Parameter.KEYWORD_ONLY,
-            )
+            ),
         ]
 
     return wrap_injection(
         func=func,
         is_async=True,
         additional_params=additional_params,
-        container_getter=lambda args, kwargs: kwargs[CONTAINER_NAME],
+        container_getter=lambda _, kwargs: kwargs[CONTAINER_NAME],
     )
 
 

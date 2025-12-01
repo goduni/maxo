@@ -11,7 +11,8 @@ class GetChatAdministrators(MaxoMethod[GetChatAdministratorsResult]):
     """
     Получение списка администраторов чата.
 
-    Возвращает всех администраторов чата. Бот должен быть администратором в запрашиваемом чате.
+    Возвращает всех администраторов чата. Бот
+    должен быть администратором в запрашиваемом чате.
 
     Источник: https://dev.max.ru/docs-api/methods/GET/chats/-chatId-/members/admins
 

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from maxo import Bot
 from maxo.fsm import State
@@ -25,16 +25,16 @@ class DialogUpdateEvent(MaxoType):
     recipient: Recipient
     action: DialogAction
     data: Any
-    intent_id: Optional[str]
-    stack_id: Optional[str]
-    show_mode: Optional[ShowMode] = None
+    intent_id: str | None
+    stack_id: str | None
+    show_mode: ShowMode | None = None
     bot: Bot
 
 
 class DialogStartEvent(DialogUpdateEvent):
     new_state: State
     mode: StartMode
-    access_settings: Optional[AccessSettings] = None
+    access_settings: AccessSettings | None = None
 
 
 class DialogSwitchEvent(DialogUpdateEvent):

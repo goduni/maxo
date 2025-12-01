@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Union
 
 from maxo import Bot, Dispatcher
 from maxo.bot.state import InitialBotState
@@ -38,7 +38,7 @@ class FakeBot(Bot):
     def __hash__(self) -> int:
         return 1
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return self is other
 
 
@@ -60,7 +60,7 @@ class BotClient:
         user_id: int = 1,
         chat_id: int = 1,
         chat_type: ChatType = ChatType.DIALOG,
-        bot: Optional[Bot] = None,
+        bot: Bot | None = None,
     ):
         self.chat = Chat(
             chat_id=chat_id,
@@ -92,7 +92,7 @@ class BotClient:
     def _new_message(
         self,
         text: str,
-        reply_to: Optional[Message],
+        reply_to: Message | None,
     ):
         message_seq = self._new_message_id()
         return Message(
@@ -124,7 +124,7 @@ class BotClient:
             url="https://max.ru/",
         )
 
-    async def send(self, text: str, reply_to: Optional[Message] = None):
+    async def send(self, text: str, reply_to: Message | None = None):
         return await self.dp.feed_max_update(
             Update(
                 update=MessageCreated(

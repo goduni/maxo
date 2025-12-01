@@ -1,3 +1,5 @@
+# ruff: noqa: SLF001
+
 from abc import abstractmethod
 from collections.abc import Sequence
 from copy import copy
@@ -120,8 +122,7 @@ class InvertFilter(BaseLogicFilter[_UpdateT], Generic[_UpdateT]):
         filter_result = await self._filter(update, ctx)
         if self._inlined:
             return filter_result
-        else:
-            return not filter_result
+        return not filter_result
 
     def _inlining(self) -> None:
         if isinstance(self._filter, InvertFilter):

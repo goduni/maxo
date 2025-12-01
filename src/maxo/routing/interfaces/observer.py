@@ -1,6 +1,6 @@
 from abc import abstractmethod
-from collections.abc import Callable
-from typing import Any, Coroutine, Protocol, Sequence, TypeVar
+from collections.abc import Callable, Coroutine, Sequence
+from typing import Any, Protocol, TypeVar
 
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces.filter import Filter
@@ -28,12 +28,12 @@ class ObserverState(Protocol):
 class Observer(Protocol[_UpdateT, _HandlerT, _HandlerFnT]):
     @property
     @abstractmethod
-    def _state(self) -> ObserverState:
+    def state(self) -> ObserverState:
         raise NotImplementedError
 
-    @_state.setter
+    @state.setter
     @abstractmethod
-    def _state(self, value: ObserverState) -> None:
+    def state(self, value: ObserverState) -> None:
         raise NotImplementedError
 
     @property

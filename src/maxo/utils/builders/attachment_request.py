@@ -49,7 +49,7 @@ class AttachmentRequestBuilder:
                 url=url,
                 token=token,
                 photos=photos,
-            )
+            ),
         )
         return self
 
@@ -82,7 +82,7 @@ class AttachmentRequestBuilder:
                 contact_id=contact_id,
                 vcf_info=vcf_info,
                 vcf_phone=vcf_phone,
-            )
+            ),
         )
         return self
 
@@ -90,7 +90,7 @@ class AttachmentRequestBuilder:
         self._items.append(
             InlineKeyboardAttachmentRequest.factory(
                 buttons=buttons,
-            )
+            ),
         )
         return self
 
@@ -99,7 +99,7 @@ class AttachmentRequestBuilder:
             LocationAttachmentRequest(
                 latitude=latitude,
                 longitude=longitude,
-            )
+            ),
         )
         return self
 
@@ -118,6 +118,6 @@ class AttachmentRequestBuilder:
             ShareAttachmentRequest.factory(
                 url=url,
                 token=token,
-            )
+            ),
         )
         return self

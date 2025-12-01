@@ -8,7 +8,6 @@ from maxo.fsm.storages.base import BaseEventIsolation, BaseStorage
 from maxo.fsm.storages.memory import MemoryStorage, SimpleEventIsolation
 from maxo.routing.ctx import Ctx
 from maxo.routing.middlewares.error import ErrorMiddleware
-from maxo.routing.middlewares.event_context import EventContextMiddleware
 from maxo.routing.middlewares.fsm_context import FSMContextMiddleware
 from maxo.routing.middlewares.update_context import UpdateContextMiddleware
 from maxo.routing.observers.signal import SignalObserver
@@ -42,7 +41,6 @@ class Dispatcher(Router):
 
         self.update = self._observers[Update] = SignalObserver[Update]()
         self.update.middleware.outer(ErrorMiddleware(self))
-        self.update.middleware.outer(EventContextMiddleware())
         self.update.middleware.outer(UpdateContextMiddleware())
 
         self.update.handler(self._feed_update_handler)

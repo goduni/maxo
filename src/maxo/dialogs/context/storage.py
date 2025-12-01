@@ -1,6 +1,5 @@
 from contextlib import AsyncExitStack
 from copy import copy
-from typing import Optional
 
 from maxo import Bot
 from maxo.dialogs.api.entities import (
@@ -20,8 +19,8 @@ class StorageProxy:
         self,
         storage: BaseStorage,
         events_isolation: BaseEventIsolation,
-        user_id: Optional[int],
-        chat_id: Optional[int],
+        user_id: int | None,
+        chat_id: int | None,
         bot: Bot,
         state_groups: dict[str, type[StatesGroup]],
     ) -> None:
@@ -33,10 +32,8 @@ class StorageProxy:
         self.bot = bot
         self.lock_stack = AsyncExitStack()
 
-    async def lock(self, key: StorageKey):
-        await self.lock_stack.enter_async_context(
-            self.events_isolation.lock(key),
-        )
+    async def lock(self, key: StorageKey) -> None:
+        await self.lock_stack.enter_async_context(self.events_isolation.lock(key))
 
     async def unlock(self) -> None:
         await self.lock_stack.aclose()
@@ -58,8 +55,7 @@ class StorageProxy:
     def _default_access_settings(self, stack_id: str) -> AccessSettings:
         if stack_id == DEFAULT_STACK_ID and self.user_id:
             return AccessSettings(user_ids=[self.user_id])
-        else:
-            return AccessSettings(user_ids=[])
+        return AccessSettings(user_ids=[])
 
     async def load_stack(self, stack_id: str = DEFAULT_STACK_ID) -> Stack:
         fixed_stack_id = self._fixed_stack_id(stack_id)
@@ -71,7 +67,7 @@ class StorageProxy:
             return Stack(_id=fixed_stack_id, access_settings=access_settings)
         return Stack(access_settings=access_settings, **data)
 
-    async def save_context(self, context: Optional[Context]) -> None:
+    async def save_context(self, context: Context | None) -> None:
         if not context:
             return
         data = copy(vars(context))
@@ -84,19 +80,19 @@ class StorageProxy:
             data=data,
         )
 
-    async def remove_context(self, intent_id: str):
+    async def remove_context(self, intent_id: str) -> None:
         await self.storage.set_data(
             key=self._context_key(intent_id),
             data={},
         )
 
-    async def remove_stack(self, stack_id: str):
+    async def remove_stack(self, stack_id: str) -> None:
         await self.storage.set_data(
             key=self._stack_key(stack_id),
             data={},
         )
 
-    async def save_stack(self, stack: Optional[Stack]) -> None:
+    async def save_stack(self, stack: Stack | None) -> None:
         if not stack:
             return
         if stack.empty() and not stack.last_message_id:
@@ -150,8 +146,8 @@ class StorageProxy:
 
     def _parse_access_settings(
         self,
-        raw: Optional[dict],
-    ) -> Optional[AccessSettings]:
+        raw: dict | None,
+    ) -> AccessSettings | None:
         if not raw:
             return None
         return AccessSettings(
@@ -161,8 +157,8 @@ class StorageProxy:
 
     def _dump_access_settings(
         self,
-        access_settings: Optional[AccessSettings],
-    ) -> Optional[dict]:
+        access_settings: AccessSettings | None,
+    ) -> dict | None:
         if not access_settings:
             return None
         return {

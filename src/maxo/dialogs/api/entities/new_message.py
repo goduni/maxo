@@ -1,6 +1,6 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Sequence, Union
 
 from maxo.dialogs.api.entities import ShowMode
 from maxo.dialogs.api.entities.link_preview import LinkPreviewOptions
@@ -26,7 +26,7 @@ class OldMessage:
     recipient: Recipient
     message_id: str
     sequence_id: int
-    text: Union[str, None, UnknownText]
+    text: str | None | UnknownText
     attachments: list[Attachments]
 
 
@@ -34,11 +34,11 @@ class OldMessage:
 class NewMessage:
     recipient: Recipient
     attachments: list[AttachmentsRequests]
-    parse_mode: Optional[TextFormat] = None
-    link_preview_options: Optional[LinkPreviewOptions] = None
+    parse_mode: TextFormat | None = None
+    link_preview_options: LinkPreviewOptions | None = None
     show_mode: ShowMode = ShowMode.AUTO
-    text: Optional[str] = None
-    link_to: Optional[NewMessageLink] = None
+    text: str | None = None
+    link_to: NewMessageLink | None = None
 
     @property
     def keyboard(self) -> Sequence[Sequence[KeyboardButtons]]:

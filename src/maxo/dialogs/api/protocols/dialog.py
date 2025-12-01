@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from maxo.dialogs.api.entities import (
     Data,
@@ -46,7 +46,7 @@ class DialogProtocol(Protocol):
         self,
         manager: "DialogManager",
         start_data: Data,
-        state: Optional[State] = None,
+        state: State | None = None,
     ) -> None:
         raise NotImplementedError
 
@@ -60,7 +60,7 @@ class DialogProtocol(Protocol):
         raise NotImplementedError
 
     @abstractmethod
-    def find(self, widget_id) -> Any:
+    def find(self, widget_id: str) -> Any:
         raise NotImplementedError
 
     @abstractmethod

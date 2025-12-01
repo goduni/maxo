@@ -1,22 +1,18 @@
 import re
+from collections.abc import Iterable, Sequence
 from dataclasses import replace
+from re import Pattern
 from typing import (
-    Any,
-    Dict,
-    Iterable,
-    Pattern,
-    Sequence,
-    Union,
     cast,
 )
 
-from maxo import Bot
+from maxo import Bot, Ctx
 from maxo.routing.filters import BaseFilter
 from maxo.routing.updates import MessageCreated
 from maxo.types.bot_command import BotCommand
 from maxo.types.command_object import CommandObject
 
-CommandPatternType = Union[str, re.Pattern, BotCommand]
+CommandPatternType = str | re.Pattern | BotCommand
 
 
 class CommandException(Exception):
@@ -46,9 +42,9 @@ class Command(BaseFilter[MessageCreated]):
             commands = [commands]
 
         if not isinstance(commands, Iterable):
-            raise ValueError(
+            raise TypeError(
                 "Command filter only supports str, re.Pattern, BotCommand object"
-                " or their Iterable"
+                " or their Iterable",
             )
 
         items = []
@@ -56,9 +52,9 @@ class Command(BaseFilter[MessageCreated]):
             if isinstance(command, BotCommand):
                 command = command.name
             if not isinstance(command, (str, re.Pattern)):
-                raise ValueError(
+                raise TypeError(
                     "Command filter only supports str, re.Pattern, BotCommand object"
-                    " or their Iterable"
+                    " or their Iterable",
                 )
             if ignore_case and isinstance(command, str):
                 command = command.casefold()
@@ -81,8 +77,10 @@ class Command(BaseFilter[MessageCreated]):
         )
 
     async def __call__(
-        self, message: MessageCreated, bot: Bot
-    ) -> Union[bool, Dict[str, Any]]:
+        self,
+        message: MessageCreated,
+        ctx: Ctx,
+    ) -> bool:
         if not isinstance(message, MessageCreated):
             return False
 
@@ -93,11 +91,12 @@ class Command(BaseFilter[MessageCreated]):
             return False
 
         try:
-            command = await self.parse_command(text=text, bot=bot)
+            command = await self.parse_command(text=text, bot=ctx["bot"])
         except CommandException:
             return False
-        result = {"command": command}
-        return result
+
+        ctx["command"] = command
+        return True
 
     def extract_command(self, text: str) -> CommandObject:
         try:
@@ -142,8 +141,7 @@ class Command(BaseFilter[MessageCreated]):
         command = self.extract_command(text)
         self.validate_prefix(command=command)
         await self.validate_mention(bot=bot, command=command)
-        command = self.validate_command(command)
-        return command
+        return self.validate_command(command)
 
 
 class CommandStart(Command):

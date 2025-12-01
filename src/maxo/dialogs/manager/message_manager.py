@@ -1,5 +1,4 @@
 from logging import getLogger
-from typing import Optional, Union
 
 from maxo import Bot
 from maxo.dialogs.api.entities import (
@@ -66,7 +65,7 @@ class MessageManager(MessageManagerProtocol):
         self,
         media: MediaAttachment,
         bot: Bot,
-    ) -> Union[InputFile, str]:
+    ) -> InputFile | str:
         if media.file_id:
             return media.file_id.file_id
         if media.url:
@@ -74,8 +73,7 @@ class MessageManager(MessageManagerProtocol):
                 # FIXME
                 return URLInputFile(media.url, bot=bot)
             return media.url
-        else:
-            return FSInputFile(media.path)
+        return FSInputFile(media.path)
 
     def had_media(self, old_message: OldMessage) -> bool:
         # FIXME
@@ -85,7 +83,7 @@ class MessageManager(MessageManagerProtocol):
         # FIXME
         return bool(new_message.media)
 
-    def need_reply_keyboard(self, new_message: Optional[NewMessage]) -> bool:
+    def need_reply_keyboard(self, new_message: NewMessage | None) -> bool:
         # FIXME
         if not new_message:
             return False
@@ -129,7 +127,7 @@ class MessageManager(MessageManagerProtocol):
         self,
         bot: Bot,
         new_message: NewMessage,
-        old_message: Optional[OldMessage],
+        old_message: OldMessage | None,
     ) -> OldMessage:
         if new_message.show_mode is ShowMode.NO_UPDATE:
             logger.debug("ShowMode is NO_UPDATE, skipping show")
@@ -175,7 +173,7 @@ class MessageManager(MessageManagerProtocol):
         self,
         bot: Bot,
         show_mode: ShowMode,
-        old_message: Optional[OldMessage],
+        old_message: OldMessage | None,
     ) -> bool:  # FIXME аннотация
         if show_mode is ShowMode.NO_UPDATE:
             return False
@@ -186,15 +184,15 @@ class MessageManager(MessageManagerProtocol):
     async def _remove_kbd(
         self,
         bot: Bot,
-        old_message: Optional[OldMessage],
-        new_message: Optional[NewMessage],
+        old_message: OldMessage | None,
+        new_message: NewMessage | None,
     ) -> bool:
         return await self.remove_inline_kbd(bot, old_message)
 
     async def remove_inline_kbd(
         self,
         bot: Bot,
-        old_message: Optional[OldMessage],
+        old_message: OldMessage | None,
     ) -> bool:  # FIXME
         if not old_message:
             return None
@@ -227,7 +225,7 @@ class MessageManager(MessageManagerProtocol):
         self,
         bot: Bot,
         old_message: OldMessage,
-        new_message: Optional[NewMessage],
+        new_message: NewMessage | None,
     ) -> bool:
         try:
             await bot.delete_message(
@@ -260,8 +258,7 @@ class MessageManager(MessageManagerProtocol):
                 or "message to edit not found" in err.message
             ):
                 return await self.send_message(bot, new_message)
-            else:
-                raise
+            raise
 
     async def edit_message(
         self,

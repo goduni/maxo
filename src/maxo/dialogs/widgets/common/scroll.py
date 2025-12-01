@@ -89,8 +89,8 @@ class BaseScroll(Actionable, Scroll, ABC):
 
 
 def sync_scroll(
-    scroll_id: Union[str, Sequence[str]],
-    on_page_chaged: Union[OnPageChanged, None] = None,
+    scroll_id: str | Sequence[str],
+    on_page_chaged: OnPageChanged | None = None,
 ) -> OnPageChanged:
     async def sync_scroll_on_page_changed(
         event: ChatEvent,

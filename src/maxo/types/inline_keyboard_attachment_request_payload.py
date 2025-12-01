@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 from maxo.types.base import MaxoType
 from maxo.types.keyboard_buttons import KeyboardButtons

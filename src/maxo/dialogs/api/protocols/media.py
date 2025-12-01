@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Protocol
+from typing import Protocol
 
 from maxo.dialogs.api.entities import MediaId
 from maxo.enums import AttachmentType
@@ -9,17 +9,17 @@ class MediaIdStorageProtocol(Protocol):
     @abstractmethod
     async def get_media_id(
         self,
-        path: Optional[str],
-        url: Optional[str],
+        path: str | None,
+        url: str | None,
         type: AttachmentType,
-    ) -> Optional[MediaId]:
+    ) -> MediaId | None:
         raise NotImplementedError
 
     @abstractmethod
     async def save_media_id(
         self,
-        path: Optional[str],
-        url: Optional[str],
+        path: str | None,
+        url: str | None,
         type: AttachmentType,
         media_id: MediaId,
     ) -> None:

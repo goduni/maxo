@@ -1,5 +1,6 @@
+from collections.abc import MutableSequence
 from copy import copy
-from typing import MutableSequence, overload
+from typing import overload
 
 from maxo.errors.routing import CycleRoutersError
 from maxo.routing.interfaces.router import BaseRouter

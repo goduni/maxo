@@ -2,7 +2,6 @@ import warnings
 from collections.abc import Callable, Iterable, Mapping
 from typing import (
     Any,
-    Optional,
     Union,
 )
 
@@ -39,8 +38,7 @@ class Jinja(Text):
 
         if env.is_async:
             return await template.render_async(data)
-        else:
-            return template.render(data)
+        return template.render(data)
 
 
 class StubLoader(BaseLoader):
@@ -51,7 +49,7 @@ class StubLoader(BaseLoader):
 
 def _create_env(
     *args: Any,
-    filters: Optional[Filters] = None,
+    filters: Filters | None = None,
     **kwargs: Any,
 ) -> Environment:
     kwargs.setdefault("autoescape", True)
@@ -66,9 +64,9 @@ def _create_env(
 
 
 def setup_jinja(
-    dp: Union[Bot, Dispatcher],
+    dp: Bot | Dispatcher,
     *args: Any,
-    filters: Optional[Filters] = None,
+    filters: Filters | None = None,
     **kwargs: Any,
 ) -> Environment:
     env = _create_env(*args, filters=filters, **kwargs)

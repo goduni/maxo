@@ -1,3 +1,5 @@
+# ruff: noqa: PLC0415
+
 from typing import Any, Generic, TypeVar
 
 from maxo.routing.interfaces.filter import Filter

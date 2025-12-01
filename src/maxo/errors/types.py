@@ -9,4 +9,7 @@ class AttributeIsEmptyError(MaxoError):
     attr: str
 
     def __str__(self) -> str:
-        return f"{self.obj.__class__.__name__}.{self.attr} is empty({getattr(self.obj, self.attr)!r})"
+        return (
+            f"{self.obj.__class__.__name__}.{self.attr} "
+            f"is empty({getattr(self.obj, self.attr)!r})"
+        )

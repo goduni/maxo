@@ -1,5 +1,3 @@
-from typing import Optional
-
 from maxo.dialogs.api.entities import MediaAttachment
 from maxo.dialogs.api.internal import MediaWidget
 from maxo.dialogs.api.protocols import DialogManager
@@ -14,7 +12,7 @@ class Media(Whenable, BaseWidget, MediaWidget):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         if not self.is_(data, manager):
             return None
         return await self._render_media(data, manager)
@@ -23,7 +21,7 @@ class Media(Whenable, BaseWidget, MediaWidget):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         return None
 
     def __or__(self, other: "Media") -> "Or":
@@ -46,7 +44,7 @@ class Or(Media):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         for widget in self.widgets:
             res = await widget.render_media(data, manager)
             if res:

@@ -1,10 +1,10 @@
 from base64 import urlsafe_b64decode, urlsafe_b64encode
-from typing import Callable, Optional
+from collections.abc import Callable
 
 
 def encode_payload(
     payload: str,
-    encoder: Optional[Callable[[bytes], bytes]] = None,
+    encoder: Callable[[bytes], bytes] | None = None,
 ) -> str:
     if not isinstance(payload, str):
         payload = str(payload)
@@ -18,7 +18,7 @@ def encode_payload(
 
 def decode_payload(
     payload: str,
-    decoder: Optional[Callable[[bytes], bytes]] = None,
+    decoder: Callable[[bytes], bytes] | None = None,
 ) -> str:
     original_payload = _decode_b64(payload)
 

@@ -1,5 +1,5 @@
 from collections.abc import Mapping, MutableMapping, MutableSequence
-from typing import Any, TypeVar
+from typing import Any
 
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces.observer import Observer
@@ -16,7 +16,6 @@ from maxo.routing.sentinels import UNHANDLED, SkipHandler
 from maxo.routing.signals.exception import ErrorEvent
 from maxo.routing.signals.shutdown import AfterShutdown, BeforeShutdown
 from maxo.routing.signals.startup import AfterStartup, BeforeStartup
-from maxo.routing.updates.base import BaseUpdate
 from maxo.routing.updates.bot_added import BotAdded
 from maxo.routing.updates.bot_removed import BotRemoved
 from maxo.routing.updates.bot_started import BotStarted
@@ -29,8 +28,6 @@ from maxo.routing.updates.message_removed import MessageRemoved
 from maxo.routing.updates.user_added import UserAdded
 from maxo.routing.updates.user_removed import UserRemoved
 from maxo.routing.utils.get_default_name import get_router_default_name
-
-_UpdateT = TypeVar("_UpdateT", bound=BaseUpdate)
 
 
 class Router(BaseRouter):
@@ -113,10 +110,10 @@ class Router(BaseRouter):
         return f"<Router {self._name!r}>"
 
     @property
-    def _state(self) -> RouterState:
+    def state(self) -> RouterState:
         return self.__state
 
-    @_state.setter
+    @state.setter
     def _state(self, value: RouterState) -> None:
         self.__state = value
 
@@ -133,7 +130,7 @@ class Router(BaseRouter):
         return self._children_routers
 
     def include(self, *routers: BaseRouter) -> None:
-        self._state.ensure_include()
+        self.state.ensure_include()
         self.children_routers.extend(routers)
 
     async def trigger_child(self, ctx: Ctx) -> Any:
@@ -150,7 +147,7 @@ class Router(BaseRouter):
             return await self.trigger_child(ctx)
 
         chain_middlewares = observer.middleware.outer.wrap_middlewares(
-            observer.handler_lookup
+            observer.handler_lookup,
         )
         try:
             result = await chain_middlewares(ctx)
@@ -167,16 +164,16 @@ class Router(BaseRouter):
         self._state = StartedRouterState()
 
         for observer in self.observers.values():
-            observer._state = StartedObserverState()
+            observer.state = StartedObserverState()
 
-            observer.middleware.inner._state = StartedMiddlewareManagerState()
-            observer.middleware.outer._state = StartedMiddlewareManagerState()
+            observer.middleware.inner.state = StartedMiddlewareManagerState()
+            observer.middleware.outer.state = StartedMiddlewareManagerState()
 
     async def _emit_before_shutdown_handler(self) -> None:
         self._state = EmptyRouterState()
 
         for observer in self.observers.values():
-            observer._state = EmptyObserverState()
+            observer.state = EmptyObserverState()
 
-            observer.middleware.inner._state = EmptyMiddlewareManagerState()
-            observer.middleware.outer._state = EmptyMiddlewareManagerState()
+            observer.middleware.inner.state = EmptyMiddlewareManagerState()
+            observer.middleware.outer.state = EmptyMiddlewareManagerState()

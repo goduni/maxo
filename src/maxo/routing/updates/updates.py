@@ -1,5 +1,3 @@
-from typing import Union
-
 from maxo.routing.updates.bot_added import BotAdded
 from maxo.routing.updates.bot_removed import BotRemoved
 from maxo.routing.updates.bot_started import BotStarted
@@ -12,16 +10,16 @@ from maxo.routing.updates.message_removed import MessageRemoved
 from maxo.routing.updates.user_added import UserAdded
 from maxo.routing.updates.user_removed import UserRemoved
 
-Updates = Union[
-    BotAdded,
-    UserAdded,
-    MessageRemoved,
-    MessageEdited,
-    MessageCallback,
-    MessageChatCreated,
-    MessageCreated,
-    BotStarted,
-    BotRemoved,
-    ChatTitileChanged,
-    UserRemoved,
-]
+Updates = (
+    BotAdded
+    | UserAdded
+    | MessageRemoved
+    | MessageEdited
+    | MessageCallback
+    | MessageChatCreated
+    | MessageCreated
+    | BotStarted
+    | BotRemoved
+    | ChatTitileChanged
+    | UserRemoved
+)

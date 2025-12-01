@@ -1,4 +1,3 @@
-from typing import Union
 
 from maxo.types.audio_attachment import AudioAttachment
 from maxo.types.contact_attachment import ContactAttachment
@@ -10,14 +9,14 @@ from maxo.types.share_attachment import ShareAttachment
 from maxo.types.sticker_attachment import StickerAttachment
 from maxo.types.video_attachment import VideoAttachment
 
-Attachments = Union[
-    ImageAttachment,
-    VideoAttachment,
-    AudioAttachment,
-    FileAttachment,
-    StickerAttachment,
-    ContactAttachment,
-    InlineKeyboardAttachment,
-    ShareAttachment,
-    LocationAttachment,
-]
+Attachments = (
+    ImageAttachment
+    | VideoAttachment
+    | AudioAttachment
+    | FileAttachment
+    | StickerAttachment
+    | ContactAttachment
+    | InlineKeyboardAttachment
+    | ShareAttachment
+    | LocationAttachment
+)

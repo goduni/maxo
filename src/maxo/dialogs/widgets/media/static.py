@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional, Union
 
 from maxo.dialogs.api.entities import MediaAttachment
 from maxo.dialogs.api.protocols import DialogManager
@@ -14,11 +13,11 @@ class StaticMedia(Media):
     def __init__(
         self,
         *,
-        path: Union[Text, str, Path, None] = None,
-        url: Union[Text, str, None] = None,
+        path: Text | str | Path | None = None,
+        url: Text | str | None = None,
         type: AttachmentType = AttachmentType.IMAGE,
         use_pipe: bool = False,
-        media_params: Optional[dict] = None,
+        media_params: dict | None = None,
         when: WhenCondition = None,
     ):
         super().__init__(when=when)
@@ -40,7 +39,7 @@ class StaticMedia(Media):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         if self.url:
             url = await self.url.render_text(data, manager)
         else:

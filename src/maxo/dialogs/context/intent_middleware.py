@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 from maxo.dialogs.api.entities import (
     DEFAULT_STACK_ID,
@@ -27,10 +27,10 @@ from maxo.enums.chat_type import ChatType
 from maxo.fsm.storages.base import BaseEventIsolation, BaseStorage
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces import BaseMiddleware, NextMiddleware
-from maxo.routing.middlewares.event_context import (
+from maxo.routing.middlewares.update_context import (
     EVENT_FROM_USER_KEY,
+    UPDATE_CONTEXT_KEY,
 )
-from maxo.routing.middlewares.update_context import UPDATE_CONTEXT_KEY
 from maxo.routing.sentinels import UNHANDLED
 from maxo.routing.signals.exception import ErrorEvent
 from maxo.routing.updates.base import MaxUpdate
@@ -146,9 +146,9 @@ class IntentMiddlewareFactory:
 
     async def _load_stack(
         self,
-        stack_id: Optional[str],
+        stack_id: str | None,
         proxy: StorageProxy,
-    ) -> Optional[Stack]:
+    ) -> Stack | None:
         if stack_id is None:
             raise InvalidStackIdError("Both stack id and intent id are None")
         return await proxy.load_stack(stack_id)
@@ -157,7 +157,7 @@ class IntentMiddlewareFactory:
         self,
         event: ChatEvent,
         proxy: StorageProxy,
-        stack_id: Optional[str],
+        stack_id: str | None,
         ctx: Ctx,
     ) -> None:
         logger.debug(
@@ -301,7 +301,7 @@ class IntentMiddlewareFactory:
         ctx[EVENT_CONTEXT_KEY] = event_context
         original_data = update.callback.payload
         if original_data:
-            intent_id, payload = remove_intent_id(original_data)
+            intent_id, _ = remove_intent_id(original_data)
             if intent_id:
                 await self._load_context_by_intent(
                     event=update,
@@ -412,7 +412,7 @@ class IntentErrorMiddleware(BaseMiddleware[ErrorEvent]):
         self,
         storage: StorageProxy,
         stack: Stack,
-    ) -> Optional[Context]:
+    ) -> Context | None:
         try:
             return await storage.load_context(stack.last_intent_id())
         except (UnknownIntent, OutdatedIntent):
@@ -431,8 +431,7 @@ class IntentErrorMiddleware(BaseMiddleware[ErrorEvent]):
     ) -> Stack:
         if isinstance(error, OutdatedIntent):
             return await proxy.load_stack(stack_id=error.stack_id)
-        else:
-            return await proxy.load_stack()
+        return await proxy.load_stack()
 
     async def __call__(
         self,

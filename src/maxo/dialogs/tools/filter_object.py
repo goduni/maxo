@@ -23,7 +23,7 @@ class CallableObject:
     def __post_init__(self) -> None:
         callback = inspect.unwrap(self.callback)
         self.awaitable = inspect.isawaitable(callback) or inspect.iscoroutinefunction(
-            callback
+            callback,
         )
         spec = inspect.getfullargspec(callback)
         self.params = {*spec.args, *spec.kwonlyargs}

@@ -46,7 +46,7 @@ class UpdateHandler(
         self._filter = filter
         self._handler_fn = handler_fn
         self._awaitable = inspect.isawaitable(
-            handler_fn
+            handler_fn,
         ) or inspect.iscoroutinefunction(handler_fn)
         spec = inspect.getfullargspec(handler_fn)
         self._params = {*spec.args, *spec.kwonlyargs}
@@ -60,7 +60,7 @@ class UpdateHandler(
 
     def _prepare_kwargs(self, ctx: Ctx) -> dict[str, Any]:
         if self._varkw:
-            return ctx  # type: ignore
+            return ctx
 
         return {k: ctx[k] for k in self._params if k in ctx}
 

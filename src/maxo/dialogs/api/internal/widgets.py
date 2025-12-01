@@ -4,7 +4,6 @@ from typing import (
     Any,
     Optional,
     Protocol,
-    Union,
     runtime_checkable,
 )
 
@@ -53,19 +52,19 @@ class LinkPreviewWidget(Widget, Protocol):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[LinkPreviewOptions]:
+    ) -> LinkPreviewOptions | None:
         """Create link preview."""
         raise NotImplementedError
 
 
-ButtonVariant = Union[
-    CallbackKeyboardButton,
-    MessageKeyboardButton,
-    LinkKeyboardButton,
-    OpenAppKeyboardButton,
-    RequestContactKeyboardButton,
-    RequestGeoLocationKeyboardButton,
-]
+ButtonVariant = (
+    CallbackKeyboardButton
+    | MessageKeyboardButton
+    | LinkKeyboardButton
+    | OpenAppKeyboardButton
+    | RequestContactKeyboardButton
+    | RequestGeoLocationKeyboardButton
+)
 RawKeyboard = list[list[ButtonVariant]]
 
 
@@ -104,7 +103,7 @@ class MediaWidget(Widget, Protocol):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         """Create media attachment."""
         raise NotImplementedError
 

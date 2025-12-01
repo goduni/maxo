@@ -17,12 +17,12 @@ class BaseRouter(Protocol):
 
     @property
     @abstractmethod
-    def _state(self) -> RouterState:
+    def state(self) -> RouterState:
         raise NotImplementedError
 
-    @_state.setter
+    @state.setter
     @abstractmethod
-    def _state(self, value: RouterState) -> None:
+    def state(self, value: RouterState) -> None:
         raise NotImplementedError
 
     @property

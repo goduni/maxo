@@ -1,6 +1,6 @@
 import dataclasses
 from collections.abc import Callable
-from typing import Any, Optional, Union
+from typing import Any
 
 from maxo.dialogs.api.internal import RawKeyboard, Widget
 from maxo.dialogs.api.protocols import (
@@ -17,7 +17,7 @@ from maxo.routing.updates import MessageCallback
 
 from .base import Keyboard
 
-ItemIdGetter = Callable[[Any], Union[str, int]]
+ItemIdGetter = Callable[[Any], str | int]
 
 
 class ListGroup(Keyboard):
@@ -71,7 +71,7 @@ class ListGroup(Keyboard):
             kbd.extend(b_kbd)
         return kbd
 
-    def find(self, widget_id: str) -> Optional[Widget]:
+    def find(self, widget_id: str) -> Widget | None:
         if widget_id == self.widget_id:
             return self
         for btn in self.buttons:
@@ -108,7 +108,7 @@ class ListGroup(Keyboard):
 
 
 class ManagedListGroup(ManagedWidget[ListGroup]):
-    def find_for_item(self, widget_id: str, item_id: str) -> Optional[Any]:
+    def find_for_item(self, widget_id: str, item_id: str) -> Any | None:
         """Find widget for specific item_id."""
         widget = self.widget.find(widget_id)
         if widget:

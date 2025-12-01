@@ -4,13 +4,13 @@ from typing import Any, Literal
 import pytest
 
 from maxo.enums import ChatType
-from maxo.routing.dispatcher import Dispatcher
 from maxo.routing.ctx import Ctx
+from maxo.routing.dispatcher import Dispatcher
 from maxo.routing.routers.simple import Router
 from maxo.routing.sentinels import UNHANDLED
-from maxo.routing.updates.message_created import MessageCreated
 from maxo.routing.signals.update import Update
-from maxo.types import Message, User, Recipient
+from maxo.routing.updates.message_created import MessageCreated
+from maxo.types import Message, Recipient, User
 
 
 class MockBotInfo:
@@ -171,7 +171,7 @@ async def test_filter_on_update():
                 ),
             ),
             timestamp=datetime.now(),
-        )
+        ),
     )
     ctx = Ctx({"execution_order": [], "update": update, "bot": MockBot()})
     ctx["ctx"] = ctx

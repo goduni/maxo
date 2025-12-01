@@ -67,7 +67,7 @@ def dp(message_manager: MockMessageManager):
                 state=MainSG.start,
             ),
             on_start=on_start_main,
-        )
+        ),
     )
     dp.include_router(
         Dialog(
@@ -78,7 +78,7 @@ def dp(message_manager: MockMessageManager):
             ),
             on_process_result=on_process_result_sub,
             on_start=on_start_sub,
-        )
+        ),
     )
     dp.include_router(
         Dialog(
@@ -87,7 +87,7 @@ def dp(message_manager: MockMessageManager):
                 Cancel(),
                 state=ThirdSG.start,
             ),
-        )
+        ),
     )
     setup_dialogs(dp, message_manager=message_manager)
     return dp

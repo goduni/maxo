@@ -27,11 +27,15 @@ class FSMContext:
 
     async def get_value(self, key: str, default: Any | None = None) -> Any | None:
         return await self.storage.get_value(
-            storage_key=self.key, value_key=key, default=default
+            storage_key=self.key,
+            value_key=key,
+            default=default,
         )
 
     async def update_data(
-        self, data: MutableMapping[str, Any] | None = None, **kwargs: Any
+        self,
+        data: MutableMapping[str, Any] | None = None,
+        **kwargs: Any,
     ) -> MutableMapping[str, Any]:
         if data:
             kwargs.update(data)

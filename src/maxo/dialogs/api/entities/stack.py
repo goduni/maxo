@@ -2,7 +2,6 @@ import random
 import string
 import time
 from dataclasses import dataclass, field
-from typing import Optional
 
 from maxo.dialogs.api.exceptions import DialogStackOverflow
 from maxo.fsm import State
@@ -18,7 +17,7 @@ _ID_SYMS = string.digits + string.ascii_letters
 
 
 def new_int_id() -> int:
-    return int(time.time()) % 100000000 + random.randint(0, 99) * 100000000
+    return int(time.time()) % 100_000_000 + random.randint(0, 99) * 100_000_000
 
 
 def id_to_str(int_id: int) -> str:
@@ -32,7 +31,7 @@ def id_to_str(int_id: int) -> str:
     return res
 
 
-def new_id():
+def new_id() -> str:
     return id_to_str(new_int_id())
 
 
@@ -40,10 +39,10 @@ def new_id():
 class Stack:
     _id: str = field(compare=True, default_factory=new_id)
     intents: list[str] = field(compare=False, default_factory=list)
-    last_message_id: Optional[str] = field(compare=False, default=None)
-    last_sequence_id: Optional[int] = field(compare=False, default=None)
+    last_message_id: str | None = field(compare=False, default=None)
+    last_sequence_id: int | None = field(compare=False, default=None)
     last_attachments: list[Attachments] = field(compare=False, default_factory=list)
-    access_settings: Optional[AccessSettings] = field(compare=False, default=None)
+    access_settings: AccessSettings | None = field(compare=False, default=None)
 
     @property
     def id(self) -> str:

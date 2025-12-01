@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable
-from typing import Optional, Union
+from typing import Union
 
 from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.api.internal import RawKeyboard
@@ -107,8 +107,8 @@ class Checkbox(BaseCheckbox):
         checked_text: Text,
         unchecked_text: Text,
         id: str,
-        on_click: Union[OnStateChanged, WidgetEventProcessor, None] = None,
-        on_state_changed: Optional[OnStateChanged] = None,
+        on_click: OnStateChanged | WidgetEventProcessor | None = None,
+        on_state_changed: OnStateChanged | None = None,
         default: bool = False,
         when: WhenCondition = None,
     ):

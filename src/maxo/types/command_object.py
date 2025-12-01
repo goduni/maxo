@@ -1,5 +1,5 @@
 from dataclasses import field
-from typing import Match
+from re import Match
 
 from maxo.types.base import MaxoType
 

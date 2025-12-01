@@ -23,7 +23,7 @@ class UpdateObserver(
         handler_fn: UpdateHandlerFn[_UpdateT, Any],
         filter: Filter[_UpdateT] | None = None,
     ) -> UpdateHandlerFn[_UpdateT, Any]:
-        self._state.ensure_add_handler()
+        self.state.ensure_add_handler()
 
         self._handlers.append(UpdateHandler(handler_fn, filter))
 

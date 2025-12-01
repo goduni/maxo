@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Protocol
+from typing import Protocol
 
 from maxo import Ctx
 from maxo.dialogs import ChatEvent
@@ -11,7 +11,7 @@ class StackAccessValidator(Protocol):
     async def is_allowed(
         self,
         stack: Stack,
-        context: Optional[Context],
+        context: Context | None,
         event: ChatEvent,
         ctx: Ctx,
     ) -> bool:

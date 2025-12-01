@@ -1,6 +1,6 @@
 from datetime import datetime
 from logging import getLogger
-from typing import Any, Optional
+from typing import Any
 
 from maxo import Bot, Dispatcher
 from maxo.dialogs.api.entities import (
@@ -41,8 +41,8 @@ class BgManager(BaseDialogManager):
         chat_id: int | None,
         bot: Bot,
         dp: Dispatcher,
-        intent_id: Optional[str],
-        stack_id: Optional[str],
+        intent_id: str | None,
+        stack_id: str | None,
         load: bool = False,
     ) -> None:
         self._event_context = EventContext(
@@ -59,7 +59,7 @@ class BgManager(BaseDialogManager):
         self.stack_id = stack_id
         self.load = load
 
-    def _get_fake_user(self, user_id: Optional[int] = None) -> User:
+    def _get_fake_user(self, user_id: int | None = None) -> User:
         if user_id is None or user_id == self._event_context.user.id:
             return self._event_context.user
         return FakeUser(
@@ -71,9 +71,9 @@ class BgManager(BaseDialogManager):
 
     def bg(
         self,
-        user_id: Optional[int] = None,
-        chat_id: Optional[int] = None,
-        stack_id: Optional[str] = None,
+        user_id: int | None = None,
+        chat_id: int | None = None,
+        stack_id: str | None = None,
         load: bool = False,
     ) -> "BaseDialogManager":
         user = self._get_fake_user(user_id)
@@ -138,7 +138,7 @@ class BgManager(BaseDialogManager):
     async def done(
         self,
         result: Any = None,
-        show_mode: Optional[ShowMode] = None,
+        show_mode: ShowMode | None = None,
     ) -> None:
         await self._load()
         await self._notify(
@@ -155,8 +155,8 @@ class BgManager(BaseDialogManager):
         state: State,
         data: Data = None,
         mode: StartMode = StartMode.NORMAL,
-        show_mode: Optional[ShowMode] = None,
-        access_settings: Optional[AccessSettings] = None,
+        show_mode: ShowMode | None = None,
+        access_settings: AccessSettings | None = None,
     ) -> None:
         await self._load()
         await self._notify(
@@ -174,7 +174,7 @@ class BgManager(BaseDialogManager):
     async def switch_to(
         self,
         state: State,
-        show_mode: Optional[ShowMode] = None,
+        show_mode: ShowMode | None = None,
     ) -> None:
         await self._load()
         await self._notify(
@@ -190,7 +190,7 @@ class BgManager(BaseDialogManager):
     async def update(
         self,
         data: dict,
-        show_mode: Optional[ShowMode] = None,
+        show_mode: ShowMode | None = None,
     ) -> None:
         await self._load()
         await self._notify(
@@ -212,7 +212,7 @@ class BgManagerFactoryImpl(BgManagerFactory):
         bot: Bot,
         user_id: int,
         chat_id: int,
-        stack_id: Optional[str] = None,
+        stack_id: str | None = None,
         load: bool = False,
     ) -> "BaseDialogManager":
         chat = FakeRecipient(

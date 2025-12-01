@@ -1,5 +1,3 @@
-from typing import Optional
-
 from maxo.dialogs import DialogManager
 from maxo.dialogs.api.entities.link_preview import LinkPreviewOptions
 from maxo.dialogs.api.internal import LinkPreviewWidget, TextWidget
@@ -14,7 +12,7 @@ class LinkPreviewBase(Whenable, BaseWidget, LinkPreviewWidget):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[LinkPreviewOptions]:
+    ) -> LinkPreviewOptions | None:
         if not self.is_(data, manager):
             return None
         return await self._render_link_preview(data, manager)
@@ -23,14 +21,14 @@ class LinkPreviewBase(Whenable, BaseWidget, LinkPreviewWidget):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[LinkPreviewOptions]:
+    ) -> LinkPreviewOptions | None:
         return None
 
 
 class LinkPreview(LinkPreviewBase):
     def __init__(
         self,
-        url: Optional[TextWidget] = None,
+        url: TextWidget | None = None,
         is_disabled: bool = False,
         prefer_small_media: bool = False,
         prefer_large_media: bool = False,
@@ -48,7 +46,7 @@ class LinkPreview(LinkPreviewBase):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[LinkPreviewOptions]:
+    ) -> LinkPreviewOptions | None:
         if not self.is_(data, manager):
             return None
         return await self._render_link_preview(data, manager)
@@ -57,7 +55,7 @@ class LinkPreview(LinkPreviewBase):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[LinkPreviewOptions]:
+    ) -> LinkPreviewOptions | None:
         return LinkPreviewOptions(
             url=(await self.url.render_text(data, manager) if self.url else None),
             is_disabled=self.is_disabled,

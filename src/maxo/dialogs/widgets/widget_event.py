@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from collections.abc import Callable
-from typing import Any, Union
+from typing import Any
 
 from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.api.protocols import DialogManager
@@ -36,9 +36,8 @@ class SimpleEventProcessor(WidgetEventProcessor):
 
 
 def ensure_event_processor(
-    processor: Union[Callable, WidgetEventProcessor, None],
+    processor: Callable | WidgetEventProcessor | None,
 ) -> WidgetEventProcessor:
     if isinstance(processor, WidgetEventProcessor):
         return processor
-    else:
-        return SimpleEventProcessor(processor)
+    return SimpleEventProcessor(processor)

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.dialogs.api.protocols import DialogManager, DialogProtocol
 from maxo.dialogs.widgets.common import (
@@ -18,7 +16,7 @@ class ScrollingGroup(Group, BaseScroll):
         self,
         *buttons: Keyboard,
         id: str,
-        width: Optional[int] = None,
+        width: int | None = None,
         height: int = 0,
         when: WhenCondition = None,
         on_page_changed: OnPageChangedVariants = None,

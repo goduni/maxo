@@ -1,5 +1,4 @@
 from logging import getLogger
-from typing import Optional, Union
 
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.types import (
@@ -47,7 +46,7 @@ def encode_reply_callback(data: str) -> str:
 
 def _decode_reply_callback_byte(little: str, big: str) -> int:
     return REPLY_CALLBACK_SYMBOLS.index(big) * len(
-        REPLY_CALLBACK_SYMBOLS
+        REPLY_CALLBACK_SYMBOLS,
     ) + REPLY_CALLBACK_SYMBOLS.index(little)
 
 
@@ -56,8 +55,8 @@ def join_reply_callback(text: str, payload: str) -> str:
 
 
 def split_reply_callback(
-    data: Optional[str],
-) -> tuple[Optional[str], Optional[str]]:
+    data: str | None,
+) -> tuple[str | None, str | None]:
     if not data:
         return None, None
     text = data.rstrip(REPLY_CALLBACK_SYMBOLS)
@@ -74,7 +73,7 @@ def decode_reply_callback(data: str) -> str:
 
 
 def _transform_to_reply_button(
-    button: Union[CallbackKeyboardButton, MessageKeyboardButton],
+    button: CallbackKeyboardButton | MessageKeyboardButton,
 ) -> MessageKeyboardButton:
     if isinstance(button, MessageKeyboardButton):
         return button
@@ -88,12 +87,12 @@ def _transform_to_reply_button(
         text=join_reply_callback(
             text=button.text,
             payload=button.payload,
-        )
+        ),
     )
 
 
 def transform_to_reply_keyboard(
-    keyboard: list[list[Union[CallbackKeyboardButton, MessageKeyboardButton]]],
+    keyboard: list[list[CallbackKeyboardButton | MessageKeyboardButton]],
 ) -> list[list[MessageKeyboardButton]]:
     return [[_transform_to_reply_button(button) for button in row] for row in keyboard]
 
@@ -118,8 +117,8 @@ def is_user_loaded(user: User) -> bool:
 
 def intent_payload(
     intent_id: str,
-    payload: Optional[str],
-) -> Optional[str]:
+    payload: str | None,
+) -> str | None:
     if payload is None:
         return None
     prefix = intent_id + CB_SEP
@@ -138,7 +137,7 @@ def add_intent_id(keyboard: RawKeyboard, intent_id: str):
                 )
 
 
-def remove_intent_id(payload: str) -> tuple[Optional[str], str]:
+def remove_intent_id(payload: str) -> tuple[str | None, str]:
     if CB_SEP in payload:
         intent_id, new_data = payload.split(CB_SEP, maxsplit=1)
         return intent_id, new_data

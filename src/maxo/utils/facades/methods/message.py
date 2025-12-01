@@ -170,7 +170,7 @@ class MessageMethodsFacade(BaseMethodsFacade, ABC):
             attachments.append(
                 InlineKeyboardAttachmentRequest(
                     payload=InlineKeyboardAttachmentRequestPayload(buttons=keyboard),
-                )
+                ),
             )
 
         if media:
@@ -189,7 +189,7 @@ class MessageMethodsFacade(BaseMethodsFacade, ABC):
         attachments: list[MediaAttachmentsRequests] = []
 
         result = await asyncio.gather(
-            *(self._upload_media(upload_media) for upload_media in media)
+            *(self._upload_media(upload_media) for upload_media in media),
         )
 
         # TODO: Все типы UploadType

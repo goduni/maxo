@@ -56,7 +56,7 @@ def dp(message_manager: MockMessageManager):
                 Format("{data[my_key]}"),
                 state=MainSG.start,
             ),
-        )
+        ),
     )
     dp.message_created.middleware.outer(MyMiddleware())
     setup_dialogs(dp, message_manager=message_manager)

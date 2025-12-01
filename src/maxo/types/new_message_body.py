@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 from maxo.enums.text_fromat import TextFormat
 from maxo.omit import Omittable, Omitted

@@ -11,7 +11,6 @@ def calculate_chat_id_and_user_id(
 ) -> tuple[Omittable[int], Omittable[int]]:
     if chat_type is ChatType.CHAT:
         return chat_id or Omitted(), Omitted()
-    elif chat_type is ChatType.DIALOG:
+    if chat_type is ChatType.DIALOG:
         return chat_id or Omitted(), user_id or Omitted()
-    else:
-        assert_never(chat_type)
+    assert_never(chat_type)

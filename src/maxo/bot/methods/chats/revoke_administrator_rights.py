@@ -10,7 +10,8 @@ class RevokeAdministratorRights(MaxoMethod[RevokeAdministratorRightsResult]):
     """
     Отменить права администратора.
 
-    Отменяет права администратора у пользователя в чате, лишая его административных привилегий.
+    Отменяет права администратора у пользователя в чате,
+    лишая его административных привилегий.
 
     Источник: https://dev.max.ru/docs-api/methods/DELETE/chats/-chatId-/members/admins/-userId-
 

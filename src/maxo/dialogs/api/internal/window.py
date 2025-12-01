@@ -55,5 +55,5 @@ class WindowProtocol(Protocol):
         raise NotImplementedError
 
     @abstractmethod
-    def find(self, widget_id) -> Any:
+    def find(self, widget_id: str) -> Any:
         raise NotImplementedError

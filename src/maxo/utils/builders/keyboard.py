@@ -51,7 +51,7 @@ class KeyboardValidator:
             count += len(row)
         if count > self.max_buttons:
             raise ValueError(
-                f"Too much buttons detected Max allowed count - {self.max_buttons}"
+                f"Too much buttons detected Max allowed count - {self.max_buttons}",
             )
         return True
 
@@ -62,7 +62,7 @@ class KeyboardValidator:
     def validate_size(self, size: int) -> int:
         if size not in range(self.min_width, self.max_width + 1):
             raise ValueError(
-                f"Row size {size} is not allowed, range: [{self.min_width}, {self.max_width}]"
+                f"Row size {size} is not allowed, range: [{self.min_width}, {self.max_width}]",
             )
         return size
 
@@ -97,7 +97,7 @@ class KeyboardBuilder:
                 text=text,
                 intent=intent,
                 payload=payload,
-            )
+            ),
         )
         return self
 
@@ -106,7 +106,7 @@ class KeyboardBuilder:
             LinkKeyboardButton(
                 text=text,
                 url=url,
-            )
+            ),
         )
         return self
 
@@ -114,18 +114,20 @@ class KeyboardBuilder:
         self.add(
             RequestContactKeyboardButton(
                 text=text,
-            )
+            ),
         )
         return self
 
     def add_request_geo_location(
-        self, text: str, quick: Omittable[bool] = Omitted()
+        self,
+        text: str,
+        quick: Omittable[bool] = Omitted(),
     ) -> Self:
         self.add(
             RequestGeoLocationKeyboardButton(
                 text=text,
                 quick=quick,
-            )
+            ),
         )
         return self
 

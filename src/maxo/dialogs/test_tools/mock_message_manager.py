@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from uuid import uuid4
 
 from maxo import Bot
@@ -51,7 +50,7 @@ MEDIA_CLASSES = {
             file_unique_id=file_unique_id(x),
             width=1024,
             height=1024,
-        )
+        ),
     ],
     "video": lambda x: VideoAttachment(
         file_id=file_id(x),
@@ -90,8 +89,8 @@ class MockMessageManager(MessageManagerProtocol):
         self,
         bot: Bot,
         show_mode: ShowMode,
-        old_message: Optional[OldMessage],
-    ) -> Optional[Message]:
+        old_message: OldMessage | None,
+    ) -> Message | None:
         if not old_message:
             return None
         if show_mode in (ShowMode.DELETE_AND_SEND, ShowMode.NO_UPDATE):
@@ -120,7 +119,10 @@ class MockMessageManager(MessageManagerProtocol):
         assert callback_id in self.answered_callbacks
 
     async def show_message(
-        self, bot: Bot, new_message: NewMessage, old_message: Optional[OldMessage]
+        self,
+        bot: Bot,
+        new_message: NewMessage,
+        old_message: OldMessage | None,
     ) -> OldMessage:
         assert isinstance(new_message, NewMessage)
         assert isinstance(old_message, (OldMessage, type(None)))
@@ -141,7 +143,7 @@ class MockMessageManager(MessageManagerProtocol):
                     text=new_message.text,
                     attachments=new_message.attachments,
                 ),
-            )
+            ),
         )
 
         return OldMessage(

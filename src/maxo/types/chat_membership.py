@@ -1,5 +1,5 @@
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Sequence
 
 from maxo.enums.chat_admin_permission import ChatAdminPermission
 from maxo.omit import Omittable, Omitted

@@ -3,7 +3,6 @@ from collections.abc import Awaitable, Callable
 from logging import getLogger
 from typing import (
     Any,
-    Optional,
     TypeVar,
     Union,
 )
@@ -44,13 +43,13 @@ class Dialog(Router, DialogProtocol):
     def __init__(
         self,
         *windows: WindowProtocol,
-        on_start: Optional[OnDialogEvent] = None,
-        on_close: Optional[OnDialogEvent] = None,
-        on_process_result: Optional[OnResultEvent] = None,
+        on_start: OnDialogEvent | None = None,
+        on_close: OnDialogEvent | None = None,
+        on_process_result: OnResultEvent | None = None,
         launch_mode: LaunchMode = LaunchMode.STANDARD,
         getter: GetterVariant = None,
         preview_data: GetterVariant = None,
-        name: Optional[str] = None,
+        name: str | None = None,
     ):
         if not windows:
             raise ValueError(
@@ -94,7 +93,7 @@ class Dialog(Router, DialogProtocol):
         self,
         manager: DialogManager,
         start_data: Data,
-        state: Optional[State] = None,
+        state: State | None = None,
     ) -> None:
         if state is None:
             state = self._states[0]
@@ -104,7 +103,7 @@ class Dialog(Router, DialogProtocol):
 
     async def _process_callback(
         self,
-        callback: Optional[OnDialogEvent],
+        callback: OnDialogEvent | None,
         *args,
         **kwargs,
     ):
@@ -250,7 +249,7 @@ class Dialog(Router, DialogProtocol):
     ) -> None:
         await self._process_callback(self.on_close, result, manager)
 
-    def find(self, widget_id: Any) -> Optional[W]:
+    def find(self, widget_id: Any) -> W | None:
         for w in self.windows.values():
             widget = w.find(widget_id)
             if widget:

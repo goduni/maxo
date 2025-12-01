@@ -1,5 +1,3 @@
-from typing import Optional
-
 from maxo.dialogs.api.entities import MediaAttachment
 from maxo.dialogs.api.protocols import DialogManager
 from maxo.dialogs.widgets.common import (
@@ -33,7 +31,7 @@ class MediaScroll(Media, BaseScroll):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         items = self.items_getter(data)
         pages = len(items)
         current_page = min(await self.get_page(manager), pages)

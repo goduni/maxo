@@ -4,10 +4,8 @@ import typing
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
-from typing import Any, ClassVar, TypeVar, get_args, get_origin
+from typing import Any, ClassVar, Self, TypeVar, get_args, get_origin
 from uuid import UUID
-
-from typing_extensions import Self
 
 from maxo import Ctx
 from maxo.routing.filters import BaseFilter
@@ -36,7 +34,7 @@ class Payload:
         if "prefix" not in kwargs:
             raise ValueError(
                 f"prefix required, usage example: "
-                f"`class {cls.__name__}(Payload, prefix='my_callback'): ...`"
+                f"`class {cls.__name__}(Payload, prefix='my_callback'): ...`",
             )
 
         cls.__separator__ = kwargs.pop("sep", ":")
@@ -45,7 +43,7 @@ class Payload:
         if cls.__separator__ in cls.__prefix__:
             raise ValueError(
                 f"Separator symbol {cls.__separator__!r} "
-                f"can not be used inside prefix {cls.__prefix__!r}"
+                f"can not be used inside prefix {cls.__prefix__!r}",
             )
 
         super().__init_subclass__(**kwargs)

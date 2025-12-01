@@ -20,8 +20,7 @@ def _get_magic_getter(f: MagicFilter) -> ItemsGetter:
         items = f.resolve(data)
         if isinstance(items, Sequence):
             return items
-        else:
-            return []
+        return []
 
     return items_magic
 
@@ -29,9 +28,8 @@ def _get_magic_getter(f: MagicFilter) -> ItemsGetter:
 def get_items_getter(attr_val: ItemsGetterVariant) -> ItemsGetter:
     if isinstance(attr_val, str):
         return itemgetter(attr_val)
-    elif isinstance(attr_val, MagicFilter):
+    if isinstance(attr_val, MagicFilter):
         return _get_magic_getter(attr_val)
-    elif isinstance(attr_val, Callable):
+    if isinstance(attr_val, Callable):
         return attr_val
-    else:
-        return _get_identity(attr_val)
+    return _get_identity(attr_val)

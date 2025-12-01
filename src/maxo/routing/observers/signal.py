@@ -24,7 +24,7 @@ class SignalObserver(
         handler_fn: SignalHandlerFn[_SignalT, Any],
         filter: Filter[_SignalT] | None = None,
     ) -> SignalHandlerFn[_SignalT, Any]:
-        self._state.ensure_add_handler()
+        self.state.ensure_add_handler()
 
         self._handlers.append(SignalHandler(handler_fn, filter))
 

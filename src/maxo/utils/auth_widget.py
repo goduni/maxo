@@ -1,6 +1,6 @@
 import hashlib
 import hmac
-from typing import Any, Dict
+from typing import Any
 
 
 def check_signature(token: str, hash: str, **kwargs: Any) -> bool:
@@ -14,5 +14,5 @@ def check_signature(token: str, hash: str, **kwargs: Any) -> bool:
     return hmac_string == hash
 
 
-def check_integrity(token: str, data: Dict[str, Any]) -> bool:
+def check_integrity(token: str, data: dict[str, Any]) -> bool:
     return check_signature(token, **data)

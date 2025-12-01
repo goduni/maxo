@@ -28,23 +28,21 @@ def _partial_middleware(
 
 
 class MiddlewareManager(Generic[_UpdateT]):
-    _middlewares: MutableSequence[BaseMiddleware[_UpdateT]]
+    middlewares: MutableSequence[BaseMiddleware[_UpdateT]]
+    state: MiddlewareManagerState
 
-    _state: MiddlewareManagerState
-
-    __slots__ = ("_middlewares", "_state")
+    __slots__ = ("middlewares", "state")
 
     def __init__(self) -> None:
-        self._middlewares = []
-
-        self._state = EmptyMiddlewareManagerState()
+        self.middlewares = []
+        self.state = EmptyMiddlewareManagerState()
 
     def __call__(self, *middlewares: BaseMiddleware[_UpdateT]) -> None:
         self.add(*middlewares)
 
     def add(self, *middlewares: BaseMiddleware[_UpdateT]) -> None:
-        self._state.ensure_add_middleware()
-        self._middlewares.extend(middlewares)
+        self.state.ensure_add_middleware()
+        self.middlewares.extend(middlewares)
 
     def wrap_middlewares(
         self,
@@ -52,7 +50,7 @@ class MiddlewareManager(Generic[_UpdateT]):
     ) -> NextMiddleware[_UpdateT]:
         middleware = cast("NextMiddleware[_UpdateT]", trigger)
 
-        for m in reversed(self._middlewares):
+        for m in reversed(self.middlewares):
             middleware = _partial_middleware(m, middleware)
 
         return middleware

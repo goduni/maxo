@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
-from typing import Any, AsyncIterator, Sequence
+from collections.abc import AsyncIterator, Sequence
+from typing import Any
 
 from maxo import loggers
 from maxo.backoff import Backoff, BackoffConfig

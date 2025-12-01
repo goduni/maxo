@@ -1,19 +1,19 @@
 import json
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from maxo.fsm import State
 from maxo.fsm.key_builder import StorageKey
 from maxo.fsm.storages.base import BaseStorage
 
-StateType = Optional[Union[str, State]]
+StateType = Optional[str | State]
 
 
 @dataclass
 class MemoryStorageRecord:
     data: str = "{}"
-    state: Optional[str] = None
+    state: str | None = None
 
 
 class JsonMemoryStorage(BaseStorage):
@@ -33,7 +33,7 @@ class JsonMemoryStorage(BaseStorage):
         state_value = state.state if isinstance(state, State) else state
         self.storage[key].state = state_value
 
-    async def get_state(self, key: StorageKey) -> Optional[str]:
+    async def get_state(self, key: StorageKey) -> str | None:
         return self.storage[key].state
 
     async def set_data(self, key: StorageKey, data: dict[str, Any]) -> None:

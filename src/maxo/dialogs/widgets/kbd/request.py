@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from typing import Union
 
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.dialogs.api.protocols import DialogManager
@@ -17,7 +16,7 @@ class RequestContact(Keyboard):
     def __init__(
         self,
         text: Text,
-        when: Union[str, Callable, None] = None,
+        when: str | Callable | None = None,
     ) -> None:
         super().__init__(when=when)
         self.text = text
@@ -41,7 +40,7 @@ class RequestLocation(Keyboard):
         self,
         text: Text,
         quick: Omittable[bool] = Omitted(),
-        when: Union[str, Callable, None] = None,
+        when: str | Callable | None = None,
     ) -> None:
         super().__init__(when=when)
         self.text = text

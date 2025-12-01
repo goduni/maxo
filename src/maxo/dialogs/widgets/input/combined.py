@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import Any, Optional
+from typing import Any
 
 from maxo.dialogs.api.protocols import (
     DialogManager,
@@ -15,7 +15,7 @@ class CombinedInput(BaseInput):
     def __init__(
         self,
         *inputs: BaseInput,
-        filter: Optional[Callable[..., Any]] = None,
+        filter: Callable[..., Any] | None = None,
     ):
         super().__init__()
         self.inputs = inputs

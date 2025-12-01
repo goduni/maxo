@@ -17,7 +17,7 @@ async def test_render_jinja(mock_manager) -> None:
 {% for animal in animals %}
 * <a href="https://yandex.ru/search/?text={{ animal }}">{{ animal|capitalize }}</a>
 {% endfor %}
-"""
+""",
     )
 
     data = {

@@ -1,4 +1,5 @@
-from typing import Self, Sequence
+from collections.abc import Sequence
+from typing import Self
 
 from maxo.types.base import MaxoType
 from maxo.types.inline_keyboard_attachment_request_payload import (

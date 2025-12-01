@@ -1,6 +1,6 @@
 from abc import ABC
-from collections.abc import Callable, MutableSequence
-from typing import Any, Coroutine, ParamSpec, Sequence, TypeVar, cast
+from collections.abc import Callable, Coroutine, MutableSequence, Sequence
+from typing import Any, ParamSpec, TypeVar, cast
 
 from maxo.routing.ctx import Ctx
 from maxo.routing.filters.always import AlwaysTrueFilter
@@ -27,7 +27,7 @@ class BaseObserver(Observer[_UpdateT, _HandlerT, _HandlerFnT], ABC):
     _filter: Filter[_UpdateT]
     _handlers: MutableSequence[_HandlerT]
     _middleware: MiddlewareManagerFacade[_UpdateT]
-    __state: ObserverState
+    _state: ObserverState
 
     __slots__ = (
         "_filter",
@@ -39,16 +39,15 @@ class BaseObserver(Observer[_UpdateT, _HandlerT, _HandlerFnT], ABC):
         self._handlers = []
         self._filter = AlwaysTrueFilter()
         self._middleware = MiddlewareManagerFacade()
-
-        self.__state = EmptyObserverState()
+        self._state = EmptyObserverState()
 
     @property
-    def _state(self) -> ObserverState:
-        return self.__state
+    def state(self) -> ObserverState:
+        return self._state
 
-    @_state.setter
-    def _state(self, value: ObserverState) -> None:
-        self.__state = value
+    @state.setter
+    def state(self, value: ObserverState) -> None:
+        self._state = value
 
     @property
     def handlers(self) -> Sequence[_HandlerT]:

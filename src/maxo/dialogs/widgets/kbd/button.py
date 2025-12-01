@@ -1,5 +1,4 @@
 from collections.abc import Awaitable, Callable
-from typing import Union
 
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.dialogs.api.protocols import DialogManager, DialogProtocol
@@ -23,7 +22,7 @@ class Button(Keyboard):
         self,
         text: Text,
         id: str,
-        on_click: Union[OnClick, WidgetEventProcessor, None] = None,
+        on_click: OnClick | WidgetEventProcessor | None = None,
         when: WhenCondition = None,
     ) -> None:
         super().__init__(id=id, when=when)
@@ -110,6 +109,6 @@ class WebApp(Keyboard):
                     text=text,
                     web_app=web_app,
                     contact_id=self.contact_id,
-                )
-            ]
+                ),
+            ],
         ]

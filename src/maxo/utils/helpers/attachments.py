@@ -57,7 +57,7 @@ def request_to_attachment(request: AttachmentsRequests) -> Attachments:
             f"Cannot convert {type(request).__name__} to an Attachment object directly. "
             "Request objects lack server-generated data like IDs, URLs, or resolved user info. "
             "This conversion is only possible for request types that have a 1:1 mapping of fields "
-            "(e.g., LocationAttachmentRequest, InlineKeyboardAttachmentRequest)."
+            "(e.g., LocationAttachmentRequest, InlineKeyboardAttachmentRequest).",
         )
 
     assert_never(request)
@@ -76,7 +76,7 @@ def attachment_to_request(attachment: Attachments) -> AttachmentsRequests:
         return StickerAttachmentRequest.factory(code=attachment.payload.code)
     if isinstance(attachment, InlineKeyboardAttachment):
         return InlineKeyboardAttachmentRequest.factory(
-            buttons=attachment.payload.buttons
+            buttons=attachment.payload.buttons,
         )
     if isinstance(attachment, LocationAttachment):
         return LocationAttachmentRequest(

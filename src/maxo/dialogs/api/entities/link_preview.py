@@ -1,11 +1,9 @@
-from typing import Optional
-
 from maxo.types import MaxoType
 
 
 class LinkPreviewOptions(MaxoType):
-    is_disabled: Optional[bool]
-    url: Optional[str]
-    prefer_small_media: Optional[bool]
-    prefer_large_media: Optional[bool]
-    show_above_text: Optional[bool]
+    is_disabled: bool | None
+    url: str | None
+    prefer_small_media: bool | None
+    prefer_large_media: bool | None
+    show_above_text: bool | None

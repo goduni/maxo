@@ -1,6 +1,6 @@
 import warnings
 from logging import getLogger
-from typing import Any, Optional
+from typing import Any
 
 from maxo.dialogs.api.entities import (
     MarkupVariant,
@@ -44,12 +44,12 @@ class Window(WindowProtocol):
         *widgets: WidgetSrc,
         state: State,
         getter: GetterVariant = None,
-        on_process_result: Optional[OnResultEvent] = None,
+        on_process_result: OnResultEvent | None = None,
         markup_factory: MarkupFactory = _DEFAULT_MARKUP_FACTORY,
-        parse_mode: Optional[TextFormat] = None,
-        disable_web_page_preview: Optional[bool] = None,
-        protect_content: Optional[bool] = None,
-        preview_add_transitions: Optional[list[Keyboard]] = None,
+        parse_mode: TextFormat | None = None,
+        disable_web_page_preview: bool | None = None,
+        protect_content: bool | None = None,
+        preview_add_transitions: list[Keyboard] | None = None,
         preview_data: GetterVariant = None,
     ):
         (
@@ -94,7 +94,7 @@ class Window(WindowProtocol):
         self,
         data: dict,
         manager: DialogManager,
-    ) -> Optional[MediaAttachment]:
+    ) -> MediaAttachment | None:
         if self.media:
             return await self.media.render_media(data, manager)
         return None
@@ -204,7 +204,7 @@ class Window(WindowProtocol):
     def get_state(self) -> State:
         return self.state
 
-    def find(self, widget_id) -> Optional[Widget]:
+    def find(self, widget_id) -> Widget | None:
         for root in (self.text, self.keyboard, self.on_message, self.media):
             if root and (found := root.find(widget_id)):
                 return found

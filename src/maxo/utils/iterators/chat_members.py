@@ -1,6 +1,6 @@
 from collections import deque
-from collections.abc import AsyncIterator
-from typing import Self, Sequence, cast
+from collections.abc import AsyncIterator, Sequence
+from typing import Self, cast
 
 from maxo.bot.bot import Bot
 from maxo.omit import Omittable, Omitted

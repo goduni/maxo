@@ -1,5 +1,4 @@
 from logging import getLogger
-from typing import Optional
 
 from maxo.dialogs import ChatEvent
 from maxo.dialogs.api.entities import (
@@ -8,7 +7,7 @@ from maxo.dialogs.api.entities import (
 )
 from maxo.dialogs.api.protocols import StackAccessValidator
 from maxo.routing.ctx import Ctx
-from maxo.routing.middlewares.event_context import EVENT_FROM_USER_KEY
+from maxo.routing.middlewares.update_context import EVENT_FROM_USER_KEY
 from maxo.types import User
 
 logger = getLogger(__name__)
@@ -18,7 +17,7 @@ class DefaultAccessValidator(StackAccessValidator):
     async def is_allowed(
         self,
         stack: Stack,
-        context: Optional[Context],
+        context: Context | None,
         event: ChatEvent,
         ctx: Ctx,
     ) -> bool:

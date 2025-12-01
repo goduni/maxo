@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Protocol
+from typing import Protocol
 
 from maxo import Bot
 from maxo.dialogs import ShowMode
@@ -19,8 +19,8 @@ class MessageManagerProtocol(Protocol):
         self,
         bot: Bot,
         show_mode: ShowMode,
-        old_message: Optional[OldMessage],
-    ) -> Optional[MessageEdited]:
+        old_message: OldMessage | None,
+    ) -> MessageEdited | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -28,7 +28,7 @@ class MessageManagerProtocol(Protocol):
         self,
         bot: Bot,
         new_message: NewMessage,
-        old_message: Optional[OldMessage],
+        old_message: OldMessage | None,
     ) -> OldMessage:
         raise NotImplementedError
 

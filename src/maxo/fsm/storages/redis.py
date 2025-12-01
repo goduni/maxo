@@ -7,8 +7,9 @@ except ImportError as e:
     raise
 
 import json
+from collections.abc import AsyncIterator, Callable, MutableMapping
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Callable, MutableMapping, cast
+from typing import Any, cast
 
 from maxo.fsm import State
 from maxo.fsm.key_builder import (

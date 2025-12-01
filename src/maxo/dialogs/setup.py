@@ -1,5 +1,4 @@
 from collections.abc import Callable, Iterable
-from typing import Optional, Union
 
 from maxo import Router
 from maxo.dialogs.api.entities import DialogUpdateEvent
@@ -58,7 +57,7 @@ class DialogRegistry(DialogRegistryProtocol):
         if not self._loaded:
             self.refresh()
 
-    def find_dialog(self, state: Union[State, str]) -> DialogProtocol:
+    def find_dialog(self, state: State | str) -> DialogProtocol:
         self._ensure_loaded()
         try:
             return self._dialogs[state.group]
@@ -125,7 +124,7 @@ def _register_middleware(
             registry=registry,
             events_isolation=events_isolation,
             access_validator=stack_access_validator,
-        )
+        ),
     )
     router.message_created.middleware.outer(intent_middleware.process_message)
     router.message_callback.middleware.outer(intent_middleware.process_callback)
@@ -154,9 +153,9 @@ def _register_middleware(
 
 
 def _prepare_dialog_manager_factory(
-    dialog_manager_factory: Optional[DialogManagerFactory],
-    message_manager: Optional[MessageManagerProtocol],
-    media_id_storage: Optional[MediaIdStorageProtocol],
+    dialog_manager_factory: DialogManagerFactory | None,
+    message_manager: MessageManagerProtocol | None,
+    media_id_storage: MediaIdStorageProtocol | None,
 ) -> DialogManagerFactory:
     if dialog_manager_factory is not None:
         return dialog_manager_factory
@@ -171,21 +170,19 @@ def _prepare_dialog_manager_factory(
 
 
 def _prepare_stack_access_validator(
-    stack_access_validator: Optional[StackAccessValidator],
+    stack_access_validator: StackAccessValidator | None,
 ) -> StackAccessValidator:
     if stack_access_validator:
         return stack_access_validator
-    else:
-        return DefaultAccessValidator()
+    return DefaultAccessValidator()
 
 
 def _prepare_events_isolation(
-    events_isolation: Optional[BaseEventIsolation],
+    events_isolation: BaseEventIsolation | None,
 ) -> BaseEventIsolation:
     if events_isolation:
         return events_isolation
-    else:
-        return SimpleEventIsolation()
+    return SimpleEventIsolation()
 
 
 def collect_dialogs(router: BaseRouter) -> Iterable[DialogProtocol]:
@@ -198,11 +195,11 @@ def collect_dialogs(router: BaseRouter) -> Iterable[DialogProtocol]:
 def setup_dialogs(
     router: Router,
     *,
-    dialog_manager_factory: Optional[DialogManagerFactory] = None,
-    message_manager: Optional[MessageManagerProtocol] = None,
-    media_id_storage: Optional[MediaIdStorageProtocol] = None,
-    stack_access_validator: Optional[StackAccessValidator] = None,
-    events_isolation: Optional[BaseEventIsolation] = None,
+    dialog_manager_factory: DialogManagerFactory | None = None,
+    message_manager: MessageManagerProtocol | None = None,
+    media_id_storage: MediaIdStorageProtocol | None = None,
+    stack_access_validator: StackAccessValidator | None = None,
+    events_isolation: BaseEventIsolation | None = None,
 ) -> BgManagerFactory:
     _setup_event_observer(router)
     _register_event_handler(router, handle_update)

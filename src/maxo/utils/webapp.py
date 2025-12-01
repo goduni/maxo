@@ -1,8 +1,9 @@
 import hashlib
 import hmac
 import json
+from collections.abc import Callable
 from operator import itemgetter
-from typing import Any, Callable
+from typing import Any
 from urllib.parse import parse_qsl
 
 from maxo.types.base import MaxoType
@@ -47,7 +48,9 @@ def check_webapp_signature(token: str, init_data: str) -> bool:
         f"{k}={v}" for k, v in sorted(parsed_data.items(), key=itemgetter(0))
     )
     secret_key = hmac.new(
-        key=b"WebAppData", msg=token.encode(), digestmod=hashlib.sha256
+        key=b"WebAppData",
+        msg=token.encode(),
+        digestmod=hashlib.sha256,
     )
     calculated_hash = hmac.new(
         key=secret_key.digest(),

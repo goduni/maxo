@@ -15,7 +15,7 @@ class StateFilter(BaseFilter[Any]):
     ) -> None:
         self._states = states
 
-    async def __call__(self, update: Any, ctx: Ctx) -> bool:
+    async def __call__(self, update: Any, ctx: Ctx) -> bool:  # noqa: ARG002
         raw_state = ctx.get("raw_state")
 
         for state in self._states:

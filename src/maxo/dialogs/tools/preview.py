@@ -2,7 +2,7 @@ import html
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -30,8 +30,10 @@ from maxo.dialogs.utils import split_reply_callback
 from maxo.enums import AttachmentType
 from maxo.fsm import State, StatesGroup
 from maxo.routing.interfaces import BaseRouter
-from maxo.routing.middlewares.event_context import EVENT_FROM_USER_KEY
-from maxo.routing.middlewares.update_context import UPDATE_CONTEXT_KEY
+from maxo.routing.middlewares.update_context import (
+    EVENT_FROM_USER_KEY,
+    UPDATE_CONTEXT_KEY,
+)
 from maxo.types import Callback, CallbackKeyboardButton, Chat, User
 from maxo.types.message import Message
 
@@ -52,9 +54,9 @@ class RenderWindow:
     state_name: str
     keyboard: list[list[RenderButton]]
     reply_keyboard: list[list[RenderButton]]
-    photo: Optional[str]
-    text_input: Optional[RenderButton]
-    attachment_input: Optional[RenderButton]
+    photo: str | None
+    text_input: RenderButton | None
+    attachment_input: RenderButton | None
 
 
 @dataclass
@@ -78,8 +80,8 @@ class FakeManager(DialogManager):
             intent_id=None,
             stack_id=None,
         )
-        self._context: Optional[Context] = None
-        self._dialog: Optional[DialogProtocol] = None
+        self._context: Context | None = None
+        self._dialog: DialogProtocol | None = None
         self._data = {
             MANAGER_KEY: self,
             UPDATE_CONTEXT_KEY: self._event.chat,
@@ -94,7 +96,7 @@ class FakeManager(DialogManager):
             ),
         }
 
-    async def next(self, show_mode: Optional[ShowMode] = None) -> None:
+    async def next(self, show_mode: ShowMode | None = None) -> None:
         states = self._dialog.states()
         current_index = states.index(self.current_context().state)
         if current_index + 1 >= len(states):
@@ -107,7 +109,7 @@ class FakeManager(DialogManager):
         new_state = states[current_index + 1]
         await self.switch_to(new_state, show_mode)
 
-    async def back(self, show_mode: Optional[ShowMode] = None) -> None:
+    async def back(self, show_mode: ShowMode | None = None) -> None:
         states = self._dialog.states()
         current_index = states.index(self.current_context().state)
         if current_index - 1 < 0:
@@ -164,7 +166,7 @@ class FakeManager(DialogManager):
     async def switch_to(
         self,
         state: State,
-        show_mode: Optional[ShowMode] = None,
+        show_mode: ShowMode | None = None,
     ) -> None:
         self.set_state(state)
 
@@ -174,14 +176,14 @@ class FakeManager(DialogManager):
         data: Data = None,
         mode: StartMode = StartMode.NORMAL,
         show_mode: ShowMode = ShowMode.AUTO,
-        access_settings: Optional[AccessSettings] = None,
+        access_settings: AccessSettings | None = None,
     ) -> None:
         self.set_state(state)
 
     async def done(
         self,
         result: Any = None,
-        show_mode: Optional[ShowMode] = None,
+        show_mode: ShowMode | None = None,
     ) -> None:
         self.set_state(State("-"))
 
@@ -214,10 +216,10 @@ class FakeManager(DialogManager):
     def show_mode(self, show_mode: ShowMode) -> None:
         return
 
-    async def show(self, show_mode: Optional[ShowMode] = None) -> None:
+    async def show(self, show_mode: ShowMode | None = None) -> None:
         pass
 
-    def find(self, widget_id) -> Optional[Any]:
+    def find(self, widget_id) -> Any | None:
         widget = self._dialog.find(widget_id)
         if not widget:
             return None
@@ -226,15 +228,15 @@ class FakeManager(DialogManager):
     async def update(
         self,
         data: dict,
-        show_mode: Optional[ShowMode] = None,
+        show_mode: ShowMode | None = None,
     ) -> None:
         pass
 
     def bg(
         self,
-        user_id: Optional[int] = None,
-        chat_id: Optional[int] = None,
-        stack_id: Optional[str] = None,
+        user_id: int | None = None,
+        chat_id: int | None = None,
+        stack_id: str | None = None,
         load: bool = False,
     ) -> BaseDialogManager:
         return self
@@ -243,7 +245,7 @@ class FakeManager(DialogManager):
         pass
 
 
-def create_photo(media: Optional[MediaAttachment]) -> Optional[str]:
+def create_photo(media: MediaAttachment | None) -> str | None:
     if not media:
         return None
     if media.type != AttachmentType.IMAGE:
@@ -288,7 +290,7 @@ async def render_input(
     dialog: "Dialog",
     content_type: str,
     simulate_events: bool,
-) -> Optional[RenderButton]:
+) -> RenderButton | None:
     if not simulate_events:
         return None
     if content_type == AttachmentType.IMAGE:

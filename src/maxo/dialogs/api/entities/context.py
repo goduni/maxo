@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
-from typing import Any, Optional, Union
+from typing import Any
 
 from maxo.fsm import State
 
 from .access import AccessSettings
 
-Data = Union[dict[Any, Any], list[Any], int, str, float, None]
+Data = dict[Any, Any] | list[Any] | int | str | float | None
 DataDict = dict[str, Data]
 
 
@@ -17,7 +17,7 @@ class Context:
     start_data: Data = field(compare=False)
     dialog_data: DataDict = field(compare=False, default_factory=dict)
     widget_data: DataDict = field(compare=False, default_factory=dict)
-    access_settings: Optional[AccessSettings] = field(
+    access_settings: AccessSettings | None = field(
         compare=False,
         default=None,
     )

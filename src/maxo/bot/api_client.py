@@ -122,7 +122,9 @@ _has_tag_providers = concat_provider(
     has_tag_provider(LinkMarkupElement, "type", MarkupElementType.LINK),
     has_tag_provider(MonospacedMarkupElements, "type", MarkupElementType.MONOSPACED),
     has_tag_provider(
-        StrikethroughMarkupElement, "type", MarkupElementType.STRIKETHROUGH
+        StrikethroughMarkupElement,
+        "type",
+        MarkupElementType.STRIKETHROUGH,
     ),
     has_tag_provider(StrongMarkupElement, "type", MarkupElementType.STRONG),
     has_tag_provider(UnderlineMarkupElement, "type", MarkupElementType.UNDERLINE),
@@ -187,7 +189,7 @@ class MaxApiClient(AiohttpClient):
                 _has_tag_providers,
                 dumper(
                     for_marker(QueryParamMarker, P[None]),
-                    lambda item: "null",
+                    lambda _: "null",
                 ),
                 dumper(
                     for_marker(QueryParamMarker, P[bool]),
@@ -201,7 +203,7 @@ class MaxApiClient(AiohttpClient):
                     for_marker(BodyMarker, P[Omittable[TextFormat | None]]),
                     lambda item: item or self._text_format,
                 ),
-            ]
+            ],
         )
         if self._warming_up:
             retort = warming_up_retort(retort, warming_up=WarmingUpType.METHOD)
@@ -213,7 +215,7 @@ class MaxApiClient(AiohttpClient):
                 http_response_loader_provider(),
                 _has_tag_providers,
                 loader(P[datetime], lambda x: datetime.fromtimestamp(x / 1000)),
-            ]
+            ],
         )
         if self._warming_up:
             retort = warming_up_retort(retort, warming_up=WarmingUpType.TYPES)

@@ -1,5 +1,5 @@
 from collections.abc import Callable, Hashable
-from typing import Any, Optional, Union
+from typing import Any
 
 from magic_filter import MagicFilter
 
@@ -37,7 +37,7 @@ class Case(Text):
     def __init__(
         self,
         texts: dict[Any, Text],
-        selector: Union[str, Selector, MagicFilter],
+        selector: str | Selector | MagicFilter,
         when: WhenCondition = None,
     ):
         super().__init__(when=when)
@@ -59,7 +59,7 @@ class Case(Text):
                 selection = next(iter(self.texts))
         return await self.texts[selection].render_text(data, manager)
 
-    def find(self, widget_id: str) -> Optional[Text]:
+    def find(self, widget_id: str) -> Text | None:
         for text in self.texts.values():
             if found := text.find(widget_id):
                 return found

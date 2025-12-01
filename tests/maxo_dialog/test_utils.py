@@ -9,7 +9,7 @@ from maxo.types import Recipient
 def test_is_recipient_loaded():
     assert is_recipient_loaded(Recipient(chat_id=1, user_id=1, type=ChatType.DIALOG))
     assert not is_recipient_loaded(
-        FakeRecipient(chat_id=1, user_id=1, type=ChatType.DIALOG)
+        FakeRecipient(chat_id=1, user_id=1, type=ChatType.DIALOG),
     )
 
 

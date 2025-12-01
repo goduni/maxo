@@ -1,5 +1,8 @@
+# ruff: noqa: ANN001 ANN003 ANN204 N804
+
 import inspect
-from typing import Any, Final, Iterator, Optional, Type, no_type_check
+from collections.abc import Iterator
+from typing import Any, Final, no_type_check
 
 
 class State:
@@ -12,16 +15,16 @@ class State:
     def __init__(self, state: str | None = None, group_name: str | None = None) -> None:
         self._state = state
         self._group_name = group_name
-        self._group: Optional[Type[StatesGroup]] = None
+        self._group: type[StatesGroup] | None = None
 
     @property
-    def group(self) -> "Type[StatesGroup]":
+    def group(self) -> "type[StatesGroup]":
         if not self._group:
             raise RuntimeError("This state is not in any group.")
         return self._group
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> str | None:
         if self._state is None or self._state == "*":
             return self._state
 
@@ -34,12 +37,12 @@ class State:
 
         return f"{group}:{self._state}"
 
-    def set_parent(self, group: "Type[StatesGroup]") -> None:
+    def set_parent(self, group: "type[StatesGroup]") -> None:
         if not issubclass(group, StatesGroup):
-            raise ValueError("Group must be subclass of StatesGroup")
+            raise TypeError("Group must be subclass of StatesGroup")
         self._group = group
 
-    def __set_name__(self, owner: "Type[StatesGroup]", name: str) -> None:
+    def __set_name__(self, owner: "type[StatesGroup]", name: str) -> None:
         if self._state is None:
             self._state = name
         self.set_parent(owner)
@@ -49,7 +52,7 @@ class State:
 
     __repr__ = __str__
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.state == other.state
         if isinstance(other, str):
@@ -61,7 +64,7 @@ class State:
 
 
 class StatesGroupMeta(type):
-    __parent__: "Optional[type[StatesGroup]]"
+    __parent__: "type[StatesGroup] | None"
     __childs__: "tuple[type[StatesGroup], ...]"
     __states__: tuple[State, ...]
     __state_names__: tuple[str, ...]
@@ -70,13 +73,13 @@ class StatesGroupMeta(type):
     __all_states_names__: tuple[str, ...]
 
     @no_type_check
-    def __new__(mcs, name, bases, namespace, **kwargs):
+    def __new__(mcs, name, bases, namespace, **__):
         cls = super().__new__(mcs, name, bases, namespace)
 
         states = []
         childs = []
 
-        for _, arg in namespace.items():
+        for arg in namespace.values():
             if isinstance(arg, State):
                 states.append(arg)
             elif inspect.isclass(arg) and issubclass(arg, StatesGroup):
@@ -101,10 +104,10 @@ class StatesGroupMeta(type):
     @property
     def __full_group_name__(cls) -> str:
         if cls.__parent__:
-            return ".".join((cls.__parent__.__full_group_name__, cls.__name__))
+            return f"{cls.__parent__.__full_group_name__}.{cls.__name__}"
         return cls.__name__
 
-    def _prepare_child(cls, child: Type["StatesGroup"]) -> Type["StatesGroup"]:
+    def _prepare_child(cls, child: type["StatesGroup"]) -> type["StatesGroup"]:
         """
         Prepare child.
 
@@ -116,10 +119,10 @@ class StatesGroupMeta(type):
         account the name of current parent.
         """
         child.__parent__ = cls  # type: ignore[assignment]
-        child.__all_states_names__ = child._get_all_states_names()
+        child.__all_states_names__ = child._get_all_states_names()  # noqa: SLF001
         return child
 
-    def _get_all_childs(cls) -> tuple[Type["StatesGroup"], ...]:
+    def _get_all_childs(cls) -> tuple[type["StatesGroup"], ...]:
         result = cls.__childs__
         for child in cls.__childs__:
             result += child.__childs__

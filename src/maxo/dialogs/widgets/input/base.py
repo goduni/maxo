@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from collections.abc import Awaitable, Callable, Sequence
-from typing import Any, Optional, Union
+from typing import Any
 
 from magic_filter import F
 
@@ -40,10 +40,10 @@ class BaseInput(Actionable, InputWidget):
 class MessageInput(BaseInput):
     def __init__(
         self,
-        func: Union[MessageHandlerFunc, WidgetEventProcessor, None],
-        content_types: Union[Sequence[str], str] = AttachmentType.ANY,
-        filter: Optional[Callable[..., Any]] = None,
-        id: Optional[str] = None,
+        func: MessageHandlerFunc | WidgetEventProcessor | None,
+        content_types: Sequence[str] | str = AttachmentType.ANY,
+        filter: Callable[..., Any] | None = None,
+        id: str | None = None,
     ):
         super().__init__(id=id)
         self.func = ensure_event_processor(func)
@@ -53,7 +53,7 @@ class MessageInput(BaseInput):
         if isinstance(content_types, str):
             if content_types != AttachmentType.ANY:
                 filters.append(
-                    FilterObject(MagicFilter(F.content_type == content_types))
+                    FilterObject(MagicFilter(F.content_type == content_types)),
                 )
         elif AttachmentType.ANY not in content_types:
             filters.append(FilterObject(MagicFilter(F.content_type.in_(content_types))))

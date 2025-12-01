@@ -1,4 +1,5 @@
-from typing import Sequence, overload
+from collections.abc import Sequence
+from typing import overload
 
 from maxo.enums import UpdateType
 from maxo.routing.interfaces.router import BaseRouter

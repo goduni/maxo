@@ -7,7 +7,6 @@ from maxo import Bot, Dispatcher, Router
 from maxo.enums import TextFormat
 from maxo.fsm import FSMContext, State, StateFilter, StatesGroup
 from maxo.integrations.magic_filter import MagicFilter
-from maxo.routing.ctx import Ctx
 from maxo.routing.filters import CommandStart
 from maxo.routing.updates.message_created import MessageCreated
 from maxo.utils.facades import MessageCreatedFacade
@@ -24,7 +23,6 @@ class UserRegistatorStatesGroup(StatesGroup):
 @router.message_created(CommandStart())
 async def start_handler(
     update: MessageCreated,
-    ctx: Ctx,
     facade: MessageCreatedFacade,
     state: FSMContext,
 ) -> None:
@@ -34,11 +32,10 @@ async def start_handler(
 
 
 @router.message_created(
-    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_NAME)
+    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_NAME),
 )
 async def input_name_handler(
     update: MessageCreated,
-    ctx: Ctx,
     facade: MessageCreatedFacade,
     state: FSMContext,
 ) -> None:
@@ -47,7 +44,7 @@ async def input_name_handler(
     text = update.message.unsafe_body.text
     if text is None:
         await facade.answer_text("Отправь текстовое сообщение")
-        return None
+        return
 
     await facade.reply_text("Теперь отправь возраст")
     await facade.answer_text(
@@ -60,11 +57,10 @@ async def input_name_handler(
 
 
 @router.message_created(
-    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_AGE)
+    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_AGE),
 )
 async def input_age_handler(
     update: MessageCreated,
-    ctx: Ctx,
     facade: MessageCreatedFacade,
     state: FSMContext,
 ) -> None:

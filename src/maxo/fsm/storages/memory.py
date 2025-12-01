@@ -1,9 +1,9 @@
 from asyncio import Lock
 from collections import defaultdict
-from collections.abc import MutableMapping
+from collections.abc import AsyncIterator, Hashable, MutableMapping
 from contextlib import asynccontextmanager
 from copy import copy
-from typing import Any, AsyncIterator, Hashable
+from typing import Any
 
 from maxo.fsm.key_builder import (
     BaseKeyBuilder,
@@ -84,7 +84,7 @@ class SimpleEventIsolation(BaseEventIsolation):
 
 class DisabledEventIsolation(BaseEventIsolation):
     @asynccontextmanager
-    async def lock(self, key: StorageKey) -> AsyncIterator[None]:
+    async def lock(self, key: StorageKey) -> AsyncIterator[None]:  # noqa: ARG002
         yield
 
     async def close(self) -> None:

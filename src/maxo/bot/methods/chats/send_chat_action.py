@@ -9,7 +9,8 @@ class SendChatAction(MaxoMethod[SendChatActionResult]):
     """
     Отправка действия в чат.
 
-    Позволяет отправлять действия бота в чат, такие как «набор текста» или «отправка фото».
+    Позволяет отправлять действия бота в чат,
+    такие как «набор текста» или «отправка фото».
 
     Источник: https://dev.max.ru/docs-api/methods/POST/chats/-chatId-/actions
 

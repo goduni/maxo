@@ -1,9 +1,10 @@
 from abc import abstractmethod
+from collections.abc import Callable, Iterable, Sequence
 from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from functools import partial, wraps
 from types import TracebackType
-from typing import Any, Callable, Iterable, Protocol, Sequence, TypeAlias
+from typing import Any, Protocol
 
 
 @dataclass
@@ -99,7 +100,7 @@ class DefaultCallPathRenderer(CallPathRenderer):
                     context_path=context_path,
                     location_path=location_path,
                     returned_path=False,
-                )
+                ),
             )
 
         return result
@@ -129,7 +130,7 @@ class DefaultCallPathRenderer(CallPathRenderer):
                     context_path=context_path,
                     location_path=location_path,
                     returned_path=True,
-                )
+                ),
             )
 
         return result
@@ -236,7 +237,7 @@ class CallPathNodeCollector:
                 type=type,
                 context=context,
                 error=error,
-            )
+            ),
         )
 
 
@@ -288,7 +289,7 @@ def call_path_collector_dec(type: str):
     return decorator
 
 
-NextMiddleware: TypeAlias = Callable[["CallPathNodeCollector"], Any]
+type NextMiddleware = Callable[["CallPathNodeCollector"], Any]
 
 
 def error_middleware(
@@ -355,6 +356,6 @@ except Exception as e:
         renderer.render(
             collector.call_path,
             collector.returned_call_path,
-        )
+        ),
     )
     raise

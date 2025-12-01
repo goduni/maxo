@@ -1,5 +1,3 @@
-from typing import Union
-
 from maxo.omit import Omittable, Omitted
 from maxo.types.base import MaxoType
 
@@ -52,14 +50,14 @@ class UserMentionMarkupElement(MaxoType):
     user_id: Omittable[int | None] = Omitted()
 
 
-MarkupElements = Union[
-    EmphasizedMarkupElement,
-    HeadingMarkupElement,
-    HighlightedMarkupElement,
-    LinkMarkupElement,
-    UserMentionMarkupElement,
-    UnderlineMarkupElement,
-    MonospacedMarkupElements,
-    StrongMarkupElement,
-    StrikethroughMarkupElement,
-]
+MarkupElements = (
+    EmphasizedMarkupElement
+    | HeadingMarkupElement
+    | HighlightedMarkupElement
+    | LinkMarkupElement
+    | UserMentionMarkupElement
+    | UnderlineMarkupElement
+    | MonospacedMarkupElements
+    | StrongMarkupElement
+    | StrikethroughMarkupElement
+)

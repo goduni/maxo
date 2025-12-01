@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
-from collections.abc import MutableMapping
+from collections.abc import AsyncIterator, MutableMapping
 from contextlib import asynccontextmanager
 from copy import copy
-from typing import Any, AsyncIterator, NewType, Protocol, TypeAlias
+from typing import Any, NewType, Protocol
 
 from maxo.fsm.key_builder import StorageKey
 from maxo.fsm.state import State
 
 _RawState = NewType("_RawState", str)
-RawState: TypeAlias = _RawState | None
+type RawState = _RawState | None
 
 
 class BaseStorage(ABC):
@@ -43,7 +43,10 @@ class BaseStorage(ABC):
         raise NotImplementedError
 
     async def get_value(
-        self, storage_key: StorageKey, value_key: str, default: Any | None = None
+        self,
+        storage_key: StorageKey,
+        value_key: str,
+        default: Any | None = None,
     ) -> Any | None:
         data = await self.get_data(storage_key)
         return copy(data.get(value_key, default))

@@ -1,12 +1,12 @@
 [build-system]
-requires = ["uv_build==0.7.19"]
+requires = ["uv_build==0.9.13"]
 build-backend = "uv_build"
 
 [project]
 name = "maxo"
-description = "Modern framework for max bots"
+description = "Modern framework for MAX bots"
 version = "0.0.1"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.14"
 dependencies = [
     "anyio~=4.9.0",
     "typing-extensions>=4.11.0,<5.0.0",
@@ -17,42 +17,48 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-redis = ["redis~=6.0.0"]
-magic_filter = ["magic_filter~=1.0.0"]
-dishka = ["dishka~=1.0.0"]
-test = [
-    "pytest~=8.3.2",
-    "pytest-asyncio~=1.2.0",
-    "aiogram-dialog~=2.2.0",
-]
-lint = [
-    "mypy~=1.16.0",
-    "ruff~=0.11.13",
-    "codespell~=2.4.1",
-    "bandit~=1.8.5",
-    "slotscheck~=0.19.1",
-    "black~=25.9.0",
-    "jinja2",
-    "cachetools>=4.0.0,<6.0.0"
-]
+redis = ["redis>=6.0.0,<7.0.0"]
+magic_filter = ["magic_filter>=1.0.0,<2.0.0"]
+dishka = ["dishka>=1.0.0,<2.0.0"]
 tools = [
     "diagrams",
-    "aiohttp",
 ]
-all = ["maxo[redis, magic_filter, dishka]"]
+test = [
+    "pytest==9.0.1",
+    "pytest-asyncio==1.3.0",
+]
+lint = [
+    "mypy==1.19.0",
+    "ruff==0.14.5",
+    "codespell==2.4.1",
+    "bandit==1.9.1",
+    "slotscheck==0.19.1",
+    "black==25.11.0",
+]
 
 
 [tool.mypy]
-files = ["src", "examples"]
+files = ["src", "test", "examples"]
 strict = true
 strict_bytes = true
 local_partial_types = true
 ignore_missing_imports = true
 warn_unreachable = true
+enable_error_code = [
+    "truthy-bool",
+    "truthy-iterable",
+    "redundant-expr",
+    "unused-awaitable",
+    "ignore-without-code",
+    "possibly-undefined",
+    "redundant-self",
+    "mutable-override",
+    "unimported-reveal",
+    "deprecated",
+]
 
 [tool.ruff]
 src = ["src", "examples"]
-include = ["pyproject.toml"]
 fix = true
 line-length = 88
 indent-width = 4
@@ -60,61 +66,63 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = [
-    "E",     # pycodestyle errors     https://docs.astral.sh/ruff/rules/#error-e
-    "W",     # pycodestyle warnings   https://docs.astral.sh/ruff/rules/#warning-w
-    "C90",   # mccabe                 https://docs.astral.sh/ruff/rules/#mccabe-c90
-    "N",     # pep8-naming            https://docs.astral.sh/ruff/rules/#pep8-naming-n
-    "D",     # pydocstyle             https://docs.astral.sh/ruff/rules/#pydocstyle-d
-    "I",     # isort                  https://docs.astral.sh/ruff/rules/#isort-i
-    "F",     # pyflakes               https://docs.astral.sh/ruff/rules/#pyflakes-f
-    "ASYNC", # flake8-async           https://docs.astral.sh/ruff/rules/#flake8-async-async
-    "C4",    # flake8-comprehensions  https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
-    "B",     # flake8-bugbear         https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
-    "Q",     # flake8-quotes          https://docs.astral.sh/ruff/rules/#flake8-quotes-q
-    "T20",   # flake8-print           https://docs.astral.sh/ruff/rules/#flake8-print-t20
-    "SIM",   # flake8-simplify        https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
-    "PT",    # flake8-pytest-style    https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
-    "PTH",   # flake8-use-pathlib     https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
-    "TCH",   # flake8-type-checking   https://docs.astral.sh/ruff/rules/#flake8-type-checking-tch
-    "RUF",   # Ruff-specific rules    https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
-    "PERF",  # Perflint               https://docs.astral.sh/ruff/rules/#perflint-perf
-    "UP",    # pyupgrade              https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "ALL",
 ]
 
 ignore = [
-    "RUF002",
-    "RUF009", # Do not call in dataclass defaults
-
-    "B008",  # Do not call in dataclass defaults
-
-    "ASYNC109", # own timeout implementation
-
-    "E501",     # line too long, handled by formatter later
-    "C901",     # too complex
-
-    # todo pep8-naming
-    "N817",     # CamelCase `*` imported as acronym `*`
-    "N815",     # Variable `*` in class scope should not be mixedCase
-    "N803",     # Argument name `expandMessageExamples` should be lowercase
+    "RUF001", # https://docs.astral.sh/ruff/rules/ambiguous-unicode-character-string/
+    "RUF002", # https://docs.astral.sh/ruff/rules/ambiguous-unicode-character-docstring/
+    "RUF003", # https://docs.astral.sh/ruff/rules/ambiguous-unicode-character-comment/
+    "C901", # https://docs.astral.sh/ruff/rules/complex-structure/
 
     # todo pydocstyle
-    "D100",     # missing docstring in public module
+    "D100",
     "D101",
     "D102",
     "D103",
-    "D104",     # missing docstring in public package
-    "D105",     # missing docstring in magic methods
-    "D106",     # missing docstring in public nested class
-    "D107",     # missing docstring in __init__
+    "D104", # missing docstring in public package
+    "D105", # missing docstring in magic methods
+    "D106", # missing docstring in public nested class
+    "D107", # missing docstring in __init__
     "D212",
     "D203",
 
-    "TC001",
-    "RUF001",
-    "UP",
+    "EM", # https://docs.astral.sh/ruff/rules/#flake8-errmsg-em
+    "FIX", # https://docs.astral.sh/ruff/rules/#flake8-fixme-fix
+    "TD001", # https://docs.astral.sh/ruff/rules/invalid-todo-tag/
+    "TD002", # https://docs.astral.sh/ruff/rules/missing-todo-author/
+    "TD003", # https://docs.astral.sh/ruff/rules/missing-todo-link/
+    "FBT001", # https://docs.astral.sh/ruff/rules/boolean-type-hint-positional-argument/
+    "FBT002", # https://docs.astral.sh/ruff/rules/boolean-default-value-positional-argument/
+    "TRY003", # https://docs.astral.sh/ruff/rules/raise-vanilla-args/
+    "ANN401", # https://docs.astral.sh/ruff/rules/any-type/
+    "ASYNC109", # own timeout implementation
+    "TC001", # https://docs.astral.sh/ruff/rules/typing-only-first-party-import/
+    "TC006", # https://docs.astral.sh/ruff/rules/runtime-cast-value/
+    "UP046", # https://docs.astral.sh/ruff/rules/non-pep695-generic-class/
+    "UP047", # https://docs.astral.sh/ruff/rules/non-pep695-generic-function/
+    "PLR0904", # https://docs.astral.sh/ruff/rules/too-many-public-methods/
+    "PLR0911", # https://docs.astral.sh/ruff/rules/too-many-return-statements/
+    "PLR0912", # https://docs.astral.sh/ruff/rules/too-many-branches/
+    "PLR0913", # https://docs.astral.sh/ruff/rules/too-many-arguments/
+    "PLR0914", # https://docs.astral.sh/ruff/rules/too-many-locals/
+    "PLR0915", # https://docs.astral.sh/ruff/rules/too-many-statements/
+    "PLR0916", # https://docs.astral.sh/ruff/rules/too-many-boolean-expressions/
+    "PLR0917", # https://docs.astral.sh/ruff/rules/too-many-positional-arguments/
+    "PLR1702", # https://docs.astral.sh/ruff/rules/too-many-nested-blocks/
+    "PLR6301", # https://docs.astral.sh/ruff/rules/no-self-use/
+    "A001", # https://docs.astral.sh/ruff/rules/builtin-variable-shadowing/
+    "A002", # https://docs.astral.sh/ruff/rules/builtin-argument-shadowing/
+    "A003", # https://docs.astral.sh/ruff/rules/builtin-attribute-shadowing/
+    "A006", # https://docs.astral.sh/ruff/rules/builtin-lambda-argument-shadowing/
+    "N818", # https://docs.astral.sh/ruff/rules/error-suffix-on-exception-name/
+    "B008", # https://docs.astral.sh/ruff/rules/function-call-in-default-argument/
+    "S311", # https://docs.astral.sh/ruff/rules/suspicious-non-cryptographic-random-usage/#suspicious-non-cryptographic-random-usage-s311
 
-    "TC006",     # Add quotes to type expression in typing.cast()
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ANN001"]
 
 [tool.ruff.lint.isort]
 case-sensitive = true
@@ -124,9 +132,9 @@ combine-as-imports = true
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
-line-ending = "lf"
+line-ending = "auto"
 
 [tool.black]
 line-length = 88
 target-version = ["py312"]
-include = 'src/.*\.py$'
+include = 'src/.*\.py$| tests/.*\.py$| examples/.*\.py$'

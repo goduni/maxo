@@ -28,7 +28,7 @@ class Updater:
                     sender=event.sender,
                     chat=event.chat,
                     **self.dp.workflow_data,
-                )
+                ),
             ),
             bot,
         )

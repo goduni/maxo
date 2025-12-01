@@ -32,8 +32,7 @@ class PreviewAwareGetter:
                 dialog_manager=dialog_manager,
                 **kwargs,
             )
-        else:
-            return await self.normal_getter(
-                dialog_manager=dialog_manager,
-                **kwargs,
-            )
+        return await self.normal_getter(
+            dialog_manager=dialog_manager,
+            **kwargs,
+        )

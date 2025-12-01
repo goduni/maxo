@@ -8,7 +8,8 @@ __all__ = (
 )
 
 import re
-from typing import TYPE_CHECKING, Callable, Literal, Optional, cast
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Literal, cast
 
 from maxo.utils.link import create_telegram_link
 from maxo.utils.payload import decode_payload, encode_payload
@@ -18,12 +19,14 @@ if TYPE_CHECKING:
 
 BAD_PATTERN = re.compile(r"[^a-zA-Z0-9-_]")
 
+PAYLOAD_MAX_LEN = 128
+
 
 def create_start_link(
     bot: "Bot",
     payload: str,
     encode: bool = False,
-    encoder: Optional[Callable[[bytes], bytes]] = None,
+    encoder: Callable[[bytes], bytes] | None = None,
 ) -> str:
     return create_deep_link(
         username=cast(str, bot.state.info.username),
@@ -38,8 +41,8 @@ def create_startapp_link(
     bot: "Bot",
     payload: str,
     encode: bool = False,
-    app_name: Optional[str] = None,
-    encoder: Optional[Callable[[bytes], bytes]] = None,
+    app_name: str | None = None,
+    encoder: Callable[[bytes], bytes] | None = None,
 ) -> str:
     return create_deep_link(
         username=cast(str, bot.state.info.username),
@@ -55,21 +58,10 @@ def create_deep_link(
     username: str,
     link_type: Literal["start", "startgroup", "startapp"],
     payload: str,
-    app_name: Optional[str] = None,
+    app_name: str | None = None,
     encode: bool = False,
-    encoder: Optional[Callable[[bytes], bytes]] = None,
+    encoder: Callable[[bytes], bytes] | None = None,
 ) -> str:
-    """
-    Create deep link.
-
-    :param username:
-    :param link_type: `start` or `startapp`
-    :param payload: any string-convertible data
-    :param app_name: if you want direct mini app link
-    :param encode: encode payload with base64url or custom encoder
-    :param encoder: custom encoder callable
-    :return: deeplink
-    """
     if not isinstance(payload, str):
         payload = str(payload)
 
@@ -79,17 +71,19 @@ def create_deep_link(
     if re.search(BAD_PATTERN, payload):
         raise ValueError(
             "Wrong payload! Only A-Z, a-z, 0-9, _ and - are allowed. "
-            "Pass `encode=True` or encode payload manually."
+            "Pass `encode=True` or encode payload manually.",
         )
 
-    if len(payload) > 64:
-        raise ValueError("Payload must be up to 64 characters long.")
+    if len(payload) > PAYLOAD_MAX_LEN:
+        raise ValueError(f"Payload must be up to {PAYLOAD_MAX_LEN} characters long.")
 
     if not app_name:
         deep_link = create_telegram_link(username, **{cast(str, link_type): payload})
     else:
         deep_link = create_telegram_link(
-            username, app_name, **{cast(str, link_type): payload}
+            username,
+            app_name,
+            **{cast(str, link_type): payload},
         )
 
     return deep_link

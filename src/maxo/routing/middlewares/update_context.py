@@ -15,11 +15,14 @@ from maxo.routing.updates.message_created import MessageCreated
 from maxo.routing.updates.message_edited import MessageEdited
 from maxo.routing.updates.user_added import UserAdded
 from maxo.routing.updates.user_removed import UserRemoved
+from maxo.types import User
 from maxo.types.update_context import UpdateContext
 
 UPDATE_CONTEXT_KEY: Final = "update_context"
+EVENT_FROM_USER_KEY: Final = "event_from_user"
 
 
+# TODO: Определять UpdateContext и User в одном методе
 class UpdateContextMiddleware(BaseMiddleware[Update[Any]]):
     async def __call__(
         self,
@@ -29,6 +32,10 @@ class UpdateContextMiddleware(BaseMiddleware[Update[Any]]):
     ) -> Any:
         update_context = self._resolve_update_context(update.update)
         ctx[UPDATE_CONTEXT_KEY] = update_context
+
+        user = self._resolve_user(update.update)
+        if user is not None:
+            ctx[EVENT_FROM_USER_KEY] = user
 
         return await next(ctx)
 
@@ -75,3 +82,16 @@ class UpdateContextMiddleware(BaseMiddleware[Update[Any]]):
             user_id=user_id,
             type=ChatType.DIALOG,
         )
+
+    def _resolve_user(
+        self,
+        update: Any,
+    ) -> User | None:
+        if isinstance(update, MessageCreated):
+            return update.message.sender
+        if isinstance(update, MessageCallback):
+            return update.callback.user
+        if isinstance(update, BotStarted):
+            return update.user
+        # TODO: Остальные ивенты
+        return None

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Union
+from typing import Any
 
 from maxo import Bot
 from maxo.enums import ChatType
@@ -10,13 +10,13 @@ from maxo.types import Chat, User
 
 from .update_event import DialogUpdateEvent
 
-ChatEvent = Union[
-    MessageCreated,
-    MessageCallback,
-    BotStarted,
-    DialogUpdateEvent,
-    ErrorEvent[Any, Any],
-]
+ChatEvent = (
+    MessageCreated
+    | MessageCallback
+    | BotStarted
+    | DialogUpdateEvent
+    | ErrorEvent[Any, Any]
+)
 
 
 @dataclass

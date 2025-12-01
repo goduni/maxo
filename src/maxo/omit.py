@@ -12,7 +12,7 @@ from retejo.marker_tools import (
 
 T = TypeVar("T")
 
-Omittable: TypeAlias = T | OriginOmitted
+Omittable: TypeAlias = T | OriginOmitted  # noqa: UP040
 Omitted = OriginOmitted
 is_defined = origin_is_defined
 is_not_defined = origin_is_not_defined

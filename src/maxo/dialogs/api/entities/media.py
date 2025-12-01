@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any
 
 from maxo.enums import AttachmentType
 
@@ -8,25 +8,26 @@ from maxo.enums import AttachmentType
 @dataclass
 class MediaId:
     file_id: str
-    file_unique_id: Optional[str] = None
+    file_unique_id: str | None = None
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if type(other) is not MediaId:
             return False
         if self.file_unique_id is None or other.file_unique_id is None:
             return self.file_id == other.file_id
         return self.file_unique_id == other.file_unique_id
 
+    __hash__ = None
 
 class MediaAttachment:
     def __init__(
         self,
         type: AttachmentType,
-        url: Optional[str] = None,
-        path: Union[str, Path, None] = None,
-        file_id: Optional[MediaId] = None,
+        url: str | None = None,
+        path: str | Path | None = None,
+        file_id: MediaId | None = None,
         use_pipe: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         if not (url or path or file_id):
             raise ValueError("Neither url nor path not file_id are provided")
@@ -37,7 +38,7 @@ class MediaAttachment:
         self.use_pipe = use_pipe
         self.kwargs = kwargs
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if type(other) is not type(self):
             return False
         return bool(
@@ -46,5 +47,7 @@ class MediaAttachment:
             and self.path == other.path
             and self.file_id == other.file_id
             and self.use_pipe == other.use_pipe
-            and self.kwargs == other.kwargs
+            and self.kwargs == other.kwargs,
         )
+
+    __hash__ = None

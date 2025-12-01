@@ -149,11 +149,7 @@ class Router(BaseRouter):
         if observer is None:
             return await self.trigger_child(ctx)
 
-        observer_filter_result = await observer.execute_filter(ctx)
-        if not observer_filter_result:
-            return await self.trigger_child(ctx)
-
-        chain_middlewares = observer.middleware.outer._make_chain(
+        chain_middlewares = observer.middleware.outer.wrap_middlewares(
             observer.handler_lookup
         )
         try:

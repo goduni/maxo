@@ -47,17 +47,15 @@ files = ["src", "examples"]
 strict = true
 strict_bytes = true
 local_partial_types = true
+ignore_missing_imports = true
+warn_unreachable = true
 
 [tool.ruff]
-include = [
-    "src/maxo/**/*.py",
-    "src/maxo_dialog/**/*.py",
-    "examples/**.py",
-    "tests/**.py",
-    "pyproject.toml",
-]
+src = ["src", "examples"]
+include = ["pyproject.toml"]
 fix = true
 line-length = 88
+indent-width = 4
 target-version = "py312"
 
 [tool.ruff.lint]
@@ -131,4 +129,4 @@ line-ending = "lf"
 [tool.black]
 line-length = 88
 target-version = ["py312"]
-include = 'src/maxo/.*\.py$|src/maxo_dialog/.*\.py$'
+include = 'src/.*\.py$'

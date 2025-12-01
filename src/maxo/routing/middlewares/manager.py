@@ -46,7 +46,7 @@ class MiddlewareManager(Generic[_UpdateT]):
         self._state.ensure_add_middleware()
         self._middlewares.extend(middlewares)
 
-    def _make_chain(
+    def wrap_middlewares(
         self,
         trigger: Callable[[Ctx], Awaitable[_ReturnT]],
     ) -> NextMiddleware[_UpdateT]:

@@ -76,6 +76,9 @@ class BaseObserver(Observer[_UpdateT, _HandlerT, _HandlerFnT], ABC):
         return await self._filter(ctx["update"], ctx)
 
     async def handler_lookup(self, ctx: Ctx) -> Any:
+        if not await self.execute_filter(ctx):
+            return UNHANDLED
+
         for handler in self._handlers:
             if await handler.execute_filter(ctx):
                 return await self.execute_handler(ctx, handler)
@@ -87,5 +90,5 @@ class BaseObserver(Observer[_UpdateT, _HandlerT, _HandlerFnT], ABC):
         ctx: Ctx,
         handler: _HandlerT,
     ) -> _ReturnT_co:
-        chain_middlewares = self.middleware.inner._make_chain(handler)
+        chain_middlewares = self.middleware.inner.wrap_middlewares(handler)
         return cast(_ReturnT_co, await chain_middlewares(ctx))

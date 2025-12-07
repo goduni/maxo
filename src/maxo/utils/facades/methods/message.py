@@ -4,8 +4,14 @@ from collections.abc import Sequence
 
 from maxo.bot.method_results.messages.delete_message import DeleteMessageResult
 from maxo.enums import MessageLinkType, TextFormat, UploadType
+from maxo.loggers import utils as logger
 from maxo.omit import Omittable, Omitted
-from maxo.types import FileAttachmentRequest
+from maxo.types import (
+    AudioAttachmentRequest,
+    FileAttachmentRequest,
+    ImageAttachmentRequest,
+    VideoAttachmentRequest,
+)
 from maxo.types.inline_keyboard_attachment_request import (
     InlineKeyboardAttachmentRequest,
 )
@@ -192,10 +198,18 @@ class MessageMethodsFacade(BaseMethodsFacade, ABC):
             *(self._upload_media(upload_media) for upload_media in media),
         )
 
-        # TODO: Все типы UploadType
         for type_, token in result:
-            if type_ == UploadType.FILE:
-                attachments.append(FileAttachmentRequest.factory(token))
+            match type_:
+                case UploadType.FILE:
+                    attachments.append(FileAttachmentRequest.factory(token))
+                case UploadType.AUDIO:
+                    attachments.append(AudioAttachmentRequest.factory(token))
+                case UploadType.VIDEO:
+                    attachments.append(VideoAttachmentRequest.factory(token))
+                case UploadType.IMAGE:
+                    attachments.append(ImageAttachmentRequest.factory(token=token))
+                case _:
+                    logger.warning("Received unknown attachment type: %s", type_)
 
         return attachments
 

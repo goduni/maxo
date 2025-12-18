@@ -147,7 +147,7 @@ class MessageCallbackFilter(BaseFilter[MessageCallback]):
         except (TypeError, ValueError):
             return False
 
-        if self.filter is None or self.filter(update, ctx):
+        if self.filter is None or await self.filter(update, ctx):
             ctx["payload"] = payload
             return True
 

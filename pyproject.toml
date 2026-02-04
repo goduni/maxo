@@ -5,7 +5,7 @@ build-backend = "uv_build"
 [project]
 name = "maxo"
 description = "Asynchronous framework for MAX.ru bots"
-version = "0.0.1b"
+version = "0.2.0"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [

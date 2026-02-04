@@ -32,7 +32,7 @@ classifiers = [
 ]
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    "unihttp[aiohttp] @ git+https://github.com/goduni/unihttp.git@36f8fd319ba90d1de8678bed590341eb23e7ddb9",
+    "unihttp[aiohttp]>=0.2.1,<0.3.0",
     "anyio>=4.0.0,<5.0.0",
     "magic_filter>=1.0.0,<2.0.0",
     "cachetools>=4.0.0,<7.0.0",

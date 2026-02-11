@@ -5,7 +5,6 @@ class StickerAttachmentPayload(AttachmentPayload):
     """
     Args:
         code: ID стикера
-
     """
 
     code: str

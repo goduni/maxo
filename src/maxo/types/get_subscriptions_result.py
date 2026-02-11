@@ -8,7 +8,6 @@ class GetSubscriptionsResult(MaxoType):
 
     Args:
         subscriptions: Список текущих подписок
-
     """
 
     subscriptions: list[Subscription]

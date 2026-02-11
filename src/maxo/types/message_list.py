@@ -8,7 +8,6 @@ class MessageList(MaxoType):
 
     Args:
         messages: Массив сообщений
-
     """
 
     messages: list[Message]

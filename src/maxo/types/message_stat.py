@@ -7,7 +7,6 @@ class MessageStat(MaxoType):
 
     Args:
         views:
-
     """
 
     views: int

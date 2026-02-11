@@ -14,7 +14,6 @@ class Callback(MaxoType):
         payload: Токен кнопки
         timestamp: Unix-время, когда пользователь нажал кнопку
         user: Пользователь, нажавший на кнопку
-
     """
 
     callback_id: str

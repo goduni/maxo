@@ -8,7 +8,6 @@ class MonospacedMarkup(MarkupElement):
 
     Args:
         type:
-
     """
 
     type: MarkupElementType = MarkupElementType.MONOSPACED

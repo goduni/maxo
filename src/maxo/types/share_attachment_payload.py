@@ -9,7 +9,6 @@ class ShareAttachmentPayload(MaxoType):
     Args:
         token: Токен вложения
         url: URL, прикрепленный к сообщению в качестве предпросмотра медиа
-
     """
 
     token: Omittable[str | None] = Omitted()

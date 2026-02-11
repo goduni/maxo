@@ -16,7 +16,6 @@ class MessageBody(MaxoType):
         mid: Уникальный ID сообщения
         seq: ID последовательности сообщения в чате
         text: Новый текст сообщения
-
     """
 
     mid: str

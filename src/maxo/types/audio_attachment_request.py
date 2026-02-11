@@ -12,7 +12,6 @@ class AudioAttachmentRequest(AttachmentRequest):
     Args:
         payload:
         type:
-
     """
 
     type: AttachmentRequestType = AttachmentRequestType.AUDIO

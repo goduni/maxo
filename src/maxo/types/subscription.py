@@ -11,7 +11,6 @@ class Subscription(MaxoType):
         time: Unix-время, когда была создана подписка
         update_types: Типы обновлений, на которые подписан бот
         url: URL вебхука
-
     """
 
     time: datetime

@@ -12,7 +12,6 @@ class StickerAttachment(Attachment):
         payload:
         type:
         width: Ширина стикера
-
     """
 
     type: AttachmentType = AttachmentType.STICKER

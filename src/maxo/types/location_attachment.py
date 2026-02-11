@@ -8,7 +8,6 @@ class LocationAttachment(Attachment):
         latitude: Широта
         longitude: Долгота
         type:
-
     """
 
     type: AttachmentType = AttachmentType.LOCATION

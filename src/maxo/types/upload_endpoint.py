@@ -9,7 +9,6 @@ class UploadEndpoint(MaxoType):
     Args:
         token: Видео- или аудио-токен для отправки сообщения
         url: URL для загрузки файла
-
     """
 
     url: str

@@ -15,7 +15,6 @@ class ShareAttachment(Attachment):
         payload:
         title: Заголовок предпросмотра ссылки.
         type:
-
     """
 
     type: AttachmentType = AttachmentType.SHARE

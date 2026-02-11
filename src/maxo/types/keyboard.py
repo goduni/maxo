@@ -8,7 +8,6 @@ class Keyboard(MaxoType):
 
     Args:
         buttons:
-
     """
 
     buttons: list[list[InlineButtons]]

@@ -9,7 +9,6 @@ class UpdateList(MaxoType):
     Args:
         marker: Указатель на следующую страницу данных
         updates: Страница обновлений
-
     """
 
     updates: list[Updates]

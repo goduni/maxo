@@ -8,7 +8,6 @@ class StrikethroughMarkup(MarkupElement):
 
     Args:
         type:
-
     """
 
     type: MarkupElementType = MarkupElementType.STRIKETHROUGH

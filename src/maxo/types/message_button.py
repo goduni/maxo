@@ -10,7 +10,6 @@ class MessageButton(Button):
     Args:
         text: Текст кнопки, который будет отправлен в чат от лица пользователя
         type:
-
     """
 
     type: ButtonType = ButtonType.MESSAGE

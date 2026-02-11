@@ -9,7 +9,6 @@ class ContactAttachmentRequestPayload(MaxoType):
         name: Имя контакта
         vcf_info: Полная информация о контакте в формате VCF
         vcf_phone: Телефон контакта в формате VCF
-
     """
 
     name: str | None = None

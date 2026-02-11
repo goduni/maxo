@@ -9,7 +9,6 @@ class BotInfo(UserWithPhoto):
 
     Args:
         commands: Команды, поддерживаемые ботом
-
     """
 
     commands: Omittable[list[BotCommand] | None] = Omitted()

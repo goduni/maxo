@@ -8,7 +8,6 @@ class UploadedInfo(MaxoType):
 
     Args:
         token: Токен — уникальный ID загруженного медиафайла
-
     """
 
     token: Omittable[str] = Omitted()

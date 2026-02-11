@@ -6,6 +6,8 @@ from maxo.types.bot_info import BotInfo
 from maxo.types.photo_attachment_request_payload import PhotoAttachmentRequestPayload
 
 
+# Метода нет в документации, но работает
+# Самодельный объект
 class EditBotInfo(MaxoMethod[BotInfo]):
     """
     Изменение информации о текущем боте.
@@ -24,7 +26,6 @@ class EditBotInfo(MaxoMethod[BotInfo]):
             Чтобы удалить все команды, передайте пустой список.
             До 32 элементов
         photo: Запрос на установку фото бота
-
     """
 
     __url__ = "me"

@@ -11,7 +11,6 @@ class PhotoAttachmentRequest(AttachmentRequest):
     Args:
         payload:
         type:
-
     """
 
     type: AttachmentRequestType = AttachmentRequestType.IMAGE

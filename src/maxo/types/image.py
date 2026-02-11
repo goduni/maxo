@@ -7,7 +7,6 @@ class Image(MaxoType):
 
     Args:
         url: URL изображения
-
     """
 
     url: str

@@ -8,7 +8,6 @@ class RequestContactButton(Button):
 
     Args:
         type:
-
     """
 
     type: ButtonType = ButtonType.REQUEST_CONTACT

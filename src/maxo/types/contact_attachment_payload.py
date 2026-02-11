@@ -8,7 +8,6 @@ class ContactAttachmentPayload(MaxoType):
     Args:
         max_info: Информация о пользователе
         vcf_info: Информация о пользователе в формате VCF.
-
     """
 
     max_info: Omittable[User | None] = Omitted()

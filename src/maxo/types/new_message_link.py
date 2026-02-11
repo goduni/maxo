@@ -7,7 +7,6 @@ class NewMessageLink(MaxoType):
     Args:
         mid: ID сообщения исходного сообщения
         type: Тип ссылки сообщения
-
     """
 
     mid: str

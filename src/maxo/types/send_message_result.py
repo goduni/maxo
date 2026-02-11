@@ -6,7 +6,6 @@ class SendMessageResult(MaxoType):
     """
     Args:
         message:
-
     """
 
     message: Message

@@ -9,7 +9,6 @@ class CallbackButton(Button):
     Args:
         payload: Токен кнопки
         type:
-
     """
 
     type: ButtonType = ButtonType.CALLBACK

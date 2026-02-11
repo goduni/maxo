@@ -23,7 +23,6 @@ class ChatMember(UserWithPhoto):
             - `"pin_message"` — Закреплять сообщения.
             - `"write"` — Писать сообщения.
             - `"edit_link"` — Изменять ссылку на чат.
-
     """
 
     alias: str

@@ -10,7 +10,6 @@ class Recipient(MaxoType):
         chat_id: ID чата
         chat_type: Тип чата
         user_id: ID пользователя, если сообщение было отправлено пользователю
-
     """
 
     chat_type: ChatType

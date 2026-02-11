@@ -15,7 +15,6 @@ class ContactAttachmentRequest(AttachmentRequest):
     Args:
         payload:
         type:
-
     """
 
     type: AttachmentRequestType = AttachmentRequestType.CONTACT

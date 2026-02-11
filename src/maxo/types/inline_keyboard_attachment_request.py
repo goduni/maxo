@@ -15,7 +15,6 @@ class InlineKeyboardAttachmentRequest(AttachmentRequest):
     Args:
         payload:
         type:
-
     """
 
     type: AttachmentRequestType = AttachmentRequestType.INLINE_KEYBOARD

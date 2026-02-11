@@ -13,7 +13,6 @@ class VideoAttachmentDetails(MaxoType):
         token: Токен видео-вложения
         urls: URL-ы для скачивания или воспроизведения видео. Может быть null, если видео недоступно
         width: Ширина видео
-
     """
 
     duration: int

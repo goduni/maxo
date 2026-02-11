@@ -13,7 +13,6 @@ class ShareAttachmentRequest(AttachmentRequest):
     Args:
         payload:
         type:
-
     """
 
     type: AttachmentRequestType = AttachmentRequestType.SHARE

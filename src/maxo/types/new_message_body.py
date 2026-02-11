@@ -13,7 +13,6 @@ class NewMessageBody(MaxoType):
         link: Ссылка на сообщение
         notify: Если false, участники чата не будут уведомлены (по умолчанию `true`)
         text: Новый текст сообщения
-
     """
 
     attachments: list[AttachmentsRequests] | None = None

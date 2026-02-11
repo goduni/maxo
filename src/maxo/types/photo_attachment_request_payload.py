@@ -11,7 +11,6 @@ class PhotoAttachmentRequestPayload(MaxoType):
         photos: Токены, полученные после загрузки изображений
         token: Токен существующего вложения
         url: Любой внешний URL изображения, которое вы хотите прикрепить
-
     """
 
     photos: Omittable[list[PhotoToken] | None] = Omitted()  # TODO: Проверить кто это

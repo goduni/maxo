@@ -7,7 +7,6 @@ class PhotoAttachmentPayload(MaxoType):
         photo_id: Уникальный ID этого изображения
         token:
         url: URL изображения
-
     """
 
     photo_id: int

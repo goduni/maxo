@@ -10,7 +10,6 @@ class RequestGeoLocationButton(Button):
     Args:
         quick: Если *true*, отправляет местоположение без запроса подтверждения пользователя
         type:
-
     """
 
     type: ButtonType = ButtonType.REQUEST_GEO_LOCATION

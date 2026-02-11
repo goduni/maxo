@@ -7,7 +7,6 @@ class ChatList(MaxoType):
     Args:
         chats: Список запрашиваемых чатов
         marker: Указатель на следующую страницу запрашиваемых чатов
-
     """
 
     chats: list[Chat]

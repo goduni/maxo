@@ -33,7 +33,6 @@ class Chat(MaxoType):
         title: Отображаемое название чата. Может быть `null` для диалогов
         type: Тип чата:
              - `"chat"` — Групповой чат.
-
     """
 
     chat_id: int

@@ -8,7 +8,6 @@ class UnderlineMarkup(MarkupElement):
 
     Args:
         type:
-
     """
 
     type: MarkupElementType = MarkupElementType.UNDERLINE

@@ -9,7 +9,6 @@ class LinkMarkup(MarkupElement):
     Args:
         type:
         url: URL ссылки
-
     """
 
     type: MarkupElementType = MarkupElementType.LINK

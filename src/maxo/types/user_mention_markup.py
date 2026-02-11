@@ -11,7 +11,6 @@ class UserMentionMarkup(MarkupElement):
         type:
         user_id: ID упомянутого пользователя без имени
         user_link: `@username` упомянутого пользователя
-
     """
 
     type: MarkupElementType = MarkupElementType.USER_MENTION

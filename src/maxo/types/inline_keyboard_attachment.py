@@ -13,7 +13,6 @@ class InlineKeyboardAttachment(Attachment):
     Args:
         payload:
         type:
-
     """
 
     type: AttachmentType = AttachmentType.INLINE_KEYBOARD

@@ -8,7 +8,6 @@ class StrongMarkup(MarkupElement):
 
     Args:
         type:
-
     """
 
     type: MarkupElementType = MarkupElementType.STRONG

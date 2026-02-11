@@ -12,7 +12,6 @@ class AudioAttachment(Attachment):
         payload:
         transcription: Аудио транскрипция
         type:
-
     """
 
     type: AttachmentType = AttachmentType.AUDIO

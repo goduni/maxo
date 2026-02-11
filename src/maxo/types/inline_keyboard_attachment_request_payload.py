@@ -6,7 +6,6 @@ class InlineKeyboardAttachmentRequestPayload(MaxoType):
     """
     Args:
         buttons: Двумерный массив кнопок
-
     """
 
     buttons: list[list[InlineButtons]]

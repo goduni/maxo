@@ -9,7 +9,6 @@ class SimpleQueryResult(MaxoType):
     Args:
         message: Объяснительное сообщение, если результат не был успешным
         success: `true`, если запрос был успешным, `false` в противном случае
-
     """
 
     success: bool

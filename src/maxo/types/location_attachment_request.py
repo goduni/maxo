@@ -10,7 +10,6 @@ class LocationAttachmentRequest(AttachmentRequest):
         latitude: Широта
         longitude: Долгота
         type:
-
     """
 
     type: AttachmentRequestType = AttachmentRequestType.LOCATION

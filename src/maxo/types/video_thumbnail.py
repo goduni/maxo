@@ -5,7 +5,6 @@ class VideoThumbnail(MaxoType):
     """
     Args:
         url: URL изображения
-
     """
 
     url: str

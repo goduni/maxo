@@ -12,7 +12,6 @@ class LinkedMessage(MaxoType):
         message:
         sender: Пользователь, отправивший сообщение.
         type: Тип связанного сообщения
-
     """
 
     message: MessageBody

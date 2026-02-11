@@ -8,7 +8,6 @@ class EmphasizedMarkup(MarkupElement):
 
     Args:
         type:
-
     """
 
     type: MarkupElementType = MarkupElementType.EMPHASIZED

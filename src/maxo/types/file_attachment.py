@@ -12,7 +12,6 @@ class FileAttachment(Attachment):
         payload:
         size: Размер файла в байтах
         type:
-
     """
 
     type: AttachmentType = AttachmentType.FILE

@@ -16,7 +16,6 @@ class VideoAttachment(Attachment):
         thumbnail: Миниатюра видео
         type:
         width: Ширина видео
-
     """
 
     type: AttachmentType = AttachmentType.VIDEO

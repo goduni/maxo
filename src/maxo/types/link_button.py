@@ -9,7 +9,6 @@ class LinkButton(Button):
     Args:
         type:
         url:
-
     """
 
     type: ButtonType = ButtonType.LINK

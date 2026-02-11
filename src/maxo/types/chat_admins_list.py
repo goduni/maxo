@@ -8,7 +8,6 @@ class ChatAdminsList(MaxoType):
     Args:
         admins: Список пользователей, которые получат права администратора чата
         marker: Указатель на следующую страницу данных
-
     """
 
     admins: list[ChatAdmin]

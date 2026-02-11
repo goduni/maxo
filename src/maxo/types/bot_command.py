@@ -10,7 +10,6 @@ class BotCommand(MaxoType):
     Args:
         description: Описание команды
         name: Название команды
-
     """
 
     name: str

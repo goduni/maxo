@@ -12,7 +12,6 @@ class OpenAppButton(Button):
         payload: Параметр запуска, который будет передан в [initData](/docs/webapps/bridge#WebAppData) мини-приложения
         type:
         web_app: Публичное имя (username) бота или ссылка на него, чьё мини-приложение надо запустить
-
     """
 
     type: ButtonType = ButtonType.OPEN_APP

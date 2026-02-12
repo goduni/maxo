@@ -6,7 +6,9 @@ from unihttp.bind_method import bind_method
 
 from maxo.bot.api_client import MaxApiClient
 from maxo.bot.methods import (
+    AddMembers,
     AnswerOnCallback,
+    DeleteAdmin,
     DeleteChat,
     DeleteMessage,
     EditBotInfo,
@@ -38,10 +40,6 @@ from maxo.bot.methods import (
     UploadMedia,
 )
 from maxo.bot.methods.base import MaxoMethod
-from maxo.bot.methods.chats.add_members import AddMembers
-from maxo.bot.methods.chats.delete_admin import (
-    DeleteAdmin,
-)
 from maxo.bot.state import (
     BotState,
     ClosedBotState,

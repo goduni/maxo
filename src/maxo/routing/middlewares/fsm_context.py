@@ -1,7 +1,7 @@
 from typing import Any
 
+from maxo.fsm.context import FSMContext
 from maxo.fsm.key_builder import StorageKey
-from maxo.fsm.manager import FSMContext
 from maxo.fsm.storages.base import BaseEventIsolation, BaseStorage
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces.middleware import BaseMiddleware, NextMiddleware

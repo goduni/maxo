@@ -1,3 +1,4 @@
+import re
 from collections.abc import Callable
 from typing import Any, Generic, TypeVar, final
 
@@ -35,3 +36,29 @@ class ExceptionTypeFilter(
         ctx: Ctx,
     ) -> bool:
         return self._handler(update.error)
+
+
+class ExceptionMessageFilter(BaseFilter[ErrorEvent[_ExceptionT, _UpdateT]]):
+    __slots__ = ("_pattern",)
+
+    def __init__(self, pattern: str | re.Pattern[str]) -> None:
+        if isinstance(pattern, str):
+            pattern = re.compile(pattern)
+        self._pattern = pattern
+
+    def __str__(self) -> str:
+        return self._signature_to_string(
+            pattern=self._pattern,
+        )
+
+    async def __call__(
+        self,
+        update: ErrorEvent[Any, Any],
+        ctx: Ctx,
+    ) -> bool:
+        result = self._pattern.match(str(update.error))
+        if not result:
+            return False
+
+        ctx["match_exception"] = result
+        return True

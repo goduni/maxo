@@ -24,7 +24,7 @@ except ImportError as e:
     raise
 
 from maxo.bot.bot import Bot
-from maxo.fsm.manager import FSMContext
+from maxo.fsm.context import FSMContext
 from maxo.fsm.storages.base import BaseStorage, RawState
 from maxo.routing.ctx import Ctx
 from maxo.routing.dispatcher import Dispatcher

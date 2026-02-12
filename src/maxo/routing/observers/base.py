@@ -3,10 +3,9 @@ from collections.abc import Callable, Coroutine, MutableSequence, Sequence
 from typing import Any, ParamSpec, TypeVar, cast
 
 from maxo.routing.ctx import Ctx
-from maxo.routing.filters.always import AlwaysTrueFilter
-from maxo.routing.interfaces.filter import Filter
-from maxo.routing.interfaces.handler import Handler
-from maxo.routing.interfaces.observer import Observer, ObserverState
+from maxo.routing.filters import AlwaysTrueFilter
+from maxo.routing.interfaces import Filter, Handler, Observer
+from maxo.routing.interfaces.observer import ObserverState
 from maxo.routing.middlewares.manager import MiddlewareManagerFacade
 from maxo.routing.observers.state import EmptyObserverState
 from maxo.routing.sentinels import UNHANDLED

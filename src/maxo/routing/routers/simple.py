@@ -3,15 +3,14 @@ from functools import partial
 from typing import Any
 
 from maxo.routing.ctx import Ctx
-from maxo.routing.interfaces.observer import Observer
-from maxo.routing.interfaces.router import BaseRouter, RouterState
+from maxo.routing.interfaces import BaseRouter, Observer
+from maxo.routing.interfaces.router import RouterState
 from maxo.routing.middlewares.state import (
     EmptyMiddlewareManagerState,
     StartedMiddlewareManagerState,
 )
-from maxo.routing.observers.signal import SignalObserver
+from maxo.routing.observers import SignalObserver, UpdateObserver
 from maxo.routing.observers.state import EmptyObserverState, StartedObserverState
-from maxo.routing.observers.update import UpdateObserver
 from maxo.routing.routers.state import EmptyRouterState, StartedRouterState
 from maxo.routing.sentinels import UNHANDLED, SkipHandler
 from maxo.routing.signals.shutdown import AfterShutdown, BeforeShutdown
@@ -97,18 +96,18 @@ class Router(BaseRouter):
 
         self._name = name
         self._children_routers: MutableSequence[BaseRouter] = []
-        self.__state = EmptyRouterState()
+        self._state = EmptyRouterState()
 
     def __repr__(self) -> str:
         return f"<Router {self._name!r}>"
 
     @property
     def state(self) -> RouterState:
-        return self.__state
+        return self._state
 
     @state.setter
-    def _state(self, value: RouterState) -> None:
-        self.__state = value
+    def state(self, value: RouterState) -> None:
+        self._state = value
 
     @property
     def name(self) -> str:

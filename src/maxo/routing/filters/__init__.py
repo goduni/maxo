@@ -1,7 +1,12 @@
-from maxo.routing.filters.always import AlwaysFalseFilter, AlwaysTrueFilter
-from maxo.routing.filters.base import BaseFilter
-from maxo.routing.filters.command import Command, CommandStart
-from maxo.routing.filters.logic import AndFilter, InvertFilter, OrFilter
+# `MagicFilter` and `MagicData` in maxo.integrations.magic_filter
+
+from .always import AlwaysFalseFilter, AlwaysTrueFilter
+from .base import BaseFilter
+from .command import Command, CommandStart
+from .deeplink import DeeplinkFilter
+from .exception import ExceptionMessageFilter, ExceptionTypeFilter
+from .logic import AndFilter, InvertFilter, OrFilter, and_f, invert_f, or_f
+from .payload import Payload
 
 __all__ = (
     "AlwaysFalseFilter",
@@ -10,6 +15,13 @@ __all__ = (
     "BaseFilter",
     "Command",
     "CommandStart",
+    "DeeplinkFilter",
+    "ExceptionMessageFilter",
+    "ExceptionTypeFilter",
     "InvertFilter",
     "OrFilter",
+    "Payload",
+    "and_f",
+    "invert_f",
+    "or_f",
 )

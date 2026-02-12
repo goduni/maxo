@@ -1,7 +1,7 @@
-from maxo.routing.signals.base import BaseSignal
-from maxo.routing.signals.shutdown import AfterShutdown, BeforeShutdown
-from maxo.routing.signals.startup import AfterStartup, BeforeStartup
-from maxo.routing.signals.update import MaxoUpdate
+from .base import BaseSignal
+from .shutdown import AfterShutdown, BeforeShutdown
+from .startup import AfterStartup, BeforeStartup
+from .update import MaxoUpdate
 
 __all__ = (
     "AfterShutdown",

@@ -130,3 +130,8 @@ class InvertFilter(BaseLogicFilter[_UpdateT], Generic[_UpdateT]):
             self._inlined = True
         else:
             self._inlined = False
+
+
+and_f = AndFilter
+or_f = OrFilter
+invert_f = InvertFilter

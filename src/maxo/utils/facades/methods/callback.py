@@ -4,10 +4,10 @@ from maxo.omit import Omittable, Omitted
 from maxo.types.callback import Callback
 from maxo.types.new_message_body import NewMessageBody
 from maxo.types.simple_query_result import SimpleQueryResult
-from maxo.utils.facades.methods.base import BaseMethodsFacade
+from maxo.utils.facades.methods.bot import BotMethodsFacade
 
 
-class CallbackMethodsFacade(BaseMethodsFacade, ABC):
+class CallbackMethodsFacade(BotMethodsFacade, ABC):
     @property
     @abstractmethod
     def callback(self) -> Callback:

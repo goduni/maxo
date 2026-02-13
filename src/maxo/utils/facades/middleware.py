@@ -4,16 +4,62 @@ from typing import Any, final
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces.middleware import BaseMiddleware, NextMiddleware
 from maxo.routing.signals.update import MaxoUpdate
-from maxo.routing.updates.base import BaseUpdate
-from maxo.routing.updates.message_callback import MessageCallback
-from maxo.routing.updates.message_created import MessageCreated
-from maxo.utils.facades.updates.base import BaseUpdateFacade
-from maxo.utils.facades.updates.message_callback import MessageCallbackFacade
-from maxo.utils.facades.updates.message_created import MessageCreatedFacade
+from maxo.routing.updates import (
+    BaseUpdate,
+    BotAddedToChat,
+    BotRemovedFromChat,
+    BotStarted,
+    BotStopped,
+    ChatTitleChanged,
+    DialogCleared,
+    DialogMuted,
+    DialogRemoved,
+    DialogUnmuted,
+    ErrorEvent,
+    MessageCallback,
+    MessageCreated,
+    MessageEdited,
+    MessageRemoved,
+    UserAddedToChat,
+    UserRemovedFromChat,
+)
+from maxo.utils.facades import (
+    BaseUpdateFacade,
+    BotAddedToChatFacade,
+    BotRemovedFromChatFacade,
+    BotStartedFacade,
+    BotStoppedFacade,
+    ChatTitleChangedFacade,
+    DialogClearedFacade,
+    DialogMutedFacade,
+    DialogRemovedFacade,
+    DialogUnmutedFacade,
+    ErrorEventFacade,
+    MessageCallbackFacade,
+    MessageCreatedFacade,
+    MessageEditedFacade,
+    MessageRemovedFacade,
+    UserAddedToChatFacade,
+    UserRemovedFromChatFacade,
+)
 
 _FACADES_MAP: Mapping[type[Any], type[BaseUpdateFacade[Any]]] = {
     MessageCreated: MessageCreatedFacade,
     MessageCallback: MessageCallbackFacade,
+    BotAddedToChat: BotAddedToChatFacade,
+    BotRemovedFromChat: BotRemovedFromChatFacade,
+    BotStarted: BotStartedFacade,
+    BotStopped: BotStoppedFacade,
+    ChatTitleChanged: ChatTitleChangedFacade,
+    DialogCleared: DialogClearedFacade,
+    DialogMuted: DialogMutedFacade,
+    DialogRemoved: DialogRemovedFacade,
+    DialogUnmuted: DialogUnmutedFacade,
+    ErrorEvent: ErrorEventFacade,
+    MessageEdited: MessageEditedFacade,
+    MessageRemoved: MessageRemovedFacade,
+    UserAddedToChat: UserAddedToChatFacade,
+    UserRemovedFromChat: UserRemovedFromChatFacade,
 }
 
 

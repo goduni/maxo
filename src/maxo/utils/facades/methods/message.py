@@ -1,39 +1,28 @@
-import asyncio
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
-from maxo import loggers
-from maxo.enums import MessageLinkType, TextFormat, UploadType
+from maxo.enums import MessageLinkType, TextFormat
 from maxo.omit import Omittable, Omitted
-from maxo.types import (
-    AttachmentsRequests,
-    AudioAttachmentRequest,
-    FileAttachmentRequest,
-    MediaAttachmentsRequests,
-    PhotoAttachmentRequest,
-    VideoAttachmentRequest,
-)
 from maxo.types.buttons import InlineButtons
-from maxo.types.inline_keyboard_attachment_request import (
-    InlineKeyboardAttachmentRequest,
-)
-from maxo.types.inline_keyboard_attachment_request_payload import (
-    InlineKeyboardAttachmentRequestPayload,
-)
+from maxo.types.chat import Chat
+from maxo.types.chat_members_list import ChatMembersList
 from maxo.types.message import Message
 from maxo.types.new_message_link import NewMessageLink
 from maxo.types.simple_query_result import SimpleQueryResult
-from maxo.utils.facades.methods.base import BaseMethodsFacade
-from maxo.utils.facades.methods.upload_media import UploadMediaFacade
+from maxo.utils.facades.methods.attachments import AttachmentsFacade
 from maxo.utils.helpers.calculating import calculate_chat_id_and_user_id
 from maxo.utils.upload_media import InputFile
 
 
-class MessageMethodsFacade(BaseMethodsFacade, ABC):
+class MessageMethodsFacade(AttachmentsFacade, ABC):
     @property
     @abstractmethod
     def message(self) -> Message:
         raise NotImplementedError
+
+    @property
+    def chat_id(self) -> int:
+        return self.message.recipient.chat_id
 
     async def delete_message(self) -> SimpleQueryResult:
         message_id = self.message.unsafe_body.mid
@@ -165,56 +154,24 @@ class MessageMethodsFacade(BaseMethodsFacade, ABC):
             mid=self.message.unsafe_body.mid,
         )
 
-    async def _build_attachments(
+    async def get_chat(self) -> Chat:
+        return await self.bot.get_chat(chat_id=self.chat_id)
+
+    async def get_members(
         self,
-        base: Sequence[AttachmentsRequests],
-        keyboard: Sequence[Sequence[InlineButtons]] | None = None,
-        media: Sequence[InputFile] | None = None,
-    ) -> Sequence[AttachmentsRequests]:
-        attachments = list(base)
-
-        if keyboard is not None:
-            attachments.append(
-                InlineKeyboardAttachmentRequest(
-                    payload=InlineKeyboardAttachmentRequestPayload(buttons=keyboard),
-                ),
-            )
-
-        if media:
-            attachments.extend(await self._build_media_attachments(media))
-            # TODO: Исправить костыль со сном, https://github.com/K1rL3s/maxo/issues/10
-            # maxo.errors.api.MaxBotBadRequestError:
-            # ('attachment.not.ready',
-            # 'Key: errors.process.attachment.file.not.processed')
-            await asyncio.sleep(0.5)
-
-        return attachments
-
-    async def _build_media_attachments(
-        self,
-        media: Sequence[InputFile],
-    ) -> Sequence[MediaAttachmentsRequests]:
-        attachments: list[MediaAttachmentsRequests] = []
-
-        result = await asyncio.gather(
-            *(self._upload_media(upload_media) for upload_media in media),
+        count: Omittable[int] = Omitted(),
+        marker: Omittable[int] = Omitted(),
+        user_ids: Omittable[list[int] | None] = Omitted(),
+    ) -> ChatMembersList:
+        return await self.bot.get_members(
+            chat_id=self.chat_id,
+            count=count,
+            marker=marker,
+            user_ids=user_ids,
         )
 
-        for type_, token in result:
-            match type_:
-                case UploadType.FILE:
-                    attachments.append(FileAttachmentRequest.factory(token))
-                case UploadType.AUDIO:
-                    attachments.append(AudioAttachmentRequest.factory(token))
-                case UploadType.VIDEO:
-                    attachments.append(VideoAttachmentRequest.factory(token))
-                case UploadType.IMAGE:
-                    attachments.append(PhotoAttachmentRequest.factory(token=token))
-                case _:
-                    loggers.utils.warning("Received unknown attachment type: %s", type_)
+    async def leave_chat(self) -> SimpleQueryResult:
+        return await self.bot.leave_chat(chat_id=self.chat_id)
 
-        return attachments
-
-    async def _upload_media(self, media: InputFile) -> tuple[UploadType, str]:
-        token = await UploadMediaFacade(self.bot, media).upload()
-        return media.type, token
+    async def get_message_by_id(self, message_id: str) -> Message:
+        return await self.bot.get_message_by_id(message_id=message_id)

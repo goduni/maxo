@@ -10,6 +10,7 @@ from typing import cast
 
 from maxo.enums import MarkupElementType
 from maxo.types.markup_elements import MarkupElements
+from maxo.types.user_mention_markup import UserMentionMarkup
 
 __all__ = (
     "HtmlDecoration",
@@ -42,7 +43,6 @@ class TextDecoration(ABC):
             return cast(str, getattr(self, entity.type)(value=text))
 
         if entity.type == MarkupElementType.USER_MENTION:
-            from maxo.types import UserMentionMarkup
 
             entity: UserMentionMarkup
 

@@ -1,3 +1,4 @@
+from . import DialogCleared, DialogMuted, DialogRemoved, DialogUnmuted
 from .bot_added_to_chat import BotAddedToChat
 from .bot_removed_from_chat import BotRemovedFromChat
 from .bot_started import BotStarted
@@ -16,6 +17,10 @@ Updates = (
     | BotStarted
     | BotStopped
     | ChatTitleChanged
+    | DialogCleared
+    | DialogMuted
+    | DialogRemoved
+    | DialogUnmuted
     | MessageCallback
     | MessageCreated
     | MessageEdited

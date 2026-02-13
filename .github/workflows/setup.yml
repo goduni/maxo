@@ -39,7 +39,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv pip install -e . --group lint --system
+        uv pip install -e . --group [lint] --system
 
     - name: Run ruff
       run: |

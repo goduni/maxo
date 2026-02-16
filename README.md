@@ -12,10 +12,10 @@
 [![License](https://img.shields.io/pypi/l/maxo.svg?style=flat)](https://github.com/K1rL3s/maxo/blob/master/LICENSE)
 [![Status](https://img.shields.io/pypi/status/maxo.svg?style=flat)](https://pypi.org/project/maxo/)
 [![PyPI](https://img.shields.io/pypi/v/maxo?label=pypi&style=flat)](https://pypi.org/project/maxo/)
-[![Downloads](https://img.shields.io/pypi/dm/maxo.svg?style=flat)](https://pypi.org/project/maxo/)
+[![Downloads](https://img.shields.io/pypi/dm/maxo?style=flat)](https://pypi.org/project/maxo/)
 [![GitHub Repo stars](https://img.shields.io/github/stars/K1rL3s/maxo?style=flat)](https://github.com/K1rL3s/maxo/stargazers)
 [![Supported python versions](https://img.shields.io/pypi/pyversions/maxo.svg?style=flat)](https://pypi.org/project/maxo/)
-[![Tests](https://img.shields.io/github/actions/workflow/status/K1rL3s/maxo/tests.yml?style=flat)](https://github.com/K1rL3s/maxo/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/K1rL3s/maxo/analyze.yml?style=flat&label=tests)](https://github.com/K1rL3s/maxo/actions)
 
 </div>
 

@@ -6,7 +6,7 @@ nox.options.reuse_existing_virtualenvs = True
 
 
 @session(
-    python=["3.12", "3.13"],
+    python=["3.12", "3.13", "3.14"],
     uv_groups=["tests"],
 )
 def test(s: nox.Session) -> None:

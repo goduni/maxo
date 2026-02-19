@@ -1,9 +1,8 @@
 from collections.abc import Callable, Hashable
 from typing import Any
 
-from magic_filter import MagicFilter
-
 from maxo.dialogs.api.protocols import DialogManager
+from maxo.dialogs.integrations.magic_filter import DialogMagic
 from maxo.dialogs.widgets.common import WhenCondition
 
 from .base import Text
@@ -22,7 +21,7 @@ def new_case_field(fieldname: str) -> Selector:
     return case_field
 
 
-def new_magic_selector(f: MagicFilter) -> Selector:
+def new_magic_selector(f: DialogMagic) -> Selector:
     def when_magic(
         data: dict,
         widget: "Case",
@@ -37,14 +36,14 @@ class Case(Text):
     def __init__(
         self,
         texts: dict[Any, Text],
-        selector: str | Selector | MagicFilter,
+        selector: str | Selector | DialogMagic,
         when: WhenCondition = None,
     ) -> None:
         super().__init__(when=when)
         self.texts = texts
         if isinstance(selector, str):
             self.selector = new_case_field(selector)
-        elif isinstance(selector, MagicFilter):
+        elif isinstance(selector, DialogMagic):
             self.selector = new_magic_selector(selector)
         else:
             self.selector = selector

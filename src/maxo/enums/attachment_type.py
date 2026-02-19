@@ -4,6 +4,7 @@ from enum import StrEnum
 class AttachmentType(StrEnum):
     """Общая схема, представляющая вложение сообщения"""
 
+    TEXT = "text"  # Самодельное поле
     AUDIO = "audio"
     CONTACT = "contact"
     FILE = "file"

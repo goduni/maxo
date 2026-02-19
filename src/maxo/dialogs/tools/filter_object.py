@@ -5,9 +5,7 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Any
 
-from magic_filter.magic import MagicFilter as OriginalMagicFilter
-
-from maxo.integrations.magic_filter import MagicFilter
+from maxo.dialogs.integrations.magic_filter import DialogMagic
 from maxo.routing.interfaces import Filter
 
 CallbackType = Callable[..., Any]
@@ -44,10 +42,10 @@ class CallableObject:
 
 @dataclass
 class FilterObject(CallableObject):
-    magic: MagicFilter | None = None
+    magic: DialogMagic | None = None
 
     def __post_init__(self) -> None:
-        if isinstance(self.callback, OriginalMagicFilter):
+        if isinstance(self.callback, DialogMagic):
             self.magic = self.callback
             self.callback = self.callback.resolve
 

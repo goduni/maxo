@@ -1,13 +1,9 @@
 from collections.abc import Callable
 
-from magic_filter import MagicFilter
-
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.dialogs.api.protocols import DialogManager
-from maxo.dialogs.widgets.common.scroll import (
-    BaseScroll,
-    OnPageChangedVariants,
-)
+from maxo.dialogs.integrations.magic_filter import DialogMagic
+from maxo.dialogs.widgets.common.scroll import BaseScroll, OnPageChangedVariants
 
 from .base import Keyboard
 
@@ -25,7 +21,7 @@ def new_pages_field(fieldname: str) -> PagesGetter:
     return pages_field
 
 
-def new_pages_magic(f: MagicFilter) -> PagesGetter:
+def new_pages_magic(f: DialogMagic) -> PagesGetter:
     def pages_magic(
         data: dict,
         widget: "StubScroll",
@@ -51,14 +47,14 @@ class StubScroll(Keyboard, BaseScroll):
     def __init__(
         self,
         id: str,
-        pages: str | int | PagesGetter | MagicFilter,
+        pages: str | int | PagesGetter | DialogMagic,
         on_page_changed: OnPageChangedVariants = None,
     ) -> None:
         Keyboard.__init__(self, id=id, when=None)
         BaseScroll.__init__(self, id=id, on_page_changed=on_page_changed)
         if isinstance(pages, str):
             self._pages = new_pages_field(pages)
-        elif isinstance(pages, MagicFilter):
+        elif isinstance(pages, DialogMagic):
             self._pages = new_pages_magic(pages)
         else:
             self._pages = new_pages_fixed(pages)

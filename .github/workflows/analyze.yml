@@ -61,7 +61,7 @@ jobs:
 
       - name: Install test dependencies
         run: |
-          uv pip install -e . --group=tests --system
+          uv pip install -e ".[magic_filter,dishka,redis]" --group=tests --system
 
       - name: Run tests with coverage
         id: pytest

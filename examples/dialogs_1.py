@@ -15,6 +15,7 @@ from maxo.dialogs.widgets.input import MessageInput
 from maxo.dialogs.widgets.kbd import Back, Button, Row, Select, SwitchTo
 from maxo.dialogs.widgets.media import StaticMedia
 from maxo.dialogs.widgets.text import Const, Format, Multi
+from maxo.enums import AttachmentType
 from maxo.fsm import State, StatesGroup
 from maxo.fsm.key_builder import DefaultKeyBuilder
 from maxo.routing.filters import CommandStart
@@ -99,7 +100,7 @@ dialog = Dialog(
         StaticMedia(
             path=os.path.join(os.path.dirname(__file__), "files/watermelon.jpg"),
         ),
-        MessageInput(name_handler),
+        MessageInput(name_handler, content_types=AttachmentType.TEXT),
         MessageInput(other_type_handler),
         state=DialogSG.greeting,
     ),

@@ -2,8 +2,7 @@ from abc import abstractmethod
 from collections.abc import Awaitable, Callable, Sequence
 from typing import Any
 
-from magic_filter import F
-
+from maxo import Ctx
 from maxo.dialogs.api.internal import InputWidget
 from maxo.dialogs.api.protocols import (
     DialogManager,
@@ -16,7 +15,7 @@ from maxo.dialogs.widgets.widget_event import (
     ensure_event_processor,
 )
 from maxo.enums import AttachmentType
-from maxo.integrations.magic_filter import MagicFilter
+from maxo.routing.filters import BaseFilter
 from maxo.routing.updates import MessageCreated
 
 MessageHandlerFunc = Callable[
@@ -47,17 +46,11 @@ class MessageInput(BaseInput):
         super().__init__(id=id)
         self.func = ensure_event_processor(func)
 
-        # TODO: Починить. `F.content_type` не существует
         filters = []
         if content_types is not None:
             if isinstance(content_types, str):
-                filters.append(
-                    FilterObject(MagicFilter(F.content_type == content_types)),
-                )
-            else:
-                filters.append(
-                    FilterObject(MagicFilter(F.content_type.in_(content_types))),
-                )
+                content_types = [content_types]
+            filters.append(FilterObject(ContentTypeFilter(content_types)))
         if filter is not None:
             filters.append(FilterObject(filter))
         self.filters = filters
@@ -76,3 +69,18 @@ class MessageInput(BaseInput):
                 return False
         await self.func.process_event(message, self, manager)
         return True
+
+
+class ContentTypeFilter(BaseFilter[MessageCreated]):
+    def __init__(self, content_types: Sequence[AttachmentType]) -> None:
+        self._content_types = content_types
+
+    async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+        if AttachmentType.TEXT in self._content_types and update.message.body.text:
+            return True
+
+        for attach in update.message.body.attachments or []:
+            if attach.type in self._content_types:
+                return True
+
+        return False

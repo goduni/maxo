@@ -2,10 +2,10 @@ from collections.abc import Callable, Sequence
 from operator import itemgetter
 from typing import Any
 
-from magic_filter import MagicFilter
+from maxo.dialogs.integrations.magic_filter import DialogMagic
 
 ItemsGetter = Callable[[dict], Sequence]
-ItemsGetterVariant = str | ItemsGetter | MagicFilter | Sequence
+ItemsGetterVariant = str | ItemsGetter | DialogMagic | Sequence
 
 
 def _get_identity(items: Sequence) -> ItemsGetter:
@@ -15,7 +15,7 @@ def _get_identity(items: Sequence) -> ItemsGetter:
     return identity
 
 
-def _get_magic_getter(f: MagicFilter) -> ItemsGetter:
+def _get_magic_getter(f: DialogMagic) -> ItemsGetter:
     def items_magic(data: dict) -> Sequence:
         items = f.resolve(data)
         if isinstance(items, Sequence):
@@ -28,7 +28,7 @@ def _get_magic_getter(f: MagicFilter) -> ItemsGetter:
 def get_items_getter(attr_val: ItemsGetterVariant) -> ItemsGetter:
     if isinstance(attr_val, str):
         return itemgetter(attr_val)
-    if isinstance(attr_val, MagicFilter):
+    if isinstance(attr_val, DialogMagic):
         return _get_magic_getter(attr_val)
     if isinstance(attr_val, Callable):
         return attr_val

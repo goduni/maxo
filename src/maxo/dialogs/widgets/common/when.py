@@ -3,9 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Protocol
 
-from magic_filter import MagicFilter
-
 from maxo.dialogs.api.protocols import DialogManager
+from maxo.dialogs.integrations.magic_filter import DialogMagic
 
 
 class Predicate(Protocol):
@@ -28,7 +27,7 @@ class Predicate(Protocol):
         raise NotImplementedError
 
 
-WhenCondition = str | MagicFilter | Predicate | None
+WhenCondition = str | DialogMagic | Predicate | None
 
 
 def new_when_field(fieldname: str) -> Predicate:
@@ -42,7 +41,7 @@ def new_when_field(fieldname: str) -> Predicate:
     return when_field
 
 
-def new_when_magic(f: MagicFilter) -> Predicate:
+def new_when_magic(f: DialogMagic) -> Predicate:
     def when_magic(
         data: dict,
         widget: Whenable,
@@ -64,7 +63,7 @@ class Whenable:
             self.condition = true_condition
         elif isinstance(when, str):
             self.condition = new_when_field(when)
-        elif isinstance(when, MagicFilter):
+        elif isinstance(when, DialogMagic):
             self.condition = new_when_magic(when)
         else:
             self.condition = when

@@ -12,7 +12,7 @@ from maxo.dialogs.api.protocols import DialogManager
 logger = getLogger(__name__)
 
 
-async def handle_update(
+async def handle_aiogd_update(
     event: DialogUpdateEvent,
     dialog_manager: DialogManager,
 ) -> None:

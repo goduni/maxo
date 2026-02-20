@@ -3,6 +3,8 @@ from logging import getLogger
 from typing import Any
 
 from maxo.dialogs.api.entities import (
+    EVENT_CONTEXT_KEY,
+    EventContext,
     MarkupVariant,
     MediaAttachment,
     NewMessage,
@@ -10,10 +12,8 @@ from maxo.dialogs.api.entities import (
 from maxo.dialogs.api.internal import Widget, WindowProtocol
 from maxo.enums.text_format import TextFormat
 from maxo.fsm import State
-from maxo.routing.middlewares.update_context import UPDATE_CONTEXT_KEY
 from maxo.routing.updates import MessageCallback, MessageCreated
 from maxo.types import Recipient
-from maxo.types.update_context import UpdateContext
 
 from .api.entities import Data, LinkPreviewOptions
 from .api.internal.widgets import MarkupFactory
@@ -161,7 +161,7 @@ class Window(WindowProtocol):
         manager: DialogManager,
     ) -> NewMessage:
         logger.debug("Show window: %s", self)
-        update_context: UpdateContext = manager.middleware_data[UPDATE_CONTEXT_KEY]
+        event_context: EventContext = manager.middleware_data[EVENT_CONTEXT_KEY]
         try:
             current_data = await self.load_data(dialog, manager)
         except Exception:
@@ -176,9 +176,9 @@ class Window(WindowProtocol):
 
             return NewMessage(
                 recipient=Recipient(
-                    chat_type=update_context.chat_type,
-                    chat_id=update_context.chat_id,
-                    user_id=update_context.user_id,
+                    chat_type=event_context.chat_type,
+                    chat_id=event_context.chat_id,
+                    user_id=event_context.user_id,
                 ),
                 text=await self.render_text(current_data, manager),
                 parse_mode=self.parse_mode,

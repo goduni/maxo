@@ -12,7 +12,6 @@ from .update_event import (
     DialogAction,
     DialogStartEvent,
     DialogSwitchEvent,
-    DialogUpdate,
     DialogUpdateEvent,
 )
 
@@ -28,7 +27,6 @@ __all__ = (
     "DialogAction",
     "DialogStartEvent",
     "DialogSwitchEvent",
-    "DialogUpdate",
     "DialogUpdateEvent",
     "EventContext",
     "LaunchMode",

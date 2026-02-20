@@ -104,6 +104,9 @@ async def test_change_settings(dp, client, second_client, message_manager) -> No
     dp.message_created.handler(start, CommandStart())
     dp.message_created.handler(add_shared, Command("add"))
 
+    await dp.feed_signal(BeforeStartup(), client.bot)
+    await dp.feed_signal(AfterStartup(), client.bot)
+
     await client.send("/start")
     message_manager.reset_history()
 
@@ -134,6 +137,9 @@ async def test_change_settings(dp, client, second_client, message_manager) -> No
 async def test_change_settings_bg(dp, client, second_client, message_manager) -> None:
     dp.message_created.handler(start, CommandStart())
     dp.message_created.handler(add_shared, Command("add"))
+
+    await dp.feed_signal(BeforeStartup(), client.bot)
+    await dp.feed_signal(AfterStartup(), client.bot)
 
     await client.send("/start")
     message_manager.reset_history()
@@ -185,8 +191,12 @@ async def test_same_user(dp, client, message_manager) -> None:
 @pytest.mark.asyncio
 async def test_shared_stack(dp, client, second_client, message_manager) -> None:
     dp.message_created.handler(start_shared, CommandStart())
+
+    await dp.feed_signal(BeforeStartup(), client.bot)
+    await dp.feed_signal(AfterStartup(), client.bot)
+
     await client.send("/start")
-    await asyncio.sleep(0.02)  # synchronization workaround, fixme
+    await asyncio.sleep(0.1)  # synchronization workaround, fixme
 
     first_message = message_manager.one_message()
     assert first_message.body.text == "stub"

@@ -27,12 +27,10 @@ class MockMessageManager(MessageManagerProtocol):
         self.answered_callbacks: set[str] = set()
         self.sent_messages = []
         self.last_message_id = 0
-        self.show_message_calls = []
 
     def reset_history(self) -> None:
         self.sent_messages.clear()
         self.answered_callbacks.clear()
-        self.show_message_calls.clear()
 
     def assert_one_message(self) -> None:
         assert len(self.sent_messages) == 1
@@ -98,17 +96,9 @@ class MockMessageManager(MessageManagerProtocol):
         new_message: NewMessage,
         old_message: OldMessage | None,
     ) -> OldMessage:
-        self.show_message_calls.append((bot, new_message, old_message))
         assert isinstance(new_message, NewMessage)
         assert isinstance(old_message, (OldMessage, type(None)))
         if new_message.show_mode is ShowMode.NO_UPDATE:
-            raise MessageNotModified
-        if (
-            old_message
-            and new_message.text == old_message.text
-            and new_message.media == old_message.media
-            and new_message.keyboard == old_message.keyboard
-        ):
             raise MessageNotModified
 
         message_id = self.last_message_id + 1

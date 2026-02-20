@@ -34,6 +34,8 @@ class FSMContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
         ctx: Ctx,
         next: NextMiddleware[MaxoUpdate[Any]],
     ) -> Any:
+        ctx[FSM_STORAGE_KEY] = self._storage
+
         storage_key = self.make_storage_key(
             bot_id=ctx["bot"].state.info.user_id,
             update_context=ctx[UPDATE_CONTEXT_KEY],
@@ -46,8 +48,6 @@ class FSMContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
                 key=storage_key,
                 storage=self._storage,
             )
-            ctx["storage"] = self._storage
-            ctx[FSM_STORAGE_KEY] = self._storage
             ctx[FSM_CONTEXT_KEY] = fsm_context
             ctx[RAW_STATE_KEY] = await fsm_context.get_state()
 

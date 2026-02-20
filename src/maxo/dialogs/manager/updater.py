@@ -2,7 +2,8 @@ import asyncio
 from contextvars import copy_context
 
 from maxo import Bot, Dispatcher
-from maxo.dialogs.api.entities import DialogUpdate, DialogUpdateEvent
+from maxo.dialogs.api.entities import DialogUpdateEvent
+from maxo.routing.signals import MaxoUpdate
 
 
 class Updater:
@@ -11,7 +12,7 @@ class Updater:
             raise TypeError("Root router must be Dispatcher.")
         self.dp = dp
 
-    async def notify(self, update: DialogUpdate, bot: Bot) -> None:
+    async def notify(self, update: DialogUpdateEvent, bot: Bot) -> None:
         def callback() -> None:
             asyncio.create_task(  # noqa: RUF006
                 self._process_update(update, bot),
@@ -19,19 +20,5 @@ class Updater:
 
         asyncio.get_running_loop().call_soon(callback, context=copy_context())
 
-    async def _process_update(self, update: DialogUpdate, bot: Bot) -> None:
-        await self.dp.feed_update(
-            DialogUpdate(
-                update=DialogUpdateEvent(
-                    bot=bot,
-                    sender=update.update.sender,
-                    chat=update.update.chat,
-                    recipient=update.update.recipient,
-                    action=update.update.action,
-                    data=update.update.data,
-                    intent_id=update.update.intent_id,
-                    stack_id=update.update.stack_id,
-                ),
-            ),
-            bot,
-        )
+    async def _process_update(self, update: DialogUpdateEvent, bot: Bot) -> None:
+        await self.dp.feed_update(MaxoUpdate(update=update), bot)

@@ -1,6 +1,4 @@
 import pytest
-
-from maxo import Dispatcher
 from maxo.dialogs import (
     Dialog,
     DialogManager,
@@ -13,9 +11,9 @@ from maxo.dialogs.test_tools.keyboard import InlineButtonTextLocator
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
 from maxo.dialogs.widgets.kbd import Cancel
 from maxo.dialogs.widgets.text import Const, Format
-from maxo.fsm.key_builder import DefaultKeyBuilder
+
+from maxo import Dispatcher
 from maxo.fsm.state import State, StatesGroup
-from maxo.fsm.storages.memory import SimpleEventIsolation
 from maxo.routing.filters import CommandStart
 from maxo.routing.signals import AfterStartup, BeforeStartup
 from maxo.types import Message
@@ -33,19 +31,19 @@ class ThirdSG(StatesGroup):
     start = State()
 
 
-async def start(message: Message, dialog_manager: DialogManager) -> None:
+async def start(message: Message, dialog_manager: DialogManager):
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 
-async def on_start_main(data, dialog_manager: DialogManager) -> None:
+async def on_start_main(data, dialog_manager: DialogManager):
     await dialog_manager.start(SecondarySG.start)
 
 
-async def on_start_sub(_, dialog_manager: DialogManager) -> None:
+async def on_start_sub(_, dialog_manager: DialogManager):
     await dialog_manager.start(ThirdSG.start)
 
 
-async def on_process_result_sub(_, __, dialog_manager: DialogManager) -> None:
+async def on_process_result_sub(_, __, dialog_manager: DialogManager):
     await dialog_manager.done()
 
 
@@ -60,14 +58,8 @@ def client(dp) -> BotClient:
 
 
 @pytest.fixture
-def dp(message_manager: MockMessageManager) -> Dispatcher:
-    key_builder = DefaultKeyBuilder(with_destiny=True)
-    event_isolation = SimpleEventIsolation(key_builder=key_builder)
-    dp = Dispatcher(
-        storage=JsonMemoryStorage(),
-        events_isolation=event_isolation,
-        key_builder=key_builder,
-    )
+def dp(message_manager: MockMessageManager):
+    dp = Dispatcher(storage=JsonMemoryStorage())
     dp.message_created.handler(start, CommandStart())
 
     dp.include(
@@ -99,7 +91,7 @@ def dp(message_manager: MockMessageManager) -> Dispatcher:
             ),
         ),
     )
-    setup_dialogs(dp, message_manager=message_manager, events_isolation=event_isolation)
+    setup_dialogs(dp, message_manager=message_manager)
     return dp
 
 
@@ -118,4 +110,4 @@ async def test_start(dp, message_manager, client) -> None:
     await client.click(first_message, InlineButtonTextLocator("Cancel"))
     second_message = message_manager.one_message()
     assert second_message.body.text == "First"
-    assert second_message.body.reply_markup
+    assert second_message.body.reply_markup is None

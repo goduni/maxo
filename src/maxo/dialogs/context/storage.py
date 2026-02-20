@@ -135,7 +135,7 @@ class StorageProxy:
         return StorageKey(
             bot_id=self.bot.state.info.user_id,
             chat_id=self.chat_id,
-            user_id=self.user_id,
+            user_id=self.chat_id,
             destiny=f"aiogd:stack:{stack_id}",
         )
 

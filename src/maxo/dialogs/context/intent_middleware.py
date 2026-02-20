@@ -6,7 +6,6 @@ from maxo.dialogs.api.entities import (
     EVENT_CONTEXT_KEY,
     ChatEvent,
     Context,
-    DialogUpdate,
     DialogUpdateEvent,
     EventContext,
     Stack,
@@ -122,11 +121,11 @@ event_context_from_bot_removed_from_chat = event_context_from_user_added_to_chat
 def event_context_from_aiogd(event: DialogUpdateEvent) -> EventContext:
     return EventContext(
         bot=event.bot,
-        user=event.sender,
-        user_id=event.sender.user_id,
-        chat=event.chat,
-        chat_id=event.chat.chat_id,
-        chat_type=event.chat.type,
+        user=event.user,
+        user_id=event.user.user_id,
+        chat=None,
+        chat_id=event.recipient.chat_id,
+        chat_type=event.recipient.chat_type,
     )
 
 
@@ -135,8 +134,8 @@ def event_context_from_error(event: ErrorEvent, ctx: Ctx) -> EventContext:
         return event_context_from_message(event.event, ctx)
     if isinstance(event.event, MessageCallback):
         return event_context_from_callback(event.event, ctx)
-    if isinstance(event.event, DialogUpdate) and event.event.aiogd_update:
-        return event_context_from_aiogd(event.event.aiogd_update)
+    if isinstance(event.event, DialogUpdateEvent):
+        return event_context_from_aiogd(event.event)
     if isinstance(event.event, BotStarted):
         return event_context_from_bot_started(event.event, ctx)
     if isinstance(event.event, BotStopped):

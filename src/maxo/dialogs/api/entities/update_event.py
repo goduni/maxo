@@ -4,7 +4,7 @@ from typing import Any
 from maxo import Bot
 from maxo.fsm import State
 from maxo.routing.updates import BaseUpdate
-from maxo.types import Chat, Recipient, User
+from maxo.types import Recipient, User
 
 from .modes import ShowMode, StartMode
 from .stack import AccessSettings
@@ -20,8 +20,7 @@ class DialogAction(Enum):
 
 
 class DialogUpdateEvent(BaseUpdate):
-    sender: User
-    chat: Chat
+    user: User
     recipient: Recipient
     action: DialogAction
     data: Any
@@ -39,7 +38,3 @@ class DialogStartEvent(DialogUpdateEvent):
 
 class DialogSwitchEvent(DialogUpdateEvent):
     new_state: State
-
-
-class DialogUpdate(BaseUpdate):
-    update: DialogUpdateEvent

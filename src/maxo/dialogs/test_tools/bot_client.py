@@ -32,7 +32,7 @@ class FakeBot(Bot):
     def __init__(self) -> None:
         super().__init__("", None, warming_up=False)
         info = BotInfo(
-            user_id=1,
+            user_id=1000,
             first_name="bot",
             username="bot",
             is_bot=True,
@@ -40,8 +40,11 @@ class FakeBot(Bot):
         )
         self._state = RunningBotState(info=info, api_client=None)
 
+    def answer_on_callback(self, *_: Any, **__: Any) -> None:
+        pass
+
     def __hash__(self) -> int:
-        return 1
+        return 1000
 
     def __eq__(self, other: object) -> bool:
         return self is other

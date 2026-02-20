@@ -38,7 +38,7 @@ from maxo.routing.middlewares.update_context import (
     EVENT_FROM_USER_KEY,
     UPDATE_CONTEXT_KEY,
 )
-from maxo.types import Callback, CallbackButton, Chat, User
+from maxo.types import Callback, CallbackButton, Chat, UpdateContext, User
 from maxo.types.message import Message
 
 if TYPE_CHECKING:
@@ -76,7 +76,7 @@ class RenderDialog:
 class FakeManager(DialogManager):
     def __init__(self) -> None:
         self._event = DialogUpdateEvent(
-            sender=User(
+            user=User(
                 id=1,
                 is_bot=False,
                 first_name="Fake",
@@ -92,15 +92,19 @@ class FakeManager(DialogManager):
         self._dialog: DialogProtocol | None = None
         self._data = {
             MANAGER_KEY: self,
-            UPDATE_CONTEXT_KEY: self._event.chat,
-            EVENT_FROM_USER_KEY: self._event.sender,
+            UPDATE_CONTEXT_KEY: UpdateContext(
+                chat_id=self._event.recipient.chat_id,
+                user_id=self._event.recipient.user_id,
+                type=self._event.recipient.chat_type,
+            ),
+            EVENT_FROM_USER_KEY: self._event.user,
             EVENT_CONTEXT_KEY: EventContext(
                 bot=None,
-                chat=self._event.chat,
-                chat_id=self._event.chat.chat_id,
-                chat_type=self._event.chat.type,
-                user=self._event.sender,
-                user_id=self._event.sender.user_id,
+                chat=None,
+                chat_type=self._event.recipient.chat_type,
+                chat_id=self._event.recipient.chat_id,
+                user=self._event.user,
+                user_id=self._event.user.user_id,
             ),
         }
 

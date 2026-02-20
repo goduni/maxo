@@ -1,5 +1,5 @@
+import logging
 from datetime import UTC, datetime
-from logging import getLogger
 from typing import Any
 
 from maxo import Bot, Dispatcher
@@ -10,28 +10,21 @@ from maxo.dialogs.api.entities import (
     DialogAction,
     DialogStartEvent,
     DialogSwitchEvent,
-    DialogUpdate,
     DialogUpdateEvent,
     EventContext,
     ShowMode,
     StartMode,
 )
-from maxo.dialogs.api.internal import (
-    FakeRecipient,
-    FakeUser,
-)
-from maxo.dialogs.api.protocols import (
-    BaseDialogManager,
-    BgManagerFactory,
-)
+from maxo.dialogs.api.internal import FakeUser
+from maxo.dialogs.api.protocols import BaseDialogManager, BgManagerFactory
 from maxo.dialogs.manager.updater import Updater
 from maxo.dialogs.utils import is_user_loaded
-from maxo.enums import ChatStatus, ChatType
+from maxo.enums import ChatType
 from maxo.fsm import State
 from maxo.routing.interfaces import BaseRouter
 from maxo.types import Recipient, User
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BgManager(BaseDialogManager):
@@ -98,7 +91,7 @@ class BgManager(BaseDialogManager):
 
         return BgManager(
             user=new_event_context.user,
-            chat_id=new_event_context.update_context.chat_id,
+            chat_id=new_event_context.chat_id,
             bot=new_event_context.bot,
             dp=self._router,
             intent_id=intent_id,
@@ -108,8 +101,7 @@ class BgManager(BaseDialogManager):
 
     def _base_event_params(self) -> dict[str, Any]:
         return {
-            "sender": self._event_context.user,
-            "chat": self._event_context.chat,
+            "user": self._event_context.user,
             "recipient": Recipient(
                 user_id=self._event_context.user.id,
                 chat_id=self._event_context.chat_id,
@@ -122,9 +114,7 @@ class BgManager(BaseDialogManager):
 
     async def _notify(self, event: DialogUpdateEvent) -> None:
         bot = self._event_context.bot
-        event.bot = bot  # TODO: ???
-        update = DialogUpdate(update=event)
-        await self._updater.notify(bot=bot, update=update)
+        await self._updater.notify(update=event, bot=bot)
 
     async def _load(self) -> None:
         if self.load:
@@ -135,9 +125,9 @@ class BgManager(BaseDialogManager):
                     self._event_context.user_id,
                     self._event_context.chat_id,
                 )
-                chat_member = await bot.get_chat_member(
-                    self._event_context.chat_id,
-                    self._event_context.user.id,
+                chat_member = await bot.get_members(
+                    chat_id=self._event_context.chat_id,
+                    user_ids=[self._event_context.user.id],
                 )
                 self._event_context.user = chat_member
 
@@ -221,14 +211,6 @@ class BgManagerFactoryImpl(BgManagerFactory):
         stack_id: str | None = None,
         load: bool = False,
     ) -> "BaseDialogManager":
-        chat = FakeRecipient(
-            chat_id=chat_id,
-            type="",
-            is_public=False,
-            last_event_time=datetime.now(UTC),
-            participants_count=1,
-            status=ChatStatus.ACTIVE,
-        )
         user = FakeUser(
             user_id=user_id,
             is_bot=False,
@@ -240,9 +222,9 @@ class BgManagerFactoryImpl(BgManagerFactory):
 
         return BgManager(
             user=user,
-            chat=chat,
+            chat_id=chat_id,
             bot=bot,
-            router=self._router,
+            dp=self._router,
             intent_id=None,
             stack_id=stack_id,
             load=load,

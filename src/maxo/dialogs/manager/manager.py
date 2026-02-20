@@ -31,10 +31,10 @@ from maxo.dialogs.api.internal import (
     EVENT_SIMULATED,
     STACK_KEY,
     STORAGE_KEY,
-    FakeRecipient,
     FakeUser,
     Widget,
 )
+from maxo.dialogs.api.internal.fake_data import FakeChat
 from maxo.dialogs.api.protocols import (
     BaseDialogManager,
     DialogManager,
@@ -51,7 +51,6 @@ from maxo.routing.interfaces import BaseRouter
 from maxo.routing.middlewares.update_context import UPDATE_CONTEXT_KEY
 from maxo.routing.updates import ErrorEvent, MessageCallback, MessageCreated
 from maxo.types import (
-    Chat,
     Message,
     MessageButton,
     Recipient,
@@ -523,16 +522,23 @@ class ManagerImpl(DialogManager):
             last_activity_time=datetime.now(UTC),
         )
 
-    def _get_fake_chat(self, chat_id: int | None = None) -> Chat:
+    def _get_fake_chat(self, chat_id: int | None = None) -> FakeChat:
         """Get Chat if we have info about him or FakeChat instead."""
-        if current_chat := self._ctx.get(UPDATE_CONTEXT_KEY):
-            if chat_id in (None, current_chat.chat_id):
-                return current_chat
+        if update_context := self._ctx.get(UPDATE_CONTEXT_KEY):
+            if chat_id is None or chat_id == update_context.chat_id:
+                return FakeChat(
+                    chat_id=update_context.chat_id,
+                    type=update_context.chat_type,
+                    is_public=False,
+                    last_event_time=datetime.now(UTC),
+                    participants_count=1,
+                    status=ChatStatus.ACTIVE,
+                )
         elif chat_id is None:
             raise ValueError(
                 "Explicit `chat_id` is required for events without current chat",
             )
-        return FakeRecipient(
+        return FakeChat(
             chat_id=chat_id,
             type="",
             is_public=False,
@@ -561,7 +567,7 @@ class ManagerImpl(DialogManager):
             user_id=user.id,
             chat=chat,
             chat_type=chat.type,
-            chat_id=chat_id,
+            chat_id=chat.id,
         )
 
         if stack_id is None:

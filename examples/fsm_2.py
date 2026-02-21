@@ -16,7 +16,7 @@ router = Router(__name__)
 
 
 # FSM + Router: состояния анкеты, state.update_data/get_value, delete_message перед ответом
-class UserRegistatorStatesGroup(StatesGroup):
+class UserRegistrationStatesGroup(StatesGroup):
     INPUT_NAME = State()
     INPUT_AGE = State()
 
@@ -29,12 +29,12 @@ async def start_handler(
 ) -> None:
     await facade.reply_text("Привет. Заполни анкету.")
     await facade.answer_text("Введи имя.")
-    await state.set_state(UserRegistatorStatesGroup.INPUT_NAME)
+    await state.set_state(UserRegistrationStatesGroup.INPUT_NAME)
 
 
 @router.message_created(
     MagicFilter(F.message.body.text)
-    & StateFilter(UserRegistatorStatesGroup.INPUT_NAME),
+    & StateFilter(UserRegistrationStatesGroup.INPUT_NAME),
 )
 async def input_name_handler(
     update: MessageCreated,
@@ -55,11 +55,11 @@ async def input_name_handler(
     )
 
     await state.update_data(name=text)
-    await state.set_state(UserRegistatorStatesGroup.INPUT_AGE)
+    await state.set_state(UserRegistrationStatesGroup.INPUT_AGE)
 
 
 @router.message_created(
-    MagicFilter(F.message.body.text) & StateFilter(UserRegistatorStatesGroup.INPUT_AGE),
+    MagicFilter(F.message.body.text) & StateFilter(UserRegistrationStatesGroup.INPUT_AGE),
 )
 async def input_age_handler(
     update: MessageCreated,

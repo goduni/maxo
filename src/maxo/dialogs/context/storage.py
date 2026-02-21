@@ -119,7 +119,7 @@ class StorageProxy:
         return StorageKey(
             bot_id=self.bot.state.info.user_id,
             chat_id=self.chat_id,
-            user_id=self.chat_id,
+            user_id=self.chat_id,  # Неожиданно, но это нужно для работы в группах
             destiny=f"aiogd:context:{intent_id}",
         )
 
@@ -135,7 +135,7 @@ class StorageProxy:
         return StorageKey(
             bot_id=self.bot.state.info.user_id,
             chat_id=self.chat_id,
-            user_id=self.chat_id,
+            user_id=self.chat_id,  # Неожиданно, но это нужно для работы в группах
             destiny=f"aiogd:stack:{stack_id}",
         )
 

@@ -1,4 +1,6 @@
 import pytest
+
+from maxo import Dispatcher
 from maxo.dialogs import (
     Dialog,
     DialogManager,
@@ -11,8 +13,6 @@ from maxo.dialogs.test_tools.keyboard import InlineButtonTextLocator
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
 from maxo.dialogs.widgets.kbd import Cancel
 from maxo.dialogs.widgets.text import Const, Format
-
-from maxo import Dispatcher
 from maxo.fsm.state import State, StatesGroup
 from maxo.routing.filters import CommandStart
 from maxo.routing.signals import AfterStartup, BeforeStartup
@@ -31,19 +31,19 @@ class ThirdSG(StatesGroup):
     start = State()
 
 
-async def start(message: Message, dialog_manager: DialogManager):
+async def start(message: Message, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 
-async def on_start_main(data, dialog_manager: DialogManager):
+async def on_start_main(data, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(SecondarySG.start)
 
 
-async def on_start_sub(_, dialog_manager: DialogManager):
+async def on_start_sub(_, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(ThirdSG.start)
 
 
-async def on_process_result_sub(_, __, dialog_manager: DialogManager):
+async def on_process_result_sub(_, __, dialog_manager: DialogManager) -> None:
     await dialog_manager.done()
 
 

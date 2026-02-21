@@ -125,11 +125,12 @@ class BgManager(BaseDialogManager):
                     self._event_context.user_id,
                     self._event_context.chat_id,
                 )
-                chat_member = await bot.get_members(
+                chat_members = await bot.get_members(
                     chat_id=self._event_context.chat_id,
-                    user_ids=[self._event_context.user.id],
+                    user_ids=[self._event_context.user_id],
                 )
-                self._event_context.user = chat_member
+                if chat_members:
+                    self._event_context.user = chat_members[0]
 
     async def done(
         self,

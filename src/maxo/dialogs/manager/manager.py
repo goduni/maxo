@@ -510,7 +510,7 @@ class ManagerImpl(DialogManager):
         if isinstance(self.event, MessageCreated):
             current_user = self.event.message.unsafe_sender
         else:
-            current_user = self.event.sender
+            current_user = self.event.user
         ###
 
         if user_id is None or user_id == current_user.id:

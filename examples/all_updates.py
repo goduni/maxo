@@ -44,6 +44,7 @@ bot = Bot(token=os.environ["TOKEN"])
 dp = Dispatcher()
 
 
+# пример обработки всех типов апдейтов: сообщения, колбэки, события чата/бота
 @dp.message_created()
 async def message_created_handler(
     message_created: MessageCreated,

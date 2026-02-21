@@ -15,6 +15,7 @@ from maxo.utils.long_polling import LongPolling
 router = Router(__name__)
 
 
+# FSM + Router: состояния анкеты, state.update_data/get_value, delete_message перед ответом
 class UserRegistatorStatesGroup(StatesGroup):
     INPUT_NAME = State()
     INPUT_AGE = State()

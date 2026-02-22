@@ -41,13 +41,7 @@ _Handler = TypeVar("_Handler", bound=UpdateHandler | SignalHandler)
 
 
 _SignalHandlerFn = Callable[_ParamsP, _ReturnT]
-_UpdateHandlerFn = Callable[[Concatenate[_UpdateT, _ParamsP]], _ReturnT]
-
-
-@overload
-def inject(
-    func: _SignalHandlerFn[_ParamsP, _ReturnT],
-) -> SignalHandlerFn[_SignalT, _ReturnT]: ...
+_UpdateHandlerFn = Callable[Concatenate[_UpdateT, _ParamsP], _ReturnT]
 
 
 @overload
@@ -56,7 +50,13 @@ def inject(
 ) -> UpdateHandlerFn[_UpdateT, _ReturnT]: ...
 
 
-def inject(func):
+@overload
+def inject(
+    func: _SignalHandlerFn[_ParamsP, _ReturnT],
+) -> SignalHandlerFn[_SignalT, _ReturnT]: ...
+
+
+def inject(func: Any) -> Any:
     if CONTAINER_NAME in signature(func).parameters:
         additional_params = []
     else:
@@ -88,7 +88,7 @@ def setup_dishka(
 
     if auto_inject:
 
-        def _auto_inject(**_kwargs: Any) -> None:
+        async def _auto_inject() -> None:
             inject_router(dispatcher)
 
         dispatcher.before_startup.handler(_auto_inject)

@@ -11,7 +11,6 @@ from maxo.routing.updates.base import BaseUpdate
 
 _UpdateT = TypeVar("_UpdateT", bound=BaseUpdate)
 _ReturnT_co = TypeVar("_ReturnT_co", covariant=True)
-_ParamsP = ParamSpec("_ParamsP")
 
 
 @runtime_checkable
@@ -20,8 +19,8 @@ class UpdateHandlerFn(Protocol[_UpdateT, _ReturnT_co]):
         self,
         update: _UpdateT,
         /,
-        *args: _ParamsP.args,
-        **kwargs: _ParamsP.kwargs,
+        *args: Any,
+        **kwargs: Any,
     ) -> _ReturnT_co: ...
 
 

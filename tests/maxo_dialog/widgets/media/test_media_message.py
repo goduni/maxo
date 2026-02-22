@@ -60,11 +60,15 @@ async def test_click() -> None:
     # with url parameter
     await client.send("/url")
     first_message = message_manager.one_message()
-    assert any(a.type == AttachmentType.IMAGE for a in first_message.body.attachments)
+    attachments = first_message.body.attachments
+    assert attachments is not None
+    assert any(a.type == AttachmentType.IMAGE for a in attachments)
 
     message_manager.reset_history()
 
     # with path parameter
     await client.send("/path")
     first_message = message_manager.one_message()
-    assert any(a.type == AttachmentType.IMAGE for a in first_message.body.attachments)
+    attachments = first_message.body.attachments
+    assert attachments is not None
+    assert any(a.type == AttachmentType.IMAGE for a in attachments)

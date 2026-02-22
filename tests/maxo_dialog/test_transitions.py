@@ -65,7 +65,7 @@ def dp(message_manager: MockMessageManager) -> Dispatcher:
                 Back(),
                 state=MainSG.next,
             ),
-        ),
+        )
     )
     dp.include(
         Dialog(
@@ -73,8 +73,8 @@ def dp(message_manager: MockMessageManager) -> Dispatcher:
                 Format("Subdialog"),
                 Cancel(),
                 state=SecondarySG.start,
-            ),
-        ),
+            )
+        )
     )
     setup_dialogs(dp, message_manager=message_manager, events_isolation=event_isolation)
     return dp

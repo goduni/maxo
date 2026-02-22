@@ -96,7 +96,7 @@ class ManagerImpl(DialogManager):
         return self._event
 
     @property
-    def middleware_data(self) -> dict:
+    def middleware_data(self) -> Ctx:
         """Middleware data."""
         return self._ctx
 

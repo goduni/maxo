@@ -27,12 +27,7 @@ class MainSG(StatesGroup):
 
 
 class MyMiddleware(BaseMiddleware[MaxUpdate]):
-    async def __call__(
-        self,
-        update: MaxUpdate,
-        ctx: Ctx,
-        next: NextMiddleware,
-    ) -> None:
+    async def __call__(self, update: MaxUpdate, ctx: Ctx, next: NextMiddleware) -> None:
         ctx["my_key"] = "my_value"
         return await next(ctx)
 
@@ -49,8 +44,7 @@ def message_manager() -> MockMessageManager:
 @pytest.fixture
 def dp(message_manager: MockMessageManager) -> Dispatcher:
     dp = Dispatcher(
-        storage=JsonMemoryStorage(),
-        key_builder=DefaultKeyBuilder(with_destiny=True),
+        storage=JsonMemoryStorage(), key_builder=DefaultKeyBuilder(with_destiny=True)
     )
     dp.message_created.handler(start, CommandStart())
     dp.include(
@@ -58,8 +52,8 @@ def dp(message_manager: MockMessageManager) -> Dispatcher:
             Window(
                 Format("{middleware_data[my_key]}"),
                 state=MainSG.start,
-            ),
-        ),
+            )
+        )
     )
     dp.message_created.middleware.outer(MyMiddleware())
     setup_dialogs(dp, message_manager=message_manager)

@@ -13,7 +13,7 @@ def test_register() -> None:
         Window(
             Format("stub"),
             state=MainSG.start,
-        ),
+        )
     )
 
     dp = Dispatcher()
@@ -26,7 +26,7 @@ def test_name_state_group() -> None:
         Window(
             Format("stub"),
             state=MainSG.start,
-        ),
+        )
     )
     assert dialog.name == "MainSG"
 

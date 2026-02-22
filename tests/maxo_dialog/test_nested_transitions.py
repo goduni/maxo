@@ -69,7 +69,7 @@ def dp(message_manager: MockMessageManager):
                 state=MainSG.start,
             ),
             on_start=on_start_main,
-        ),
+        )
     )
     dp.include(
         Dialog(
@@ -80,7 +80,7 @@ def dp(message_manager: MockMessageManager):
             ),
             on_process_result=on_process_result_sub,
             on_start=on_start_sub,
-        ),
+        )
     )
     dp.include(
         Dialog(
@@ -88,8 +88,8 @@ def dp(message_manager: MockMessageManager):
                 Format("Third"),
                 Cancel(),
                 state=ThirdSG.start,
-            ),
-        ),
+            )
+        )
     )
     setup_dialogs(dp, message_manager=message_manager)
     return dp

@@ -39,9 +39,7 @@ async def on_finish(_event, _button, manager: DialogManager) -> None:
 
 
 async def second_getter(user_getter, **_kwargs: Any) -> dict[str, Any]:
-    return {
-        "user": user_getter(),
-    }
+    return {"user": user_getter()}
 
 
 dialog = Dialog(
@@ -101,10 +99,7 @@ async def test_click() -> None:
 
     # click next
     message_manager.reset_history()
-    callback_id = await client.click(
-        first_message,
-        InlineButtonTextLocator("Button"),
-    )
+    callback_id = await client.click(first_message, InlineButtonTextLocator("Button"))
 
     message_manager.assert_answered(callback_id)
     usecase.assert_called()

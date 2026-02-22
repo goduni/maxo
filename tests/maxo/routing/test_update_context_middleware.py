@@ -94,10 +94,10 @@ async def test_resolve_message_removed_without_enrich() -> None:
 
 @pytest.mark.asyncio
 async def test_enrich_disabled_does_not_call_bot() -> None:
-    async def get_chat(chat_id: int) -> None:
+    async def get_chat(self: Any, **kwargs: Any) -> None:
         raise AssertionError("get_chat must not be called")
 
-    async def get_members(chat_id: int, user_ids: list[int]) -> None:
+    async def get_members(self: Any, **kwargs: Any) -> None:
         raise AssertionError("get_members must not be called")
 
     bot = type("Bot", (), {"get_chat": get_chat, "get_members": get_members})()

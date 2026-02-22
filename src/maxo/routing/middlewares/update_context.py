@@ -117,7 +117,7 @@ class UpdateContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
     def _resolve_update_context(self, update: Any) -> UpdateContext:
         chat_id = None
         user_id = None
-        chat_type: ChatType | None = ChatType.DIALOG
+        chat_type: ChatType | None = None
 
         if isinstance(update, _EVENTS_WITH_CHAT_AND_USER):
             chat_id = update.chat_id

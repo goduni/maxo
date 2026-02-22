@@ -2,12 +2,13 @@ from unittest.mock import Mock
 
 import pytest
 
+from maxo.dialogs import DialogManager
 from maxo.dialogs.widgets.media import MediaScroll, StaticMedia
 from maxo.dialogs.widgets.text import Format
 
 
 @pytest.mark.asyncio
-async def test_render_media_scroll(mock_manager) -> None:
+async def test_render_media_scroll(mock_manager: DialogManager) -> None:
     media = MediaScroll(
         items=["0.png", "1.png", "2.png"],
         media=StaticMedia(path=Format("/{item}")),

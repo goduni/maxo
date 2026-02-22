@@ -16,12 +16,15 @@ from maxo.dialogs.test_tools.keyboard import InlineButtonTextLocator
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
 from maxo.dialogs.widgets.kbd import Button
 from maxo.dialogs.widgets.text import Const, Format
+from maxo.dialogs.widgets.utils import GetterVariant
 from maxo.fsm.key_builder import DefaultKeyBuilder
 from maxo.fsm.state import State, StatesGroup
 from maxo.fsm.storages.memory import SimpleEventIsolation
 from maxo.routing.filters import CommandStart
 from maxo.routing.signals import AfterStartup, BeforeStartup
+from maxo.routing.updates import MessageCallback, MessageCreated
 from maxo.types import Message
+from collections.abc import Callable
 
 
 class MainSG(StatesGroup):
@@ -29,16 +32,16 @@ class MainSG(StatesGroup):
     next = State()
 
 
-async def on_click(_event, _button, manager: DialogManager) -> None:
+async def on_click(_event: MessageCallback, _button: Button, manager: DialogManager) -> None:
     manager.middleware_data["usecase"]()
     await manager.next()
 
 
-async def on_finish(_event, _button, manager: DialogManager) -> None:
+async def on_finish(_event: MessageCallback, _button: Button, manager: DialogManager) -> None:
     await manager.done()
 
 
-async def second_getter(user_getter, **_kwargs: Any) -> dict[str, Any]:
+async def second_getter(user_getter: Callable[[], str], **_kwargs: Any) -> dict[str, Any]:
     return {
         "user": user_getter(),
     }
@@ -59,7 +62,7 @@ dialog = Dialog(
 )
 
 
-async def start(message: Message, dialog_manager: DialogManager) -> None:
+async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 

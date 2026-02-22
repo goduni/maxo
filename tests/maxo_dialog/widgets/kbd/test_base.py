@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from magic_filter import F
 
@@ -14,21 +16,22 @@ class Button(Keyboard):
 
     async def _render_keyboard(
         self,
-        data,
+        data: dict[Any, Any],
         manager: DialogManager,
     ) -> RawKeyboard:
+        assert self.widget_id is not None
         return [[MessageButton(text=self.widget_id)]]
 
 
 @pytest.mark.asyncio
-async def test_or(mock_manager) -> None:
+async def test_or(mock_manager: DialogManager) -> None:
     text = Button("a") | Button("b")
     res = await text.render_keyboard({}, mock_manager)
     assert res == [[MessageButton(text="a")]]
 
 
 @pytest.mark.asyncio
-async def test_or_condition(mock_manager) -> None:
+async def test_or_condition(mock_manager: DialogManager) -> None:
     text = Button("A", when=F["a"]) | Button("B", when=F["b"]) | Button("C")
     res = await text.render_keyboard({"a": True}, mock_manager)
     assert res == [[MessageButton(text="A")]]

@@ -1,10 +1,11 @@
 import pytest
 
+from maxo.dialogs import DialogManager
 from maxo.dialogs.widgets.kbd import Calendar, CalendarScope
 
 
 @pytest.mark.asyncio
-async def test_render_calendar(mock_manager) -> None:
+async def test_render_calendar(mock_manager: DialogManager) -> None:
     calendar = Calendar(id="calendar")
     res_days = await calendar.render_keyboard(data={}, manager=mock_manager)
     assert res_days

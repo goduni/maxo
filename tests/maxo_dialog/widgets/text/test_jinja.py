@@ -5,13 +5,13 @@ from maxo.dialogs.widgets.text import Jinja
 
 
 @pytest.fixture
-def mock_manager(mock_manager) -> DialogManager:
-    mock_manager.middleware_data = {}
+def mock_manager(mock_manager: DialogManager) -> DialogManager:
+    setattr(mock_manager, "middleware_data", {})
     return mock_manager
 
 
 @pytest.mark.asyncio
-async def test_render_jinja(mock_manager) -> None:
+async def test_render_jinja(mock_manager: DialogManager) -> None:
     jinja = Jinja(
         """
 <b>{{title}}</b>

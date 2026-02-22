@@ -1,14 +1,16 @@
 import operator
+from typing import Any
 
 import pytest
 
+from maxo.dialogs import DialogManager
 from maxo.dialogs.widgets.kbd import Select
 from maxo.dialogs.widgets.text import Format
 
 
 @pytest.mark.asyncio
-async def test_render_select(mock_manager) -> None:
-    select = Select(
+async def test_render_select(mock_manager: DialogManager) -> None:
+    select: Select[Any] = Select(
         Format("{item[1]} ({pos}/3)"),
         id="fruit",
         item_id_getter=operator.itemgetter(0),

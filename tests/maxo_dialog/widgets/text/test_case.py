@@ -1,11 +1,12 @@
 import pytest
 from magic_filter import F
 
+from maxo.dialogs import DialogManager
 from maxo.dialogs.widgets.text import Case, Const, Format
 
 
 @pytest.mark.asyncio
-async def test_render_case(mock_manager) -> None:
+async def test_render_case(mock_manager: DialogManager) -> None:
     case = Case(
         {
             0: Format("{number} is even!"),

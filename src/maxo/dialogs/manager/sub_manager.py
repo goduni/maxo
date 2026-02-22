@@ -1,5 +1,6 @@
 import dataclasses
 
+from maxo import Ctx
 from maxo.dialogs.api.entities import (
     AccessSettings,
     ChatEvent,
@@ -10,20 +11,13 @@ from maxo.dialogs.api.entities import (
     StartMode,
 )
 from maxo.dialogs.api.internal import Widget
-from maxo.dialogs.api.protocols import (
-    BaseDialogManager,
-    DialogManager,
-)
+from maxo.dialogs.api.protocols import BaseDialogManager, DialogManager
 from maxo.fsm import State
 
 
 class SubManager(DialogManager):
     def __init__(
-        self,
-        widget: Widget,
-        manager: DialogManager,
-        widget_id: str,
-        item_id: str,
+        self, widget: Widget, manager: DialogManager, widget_id: str, item_id: str
     ) -> None:
         self.widget = widget
         self.manager = manager
@@ -35,7 +29,7 @@ class SubManager(DialogManager):
         return self.manager.event
 
     @property
-    def middleware_data(self) -> dict:
+    def middleware_data(self) -> Ctx:
         """Middleware data."""
         return self.manager.middleware_data
 
@@ -103,9 +97,7 @@ class SubManager(DialogManager):
         await self.manager.back(show_mode)
 
     async def done(
-        self,
-        result: Data | None = None,
-        show_mode: ShowMode | None = None,
+        self, result: Data | None = None, show_mode: ShowMode | None = None
     ) -> None:
         await self.manager.done(result, show_mode)
 
@@ -128,18 +120,10 @@ class SubManager(DialogManager):
             access_settings=access_settings,
         )
 
-    async def switch_to(
-        self,
-        state: State,
-        show_mode: ShowMode | None = None,
-    ) -> None:
+    async def switch_to(self, state: State, show_mode: ShowMode | None = None) -> None:
         await self.manager.switch_to(state, show_mode)
 
-    async def update(
-        self,
-        data: dict,
-        show_mode: ShowMode | None = None,
-    ) -> None:
+    async def update(self, data: dict, show_mode: ShowMode | None = None) -> None:
         self.current_context().dialog_data.update(data)
         await self.show(show_mode)
 
@@ -151,8 +135,5 @@ class SubManager(DialogManager):
         load: bool = False,
     ) -> BaseDialogManager:
         return self.manager.bg(
-            user_id=user_id,
-            chat_id=chat_id,
-            stack_id=stack_id,
-            load=load,
+            user_id=user_id, chat_id=chat_id, stack_id=stack_id, load=load
         )

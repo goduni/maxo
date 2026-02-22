@@ -50,12 +50,7 @@ from maxo.fsm import State
 from maxo.routing.interfaces import BaseRouter
 from maxo.routing.middlewares.update_context import UPDATE_CONTEXT_KEY
 from maxo.routing.updates import ErrorEvent, MessageCallback, MessageCreated
-from maxo.types import (
-    Message,
-    MessageButton,
-    Recipient,
-    User,
-)
+from maxo.types import Message, MessageButton, Recipient, User
 
 from .bg_manager import BgManager
 

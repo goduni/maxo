@@ -3,12 +3,7 @@ from collections.abc import Sequence
 from logging import getLogger
 
 from maxo import Bot
-from maxo.dialogs.api.entities import (
-    MediaAttachment,
-    NewMessage,
-    OldMessage,
-    ShowMode,
-)
+from maxo.dialogs.api.entities import MediaAttachment, NewMessage, OldMessage, ShowMode
 from maxo.dialogs.api.protocols import (
     MediaIdStorageProtocol,
     MessageManagerProtocol,

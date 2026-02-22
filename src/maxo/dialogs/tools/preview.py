@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Optional
 import anyio
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from maxo import Ctx
 from maxo.dialogs.api.entities import (
     EVENT_CONTEXT_KEY,
     AccessSettings,
@@ -135,7 +136,7 @@ class FakeManager(DialogManager):
         await self.switch_to(new_state, show_mode)
 
     @property
-    def middleware_data(self) -> dict:
+    def middleware_data(self) -> Ctx:
         return self._data
 
     @property

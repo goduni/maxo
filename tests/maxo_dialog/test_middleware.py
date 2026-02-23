@@ -12,15 +12,20 @@ from maxo.fsm.state import State, StatesGroup
 from maxo.routing.ctx import Ctx
 from maxo.routing.filters.command import CommandStart
 from maxo.routing.interfaces import BaseMiddleware, NextMiddleware
-from maxo.routing.updates import MaxUpdate, MessageCreated
+from maxo.routing.updates import MessageCreated
 
 
 class MainSG(StatesGroup):
     start = State()
 
 
-class MyMiddleware(BaseMiddleware[MaxUpdate]):
-    async def __call__(self, update: MaxUpdate, ctx: Ctx, next: NextMiddleware) -> None:
+class MyMiddleware(BaseMiddleware[MessageCreated]):
+    async def __call__(
+        self,
+        update: MessageCreated,
+        ctx: Ctx,
+        next: NextMiddleware,
+    ) -> None:
         ctx["my_key"] = "my_value"
         await next(ctx)
 

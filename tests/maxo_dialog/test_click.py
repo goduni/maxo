@@ -1,16 +1,11 @@
+from collections.abc import Callable
 from typing import Any
 from unittest.mock import Mock
 
 import pytest
 
 from maxo import Dispatcher
-from maxo.dialogs import (
-    Dialog,
-    DialogManager,
-    StartMode,
-    Window,
-    setup_dialogs,
-)
+from maxo.dialogs import Dialog, DialogManager, StartMode, Window, setup_dialogs
 from maxo.dialogs.test_tools import BotClient, MockMessageManager
 from maxo.dialogs.test_tools.keyboard import InlineButtonTextLocator
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
@@ -46,7 +41,10 @@ async def on_finish(
     await manager.done()
 
 
-async def second_getter(user_getter, **_kwargs: Any) -> dict[str, Any]:
+async def second_getter(
+    user_getter: Callable[[], str],
+    **_kwargs: Any,
+) -> dict[str, Any]:
     return {"user": user_getter()}
 
 

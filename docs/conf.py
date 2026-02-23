@@ -151,9 +151,9 @@ def fix_docstring(app, what, name, obj, options, lines):
             # Экранируем висячие подчеркивания и звездочки
             processed_line = re.sub(r'(?<!\\)([_*])', r'\\\1', processed_line)
 
-            # Если в строке осталась одинокая кавычка, экранируем её
+            # Удаляем только висячую кавычку в конце, если она не часть пары
             if processed_line.count('`') % 2 != 0:
-                processed_line = processed_line.replace('`', r'\`')
+                processed_line = re.sub(r'(?<!`)(`)\s*$', r'\\`', processed_line)
 
             new_lines.append(processed_line)
 

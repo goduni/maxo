@@ -55,7 +55,7 @@
 
     router = Router()
 
-    @router.message_created.handler(text="/start")
+    @router.message_created(Command("start"))
     async def start_handler(message: MessageCreated, dialog_manager: DialogManager):
         await dialog_manager.start(MyDialog.main, mode=StartMode.RESET_STACK)
 

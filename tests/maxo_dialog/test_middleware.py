@@ -2,13 +2,7 @@ import pytest
 
 from maxo import Dispatcher
 from maxo.bot.bot import Bot
-from maxo.dialogs import (
-    Dialog,
-    DialogManager,
-    StartMode,
-    Window,
-    setup_dialogs,
-)
+from maxo.dialogs import Dialog, DialogManager, StartMode, Window, setup_dialogs
 from maxo.dialogs.test_tools import MockMessageManager
 from maxo.dialogs.test_tools.bot_client import BotClient, FakeBot
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
@@ -18,7 +12,7 @@ from maxo.fsm.state import State, StatesGroup
 from maxo.routing.ctx import Ctx
 from maxo.routing.filters.command import CommandStart
 from maxo.routing.interfaces import BaseMiddleware, NextMiddleware
-from maxo.routing.updates import MessageCreated
+from maxo.routing.updates import MaxUpdate, MessageCreated
 
 
 class MainSG(StatesGroup):
@@ -71,9 +65,7 @@ def bot() -> Bot:
 
 @pytest.mark.asyncio
 async def test_middleware(
-    bot: Bot,
-    message_manager: MockMessageManager,
-    client: BotClient,
+    bot: Bot, message_manager: MockMessageManager, client: BotClient
 ) -> None:
     await client.send("/start")
     first_message = message_manager.one_message()

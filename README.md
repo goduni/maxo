@@ -115,7 +115,7 @@ from magic_filter import F
 from maxo import Bot, Dispatcher, Router
 from maxo.integrations.magic_filter import MagicFilter
 from maxo.routing.filters import CommandStart
-from maxo.routing.updates import MessageCallback
+from maxo.routing.updates import MessageCreated, MessageCallback
 from maxo.utils.builders import KeyboardBuilder
 from maxo.utils.facades import MessageCallbackFacade, MessageCreatedFacade
 from maxo.utils.long_polling import LongPolling
@@ -125,7 +125,7 @@ router = Router()
 
 @router.message_created(CommandStart())
 async def start_handler(
-    update: MessageCallback,
+    update: MessageCreated,
     facade: MessageCreatedFacade,
 ) -> None:
     keyboard = (

@@ -116,6 +116,7 @@ fix = true
 line-length = 88
 indent-width = 4
 target-version = "py312"
+exclude = ["docs/conf.py"]
 
 [tool.ruff.lint]
 select = [

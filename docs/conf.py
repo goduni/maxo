@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import cast
 
 # We need `maxo` to be importable from here:
-_ROOT = Path('..').resolve(strict=True)
+_ROOT = Path("..").resolve(strict=True)
 sys.path.insert(0, str(_ROOT))
 
 
@@ -22,31 +22,31 @@ def _get_project_meta() -> dict[str, str]:
 pkg_meta = _get_project_meta()
 project = str(pkg_meta["name"])
 
-copyright = f"2026, Kirill Lesovoy"
+copyright = "2026, Kirill Lesovoy"
 author = "Kirill Lesovoy"
-version = str(pkg_meta['version'])
+version = str(pkg_meta["version"])
 release = version
 
 # ----- General configuration -----
 
 extensions = [
-    'sphinx.ext.napoleon',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.intersphinx',
+    "sphinx.ext.napoleon",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+    "sphinx.ext.intersphinx",
     # https://github.com/executablebooks/MyST-Parser
-    'myst_parser',
+    "myst_parser",
     # 3rd party, order matters:
-    'sphinx_design',
-    'sphinx_copybutton',
-    'sphinx_contributors',
-    'sphinx_tabs.tabs',
-    'sphinx_iconify',
-    'sphinxcontrib.mermaid',
+    "sphinx_design",
+    "sphinx_copybutton",
+    "sphinx_contributors",
+    "sphinx_tabs.tabs",
+    "sphinx_iconify",
+    "sphinxcontrib.mermaid",
 ]
 
 # Napoleon:
@@ -70,7 +70,7 @@ autodoc_default_options = {
 
 
 def setup(app):
-    app.connect('autodoc-process-docstring', fix_docstring, priority=400)
+    app.connect("autodoc-process-docstring", fix_docstring, priority=400)
 
 
 def fix_docstring(app, what, name, obj, options, lines):
@@ -79,16 +79,16 @@ def fix_docstring(app, what, name, obj, options, lines):
         return
 
     # Только для наших модулей
-    if not name.startswith('maxo'):
+    if not name.startswith("maxo"):
         return
 
-    is_method = name.startswith('maxo.bot.methods')
-    is_type = name.startswith('maxo.types')
+    is_method = name.startswith("maxo.bot.methods")
+    is_type = name.startswith("maxo.types")
 
-    if not hasattr(app, '_method_args'):
+    if not hasattr(app, "_method_args"):
         app._method_args = {}
 
-    class_name = name if what == 'class' else ".".join(name.split(".")[:-1])
+    class_name = name if what == "class" else ".".join(name.split(".")[:-1])
 
     new_lines = []
     in_code = False
@@ -111,7 +111,7 @@ def fix_docstring(app, what, name, obj, options, lines):
                 in_args = False
                 if s: new_lines.append(line)
             else:
-                m = re.match(r'^([a-z0-9_]+)\s*:\s*(.*)', s, re.I)
+                m = re.match(r"^([a-z0-9_]+)\s*:\s*(.*)", s, re.IGNORECASE)
                 if m:
                     arg_name, arg_desc = m.groups()
                     if class_name not in app._method_args:
@@ -146,26 +146,26 @@ def fix_docstring(app, what, name, obj, options, lines):
         else:
             # 5. Экранирование и конвертация Markdown -> rST
             # Конвертируем одинарные обратные кавычки в двойные (inline code)
-            processed_line = re.sub(r'(?<!`)`([^`\n]+)`(?!`)', r'``\1``', line)
+            processed_line = re.sub(r"(?<!`)`([^`\n]+)`(?!`)", r"``\1``", line)
 
             # Экранируем висячие подчеркивания и звездочки
-            processed_line = re.sub(r'(?<!\\)([_*])', r'\\\1', processed_line)
+            processed_line = re.sub(r"(?<!\\)([_*])", r"\\\1", processed_line)
 
             # Удаляем только висячую кавычку в конце, если она не часть пары
-            if processed_line.count('`') % 2 != 0:
-                processed_line = re.sub(r'(?<!`)(`)\s*$', r'\\`', processed_line)
+            if processed_line.count("`") % 2 != 0:
+                processed_line = re.sub(r"(?<!`)(`)\s*$", r"\\`", processed_line)
 
             new_lines.append(processed_line)
 
     # 6. Подставляем описание атрибута, если оно пустое
-    if (is_method or is_type) and what in ('attribute', 'variable'):
+    if (is_method or is_type) and what in ("attribute", "variable"):
         if not any(l.strip() for l in new_lines):
             attr_name = name.split(".")[-1]
             if class_name in app._method_args and attr_name in app._method_args[class_name]:
                 desc = app._method_args[class_name][attr_name]
                 # Обрабатываем описание так же
-                desc = re.sub(r'(?<!`)`([^`\n]+)`(?!`)', r'``\1``', desc)
-                desc = re.sub(r'(?<!\\)([_*])', r'\\\1', desc)
+                desc = re.sub(r"(?<!`)`([^`\n]+)`(?!`)", r"``\1``", desc)
+                desc = re.sub(r"(?<!\\)([_*])", r"\\\1", desc)
                 new_lines.append(desc)
 
     lines[:] = new_lines

@@ -70,3 +70,32 @@ Magic Filter
     class MyFilter(BaseFilter[MessageCreated]):
         async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
             return update.message.body.text == "foo"
+
+Пример: фильтр с параметром и DI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Фильтр может принимать аргументы конструктора и возвращать словарь с данными, которые станут доступны обработчику:
+
+.. code-block:: python
+
+    from maxo.routing.filters import BaseFilter
+    from maxo.routing.updates.message_created import MessageCreated
+    from maxo.routing.ctx import Ctx
+
+    class MinLengthFilter(BaseFilter[MessageCreated]):
+        """Пропускает сообщения длиннее min_length символов."""
+
+        def __init__(self, min_length: int):
+            self.min_length = min_length
+
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool | dict:
+            text = update.message.body.text or ""
+            if len(text) >= self.min_length:
+                # Возвращаем словарь — значения попадут в аргументы обработчика
+                return {"text_length": len(text)}
+            return False
+
+    @router.message_created(MinLengthFilter(10))
+    async def long_message_handler(update, ctx, facade, text_length: int):
+        await facade.answer_text(f"Длинное сообщение! ({text_length} символов)")
+

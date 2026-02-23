@@ -144,7 +144,7 @@ Contributors
    pages/dialogs/widgets
    pages/dialogs/transitions
    pages/dialogs/data_and_context
-   pages/dialogs/setup_and_integrations
+   pages/dialogs/background_manager
 
 .. toctree::
    :maxdepth: 2

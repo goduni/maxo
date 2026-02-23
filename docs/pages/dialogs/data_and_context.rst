@@ -9,7 +9,17 @@
 
 Геттер — это функция, возвращающая словарь с данными для шаблонов и форматов. Геттер можно повесить как на всё окно (``Window``), так и на весь диалог (``Dialog``). Словари объединяются.
 
+Геттер на окно
+--------------
+
 .. code-block:: python
+
+    from maxo.dialogs import Window
+    from maxo.dialogs.widgets.text import Format
+    from maxo.fsm import State, StatesGroup
+
+    class SG(StatesGroup):
+        main = State()
 
     async def get_user_data(manager, **kwargs):
         return {
@@ -20,32 +30,144 @@
     Window(
         Format("Пользователь {name}, баланс: {balance}"),
         state=SG.main,
-        getter=get_user_data
+        getter=get_user_data,
+    )
+
+Геттер на диалог
+----------------
+
+Если один и тот же набор данных нужен во всех окнах диалога, удобнее повесить геттер на весь ``Dialog``. Он будет вызван для каждого окна, а его результат объединится со словарём локального геттера окна.
+
+.. code-block:: python
+
+    from maxo.dialogs import Dialog, Window
+    from maxo.dialogs.widgets.text import Const, Format
+    from maxo.fsm import State, StatesGroup
+
+    class SG(StatesGroup):
+        main = State()
+        details = State()
+
+    async def common_getter(manager, **kwargs):
+        """Общий геттер — данные доступны во всех окнах."""
+        return {"app_name": "МойБот", "version": "1.0"}
+
+    async def details_getter(manager, **kwargs):
+        """Локальный геттер — только для окна details."""
+        return {"info": "Подробная информация"}
+
+    dialog = Dialog(
+        Window(
+            Format("{app_name} v{version}"),
+            Const("Главное окно"),
+            state=SG.main,
+        ),
+        Window(
+            Format("{app_name}: {info}"),
+            state=SG.details,
+            getter=details_getter,  # локальный геттер
+        ),
+        getter=common_getter,  # общий геттер для всех окон
     )
 
 Данные из Middleware
 ====================
 
-Геттеры поддерживают Dependency Injection (как и обычные хэндлеры ``maxo``). Туда автоматически прокидываются все данные из мидлварей:
+Геттеры поддерживают Dependency Injection (как и обычные хэндлеры ``maxo``). Туда автоматически прокидываются все данные из мидлварей.
+
+Например, если у вас есть мидлварь, которая по каждому событию достаёт из базы объект текущего пользователя:
+
+.. code-block:: python
+
+    from maxo.routing.interfaces.middleware import BaseMiddleware, NextMiddleware
+    from maxo.routing.ctx import Ctx
+    from maxo.routing.updates.message_created import MessageCreated
+
+    class UserMiddleware(BaseMiddleware[MessageCreated]):
+        async def __call__(self, update: MessageCreated, ctx: Ctx, next: NextMiddleware[MessageCreated]):
+            user = await get_user_from_db(update.message.sender.user_id)
+            ctx["user"] = user  # кладём в контекст
+            return await next(ctx)
+
+То в геттере вы можете принять ``user`` через аргумент:
 
 .. code-block:: python
 
     async def get_user_data(user: User, **kwargs):
-        # user подставляется из мидлвари
-        return {"name": user.full_name}
+        # user подставляется из мидлвари автоматически
+        return {"name": user.full_name, "balance": user.balance}
+
+.. seealso::
+
+   Подробнее о создании и регистрации мидлварей: :doc:`/pages/event-handling/middlewares`.
 
 DialogData и StartData
 ======================
 
-Помимо геттеров, у ``DialogManager`` есть доступ к состоянию диалога:
+Помимо геттеров, у ``DialogManager`` есть доступ к состоянию диалога через два ключевых словаря.
 
-* ``manager.start_data``: Данные, переданные при вызове ``manager.start(state, data={...})``. Не мутируют.
-* ``manager.dialog_data``: Словарь, в который можно сохранять данные между переходами окон (аналог FSM-хранилища).
+start_data — данные между диалогами
+------------------------------------
 
-Пример использования ``dialog_data``:
+``start_data`` — это **неизменяемые** данные, переданные при запуске диалога через ``manager.start(state, data={...})``. Используются для передачи начальных параметров **из одного диалога в другой** (или из хэндлера в диалог).
+
+**Пример 1: Запуск диалога из хэндлера с данными**
 
 .. code-block:: python
 
-    async def on_input(message, widget, manager):
+    from maxo.routing.filters import Command
+
+    @router.message_created(Command("profile"))
+    async def show_profile(message, dialog_manager):
+        await dialog_manager.start(
+            ProfileSG.main,
+            data={"user_id": message.message.sender.user_id},
+        )
+
+**Пример 2: Чтение start_data в геттере**
+
+.. code-block:: python
+
+    async def profile_getter(dialog_manager, **kwargs):
+        user_id = dialog_manager.start_data["user_id"]
+        user = await get_user_from_db(user_id)
+        return {"name": user.name, "age": user.age}
+
+**Пример 3: Запуск вложенного диалога с данными**
+
+.. code-block:: python
+
+    async def on_edit_click(callback, button, manager):
+        # Передаём данные из текущего диалога в дочерний
+        await manager.start(
+            EditSG.main,
+            data={"item_id": manager.dialog_data["selected_item"]},
+        )
+
+dialog_data — данные между окнами
+----------------------------------
+
+``dialog_data`` — это **мутируемый** словарь для хранения промежуточных данных **внутри одного диалога**, между переходами окон. Аналог FSM-хранилища, но привязан к конкретному диалогу.
+
+.. code-block:: python
+
+    async def on_name_input(message, widget, manager):
+        manager.dialog_data["name"] = message.text
+        await manager.next()
+
+    async def on_age_input(message, widget, manager):
         manager.dialog_data["age"] = message.text
         await manager.next()
+
+    async def summary_getter(dialog_manager, **kwargs):
+        return {
+            "name": dialog_manager.dialog_data.get("name", "—"),
+            "age": dialog_manager.dialog_data.get("age", "—"),
+        }
+
+.. important::
+
+   **Главное отличие:**
+
+   - ``start_data`` — передаётся извне при запуске и **не изменяется**. Для связи *между* диалогами.
+   - ``dialog_data`` — создаётся внутри диалога и **свободно мутируется**. Для связи *между окнами* одного диалога.

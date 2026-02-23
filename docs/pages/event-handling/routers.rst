@@ -65,6 +65,43 @@
     # Диспетчер включает роутер профиля
     dispatcher.include(profile_router)
 
+Фильтры на уровне роутера
+--------------------------
+
+Помимо фильтров на отдельных обработчиках, вы можете установить **фильтр на целый роутер** (точнее — на его наблюдатель за конкретным типом события).
+
+Если фильтр роутера не проходит, **все** обработчики этого типа в данном роутере будут пропущены, и событие перейдёт к следующему роутеру.
+
+.. code-block:: python
+
+    from maxo import Router
+    from maxo.routing.filters import BaseFilter
+    from maxo.routing.updates.message_created import MessageCreated
+    from maxo.routing.ctx import Ctx
+
+    class IsGroupChat(BaseFilter[MessageCreated]):
+        """Пропускает только сообщения из групповых чатов."""
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+            return update.message.recipient.chat_type == "chat"
+
+    # Создаём роутер и навешиваем фильтр на все его message_created обработчики
+    group_router = Router(name="group")
+    group_router.message_created.filter(IsGroupChat())
+
+    @group_router.message_created()
+    async def group_handler(update, ctx, facade):
+        # Этот обработчик вызовется ТОЛЬКО для групповых чатов
+        await facade.answer_text("Привет, группа!")
+
+    @group_router.message_created()
+    async def another_group_handler(update, ctx, facade):
+        # Этот обработчик тоже только для групповых чатов
+        ...
+
+.. note::
+
+   Метод ``.filter()`` устанавливается на наблюдатель конкретного типа события (например, ``message_created``, ``message_callback``). Это позволяет гибко управлять маршрутизацией: один роутер может обрабатывать только события из групп, другой — только из личных сообщений.
+
 Порядок обработки
 -----------------
 
@@ -76,6 +113,40 @@
 
 Если обработчик найден и все фильтры прошли успешно, событие обрабатывается, и дальнейшее распространение останавливается.
 Если ни один обработчик в текущем роутере не подошел, управление передается следующему роутеру в списке.
+
+Пример: приоритет обработчиков
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from maxo import Dispatcher, Router
+    from maxo.routing.filters import Command
+
+    dispatcher = Dispatcher()
+    admin_router = Router(name="admin")
+    user_router = Router(name="user")
+
+    # 1. Обработчик диспетчера — проверяется ПЕРВЫМ
+    @dispatcher.message_created(Command("start"))
+    async def global_start(update, ctx, facade):
+        await facade.answer_text("Глобальный /start")
+
+    # 2. Обработчик в admin_router — проверяется ВТОРЫМ
+    @admin_router.message_created(Command("start"))
+    async def admin_start(update, ctx, facade):
+        # Этот обработчик НЕ будет вызван для /start,
+        # потому что глобальный обработчик уже перехватил событие
+        await facade.answer_text("Админский /start")
+
+    # 3. Обработчик в user_router — проверяется ТРЕТЬИМ
+    @user_router.message_created()
+    async def echo(update, ctx, facade):
+        # Обрабатывает всё, что не было перехвачено выше
+        await facade.answer_text(update.message.body.text)
+
+    # Порядок подключения определяет приоритет между роутерами
+    dispatcher.include(admin_router)  # admin_router проверяется раньше
+    dispatcher.include(user_router)   # user_router проверяется позже
 
 Доступные события
 -----------------
@@ -138,7 +209,7 @@
 Сигналы жизненного цикла
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Эти события не приходят от сервера MAX/API, а генерируются самим фреймворком при запуске и остановке.
+Эти события не приходят от Max API, а генерируются самим фреймворком при запуске и остановке.
 
 .. list-table::
    :header-rows: 1

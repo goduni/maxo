@@ -26,6 +26,7 @@ from maxo.types.update_context import UpdateContext
 
 UPDATE_CONTEXT_KEY: Final = "update_context"
 EVENT_FROM_USER_KEY: Final = "event_from_user"
+EVENT_CHAT_KEY: Final = "event_chat"
 
 
 class UpdateContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
@@ -53,69 +54,67 @@ class UpdateContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
         do_enrich = self._enrich or ctx.get("enrich_update_context", False)
         update_context = await self._resolve_update_context(
             update.update,
-            do_enrich,
             ctx,
+            do_enrich,
         )
+
         ctx[UPDATE_CONTEXT_KEY] = update_context
         if update_context.user is not None:
             ctx[EVENT_FROM_USER_KEY] = update_context.user
+        if update_context.chat is not None:
+            ctx[EVENT_CHAT_KEY] = update_context.chat
+
         return await next(ctx)
 
-    async def _enrich_context(
-        self,
-        ctx: Ctx,
-        update_context: UpdateContext,
-        update: Any,
-    ) -> None:
+    async def _enrich_context(self, ctx: Ctx, update_context: UpdateContext) -> None:
         """Дополняет контекст данными чата и пользователя через Bot API."""
         bot = ctx["bot"]
-        if update_context.chat_id is None:
-            return
-        logger = loggers.update_context
-        try:
-            logger.debug("Обогащение контекста: chat_id=%s", update_context.chat_id)
-            chat = await bot.get_chat(chat_id=update_context.chat_id)
-            update_context.chat = chat
-            update_context.type = chat.type
-        except Exception as exc:  # noqa: BLE001
-            logger.warning(
-                "Не удалось обогатить контекст: %s",
-                exc,
-                exc_info=True,
-            )
-            return
-        if (
-            update_context.user_id is not None
-            and update_context.user is None
-            and isinstance(update, MessageRemoved)
+
+        if update_context.chat_id is not None and update_context.chat is None:
+            try:
+                loggers.update_context.debug(
+                    "Обогащение контекста чатом: chat_id=%s",
+                    update_context.chat_id,
+                )
+                chat = await bot.get_chat(chat_id=update_context.chat_id)
+                update_context.chat = chat
+                update_context.type = chat.type
+            except Exception:  # noqa: BLE001
+                loggers.update_context.warning(
+                    "Не удалось обогатить контекст чатом",
+                    exc_info=True,
+                )
+
+        if update_context.chat is not None and is_defined(
+            update_context.chat.dialog_with_user,
         ):
-            chat_obj = update_context.chat
-            if chat_obj is not None and chat_obj.type == ChatType.CHAT:
-                try:
-                    members_list = await bot.get_members(
-                        chat_id=update_context.chat_id,
-                        user_ids=[update_context.user_id],
+            update_context.user = update_context.chat.unsafe_dialog_with_user
+        elif (
+            update_context.user_id is not None
+            and update_context.chat_id is not None
+            and update_context.user is None
+        ):
+            chat_id = update_context.chat_id
+            user_id = update_context.user_id
+            try:
+                members = await bot.get_members(chat_id=chat_id, user_ids=[user_id])
+                if members.members:
+                    update_context.user = members.members[0]
+                else:
+                    raise ValueError(  # noqa: TRY301
+                        f"Юзер user_id={user_id} не найден в чате chat_id={chat_id}",
                     )
-                    if members_list.members:
-                        update_context.user = members_list.members[0]
-                except Exception as exc:  # noqa: BLE001
-                    logger.warning(
-                        "Не удалось загрузить участника чата: %s",
-                        exc,
-                        exc_info=True,
-                    )
-            elif (
-                update_context.chat is not None
-                and update_context.chat.type == ChatType.DIALOG
-                and is_defined(update_context.chat.dialog_with_user)
-            ):
-                update_context.user = update_context.chat.unsafe_dialog_with_user
+            except Exception:  # noqa: BLE001
+                loggers.update_context.warning(
+                    "Не удалось загрузить участника чата",
+                    exc_info=True,
+                )
 
     async def _resolve_update_context(
         self,
         update: Any,
-        do_enrich: bool,
         ctx: Ctx,
+        do_enrich: bool,
     ) -> UpdateContext:
         chat_id = None
         user_id = None
@@ -175,5 +174,6 @@ class UpdateContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
             user=user,
         )
         if do_enrich and "bot" in ctx:
-            await self._enrich_context(ctx, update_context, update)
+            await self._enrich_context(ctx, update_context)
+
         return update_context

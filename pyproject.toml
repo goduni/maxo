@@ -73,6 +73,27 @@ dev = [
 Documentation = "https://maxo.rtfd.io"
 Repository = "https://github.com/K1rL3s/maxo"
 
+[tool.mypy]
+files = ["src/maxo", "tests", "examples"]
+namespace_packages = false
+strict = true
+strict_bytes = true
+local_partial_types = true
+ignore_missing_imports = true
+warn_unreachable = true
+enable_error_code = [
+    "truthy-bool",
+    "truthy-iterable",
+    "redundant-expr",
+    "unused-awaitable",
+    "ignore-without-code",
+    "possibly-undefined",
+    "redundant-self",
+    "mutable-override",
+    "unimported-reveal",
+    "deprecated",
+]
+
 [tool.ruff]
 src = ["src", "examples"]
 fix = true

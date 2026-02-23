@@ -35,4 +35,4 @@ jobs:
 
       - name: Run mypy
         run: |
-          mypy --config-file mypy.ini
+          mypy --config-file pyproject.toml

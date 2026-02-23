@@ -12,9 +12,23 @@ from maxo.routing.middlewares.update_context import (
     UpdateContextMiddleware,
 )
 from maxo.routing.signals.update import MaxoUpdate
+from maxo.routing.updates.bot_added_to_chat import BotAddedToChat
+from maxo.routing.updates.bot_removed_from_chat import BotRemovedFromChat
+from maxo.routing.updates.bot_started import BotStarted
+from maxo.routing.updates.bot_stopped import BotStopped
+from maxo.routing.updates.chat_title_changed import ChatTitleChanged
+from maxo.routing.updates.dialog_cleared import DialogCleared
+from maxo.routing.updates.dialog_muted import DialogMuted
+from maxo.routing.updates.dialog_removed import DialogRemoved
+from maxo.routing.updates.dialog_unmuted import DialogUnmuted
+from maxo.routing.updates.message_callback import MessageCallback
 from maxo.routing.updates.message_created import MessageCreated
+from maxo.routing.updates.message_edited import MessageEdited
 from maxo.routing.updates.message_removed import MessageRemoved
+from maxo.routing.updates.user_added_to_chat import UserAddedToChat
+from maxo.routing.updates.user_removed_from_chat import UserRemovedFromChat
 from maxo.types import (
+    Callback,
     Chat,
     ChatMember,
     ChatMembersList,
@@ -38,18 +52,22 @@ class MockBot:
         return await self._get_members(self, **kwargs)
 
 
+def _make_user(user_id: int = 1, first_name: str = "Test") -> User:
+    return User(
+        user_id=user_id,
+        first_name=first_name,
+        is_bot=False,
+        last_activity_time=datetime.now(UTC),
+    )
+
+
 def _make_message_created(chat_id: int = 1, user_id: int = 1) -> MessageCreated:
     return MessageCreated(
         message=Message(
             body=MessageBody(mid="m1", seq=1),
             recipient=Recipient(chat_type=ChatType.CHAT, chat_id=chat_id),
             timestamp=datetime.now(UTC),
-            sender=User(
-                user_id=user_id,
-                first_name="Test",
-                is_bot=False,
-                last_activity_time=datetime.now(UTC),
-            ),
+            sender=_make_user(user_id=user_id),
         ),
         timestamp=datetime.now(UTC),
     )
@@ -78,6 +96,188 @@ async def _run_middleware(
 
     await middleware(update=update, ctx=ctx, next=next_handler)
     assert next_called
+
+
+@pytest.mark.parametrize(
+    ("update", "expected_chat_id", "expected_user_id", "expected_type", "expect_event_user"),
+    [
+        (
+            BotAddedToChat(
+                chat_id=10,
+                is_channel=False,
+                user=_make_user(1),
+                timestamp=datetime.now(UTC),
+            ),
+            10,
+            1,
+            ChatType.CHAT,
+            True,
+        ),
+        (
+            BotRemovedFromChat(
+                chat_id=11,
+                is_channel=True,
+                user=_make_user(2),
+                timestamp=datetime.now(UTC),
+            ),
+            11,
+            2,
+            ChatType.CHANNEL,
+            True,
+        ),
+        (
+            BotStarted(chat_id=12, user=_make_user(3), timestamp=datetime.now(UTC)),
+            12,
+            3,
+            None,
+            True,
+        ),
+        (
+            BotStopped(chat_id=13, user=_make_user(4), timestamp=datetime.now(UTC)),
+            13,
+            4,
+            None,
+            True,
+        ),
+        (
+            ChatTitleChanged(
+                chat_id=14,
+                title="New title",
+                user=_make_user(5),
+                timestamp=datetime.now(UTC),
+            ),
+            14,
+            5,
+            None,
+            True,
+        ),
+        (
+            DialogCleared(
+                chat_id=15,
+                user=_make_user(6),
+                user_locale="ru",
+                timestamp=datetime.now(UTC),
+            ),
+            15,
+            6,
+            None,
+            True,
+        ),
+        (
+            DialogMuted(
+                chat_id=16,
+                muted_until=datetime.now(UTC),
+                user=_make_user(7),
+                user_locale="ru",
+                timestamp=datetime.now(UTC),
+            ),
+            16,
+            7,
+            None,
+            True,
+        ),
+        (
+            DialogRemoved(
+                chat_id=17,
+                user=_make_user(8),
+                user_locale="ru",
+                timestamp=datetime.now(UTC),
+            ),
+            17,
+            8,
+            None,
+            True,
+        ),
+        (
+            DialogUnmuted(
+                chat_id=18,
+                user=_make_user(9),
+                user_locale="ru",
+                timestamp=datetime.now(UTC),
+            ),
+            18,
+            9,
+            None,
+            True,
+        ),
+        (
+            UserAddedToChat(
+                chat_id=19,
+                is_channel=False,
+                user=_make_user(10),
+                timestamp=datetime.now(UTC),
+            ),
+            19,
+            10,
+            ChatType.CHAT,
+            True,
+        ),
+        (
+            UserRemovedFromChat(
+                chat_id=20,
+                is_channel=True,
+                user=_make_user(11),
+                timestamp=datetime.now(UTC),
+            ),
+            20,
+            11,
+            ChatType.CHANNEL,
+            True,
+        ),
+        (
+            MessageCallback(
+                callback=Callback(
+                    callback_id="cb-1",
+                    timestamp=datetime.now(UTC),
+                    user=_make_user(12),
+                ),
+                message=_make_message_created(chat_id=21, user_id=100).message,
+                timestamp=datetime.now(UTC),
+            ),
+            21,
+            12,
+            ChatType.CHAT,
+            True,
+        ),
+        (
+            MessageEdited(
+                message=_make_message_created(chat_id=22, user_id=13).message,
+                timestamp=datetime.now(UTC),
+            ),
+            22,
+            13,
+            ChatType.CHAT,
+            True,
+        ),
+        (_make_message_created(chat_id=23, user_id=14), 23, 14, ChatType.CHAT, True),
+        (_make_message_removed(chat_id=24, user_id=15), 24, 15, None, False),
+    ],
+)
+@pytest.mark.asyncio
+async def test_resolve_update_context_for_all_update_types(
+    update: Any,
+    expected_chat_id: int,
+    expected_user_id: int,
+    expected_type: ChatType | None,
+    expect_event_user: bool,
+) -> None:
+    middleware = UpdateContextMiddleware()
+    ctx = Ctx({"update": update})
+
+    await _run_middleware(middleware, update, ctx)
+
+    uc = ctx[UPDATE_CONTEXT_KEY]
+    assert uc.chat_id == expected_chat_id
+    assert uc.user_id == expected_user_id
+    assert uc.type == expected_type
+    assert uc.chat is None
+
+    if expect_event_user:
+        assert uc.user is not None
+        assert ctx[EVENT_FROM_USER_KEY] is uc.user
+    else:
+        assert uc.user is None
+        assert EVENT_FROM_USER_KEY not in ctx
 
 
 @pytest.mark.asyncio

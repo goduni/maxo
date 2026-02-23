@@ -4,7 +4,7 @@ from typing import Any
 
 from maxo.dialogs.integrations.magic_filter import DialogMagic
 
-ItemsGetter = Callable[[dict[str, Any]], Sequence[Any]]
+ItemsGetter = Callable[[dict[Any, Any]], Sequence[Any]]
 ItemsGetterVariant = str | ItemsGetter | DialogMagic | Sequence[Any]
 
 
@@ -16,7 +16,7 @@ def _get_identity(items: Sequence[Any]) -> ItemsGetter:
 
 
 def _get_magic_getter(f: DialogMagic) -> ItemsGetter:
-    def items_magic(data: dict[str, Any]) -> Sequence[Any]:
+    def items_magic(data: dict[Any, Any]) -> Sequence[Any]:
         items = f.resolve(data)
         if isinstance(items, Sequence):
             return items

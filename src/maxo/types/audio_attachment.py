@@ -4,6 +4,7 @@ from maxo.enums.attachment_type import AttachmentType
 from maxo.errors import AttributeIsEmptyError
 from maxo.omit import Omittable, Omitted, is_defined
 from maxo.types.attachment import Attachment
+from maxo.types.audio_attachment_request import AudioAttachmentRequest
 from maxo.types.media_attachment_payload import MediaAttachmentPayload
 
 
@@ -55,3 +56,6 @@ class AudioAttachment(Attachment):
             obj=self,
             attr="transcription",
         )
+
+    def to_request(self) -> AudioAttachmentRequest:
+        return AudioAttachmentRequest.factory(token=self.payload.token)

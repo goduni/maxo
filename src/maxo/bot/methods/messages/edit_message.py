@@ -2,7 +2,7 @@ from maxo.bot.methods.base import MaxoMethod
 from maxo.bot.methods.markers import Body, Query
 from maxo.enums.text_format import TextFormat
 from maxo.omit import Omittable, Omitted
-from maxo.types import AttachmentsRequests
+from maxo.types import Attachments, AttachmentsRequests
 from maxo.types.new_message_link import NewMessageLink
 from maxo.types.simple_query_result import SimpleQueryResult
 
@@ -42,7 +42,7 @@ class EditMessage(MaxoMethod[SimpleQueryResult]):
     message_id: Query[str]
     """ID редактируемого сообщения"""
 
-    attachments: Body[list[AttachmentsRequests] | None] = None
+    attachments: Body[list[AttachmentsRequests | Attachments] | None] = None
     """Вложения сообщения. Если пусто, все вложения будут удалены"""
     link: Body[NewMessageLink | None] = None
     """Ссылка на сообщение"""

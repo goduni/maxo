@@ -34,7 +34,7 @@ class ChatMethodsFacade(AttachmentsFacade, ABC):
         attachments = await self.build_attachments(
             base=[],
             keyboard=keyboard,
-            media=media,
+            files=media,
         )
 
         result = await self.bot.send_message(

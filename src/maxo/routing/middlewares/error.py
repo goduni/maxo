@@ -13,12 +13,7 @@ class ErrorMiddleware(BaseMiddleware[Any]):
     def __init__(self, router: BaseRouter) -> None:
         self._router = router
 
-    async def __call__(
-        self,
-        update: Any,
-        ctx: Ctx,
-        next: NextMiddleware[Any],
-    ) -> Any:
+    async def __call__(self, update: Any, ctx: Ctx, next: NextMiddleware[Any]) -> Any:
         try:
             return await next(ctx)
         except (SkipHandler, CancelHandler):  # pragma: no cover

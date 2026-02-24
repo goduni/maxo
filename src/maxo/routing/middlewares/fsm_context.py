@@ -15,10 +15,7 @@ RAW_STATE_KEY = "raw_state"
 
 
 class FSMContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
-    __slots__ = (
-        "_events_isolation",
-        "_storage",
-    )
+    __slots__ = ("_events_isolation", "_storage")
 
     def __init__(
         self,
@@ -62,8 +59,4 @@ class FSMContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
         if chat_id is None or user_id is None:
             return None
 
-        return StorageKey(
-            bot_id=bot_id,
-            chat_id=chat_id,
-            user_id=user_id,
-        )
+        return StorageKey(bot_id=bot_id, chat_id=chat_id, user_id=user_id)

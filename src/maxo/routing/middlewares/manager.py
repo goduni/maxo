@@ -18,11 +18,7 @@ def _partial_middleware(
     next: NextMiddleware[_UpdateT],
 ) -> NextMiddleware[_UpdateT]:
     async def wrapper(ctx: Ctx) -> Any:
-        return await middleware(
-            update=ctx["update"],
-            ctx=ctx,
-            next=next,
-        )
+        return await middleware(update=ctx["update"], ctx=ctx, next=next)
 
     return wrapper
 
@@ -60,10 +56,7 @@ class MiddlewareManagerFacade(Generic[_UpdateT]):
     _inner: MiddlewareManager[_UpdateT]
     _outer: MiddlewareManager[_UpdateT]
 
-    __slots__ = (
-        "_inner",
-        "_outer",
-    )
+    __slots__ = ("_inner", "_outer")
 
     def __init__(self) -> None:
         self._inner = MiddlewareManager()

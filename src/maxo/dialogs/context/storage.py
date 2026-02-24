@@ -2,12 +2,7 @@ from contextlib import AsyncExitStack
 from copy import copy
 
 from maxo import Bot
-from maxo.dialogs.api.entities import (
-    DEFAULT_STACK_ID,
-    AccessSettings,
-    Context,
-    Stack,
-)
+from maxo.dialogs.api.entities import DEFAULT_STACK_ID, AccessSettings, Context, Stack
 from maxo.dialogs.api.exceptions import UnknownIntent, UnknownState
 from maxo.enums import ChatType
 from maxo.fsm import State, StatesGroup

@@ -3,16 +3,10 @@ from collections.abc import Callable
 from typing import Any
 
 from maxo.dialogs.api.internal import RawKeyboard, Widget
-from maxo.dialogs.api.protocols import (
-    DialogManager,
-    DialogProtocol,
-)
+from maxo.dialogs.api.protocols import DialogManager, DialogProtocol
 from maxo.dialogs.manager.sub_manager import SubManager
 from maxo.dialogs.widgets.common import ManagedWidget, WhenCondition
-from maxo.dialogs.widgets.common.items import (
-    ItemsGetterVariant,
-    get_items_getter,
-)
+from maxo.dialogs.widgets.common.items import ItemsGetterVariant, get_items_getter
 from maxo.routing.updates import MessageCallback
 
 from .base import Keyboard

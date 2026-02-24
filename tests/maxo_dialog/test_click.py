@@ -5,13 +5,7 @@ from unittest.mock import Mock
 import pytest
 
 from maxo import Dispatcher
-from maxo.dialogs import (
-    Dialog,
-    DialogManager,
-    StartMode,
-    Window,
-    setup_dialogs,
-)
+from maxo.dialogs import Dialog, DialogManager, StartMode, Window, setup_dialogs
 from maxo.dialogs.test_tools import BotClient, MockMessageManager
 from maxo.dialogs.test_tools.keyboard import InlineButtonTextLocator
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
@@ -51,9 +45,7 @@ async def second_getter(
     user_getter: Callable[[], str],
     **_kwargs: Any,
 ) -> dict[str, Any]:
-    return {
-        "user": user_getter(),
-    }
+    return {"user": user_getter()}
 
 
 dialog = Dialog(
@@ -113,10 +105,7 @@ async def test_click() -> None:
 
     # click next
     message_manager.reset_history()
-    callback_id = await client.click(
-        first_message,
-        InlineButtonTextLocator("Button"),
-    )
+    callback_id = await client.click(first_message, InlineButtonTextLocator("Button"))
 
     message_manager.assert_answered(callback_id)
     usecase.assert_called()

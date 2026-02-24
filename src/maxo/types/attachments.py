@@ -19,10 +19,8 @@ from maxo.types.sticker_attachment_request import StickerAttachmentRequest
 from maxo.types.video_attachment import VideoAttachment
 from maxo.types.video_attachment_request import VideoAttachmentRequest
 
-type MediaAttachments = (
-    PhotoAttachment | VideoAttachment | AudioAttachment | FileAttachment
-)
-type Attachments = (
+MediaAttachments = PhotoAttachment | VideoAttachment | AudioAttachment | FileAttachment
+Attachments = (
     MediaAttachments
     | StickerAttachment
     | ContactAttachment
@@ -30,13 +28,13 @@ type Attachments = (
     | ShareAttachment
     | LocationAttachment
 )
-type MediaAttachmentsRequests = (
+MediaAttachmentsRequests = (
     PhotoAttachmentRequest
     | VideoAttachmentRequest
     | AudioAttachmentRequest
     | FileAttachmentRequest
 )
-type AttachmentsRequests = (
+AttachmentsRequests = (
     MediaAttachmentsRequests
     | StickerAttachmentRequest
     | ContactAttachmentRequest

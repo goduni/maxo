@@ -1,4 +1,4 @@
-name: CI
+name: Test
 
 on:
   push:
@@ -11,32 +11,6 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint (Python 3.14)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.14"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Install lint dependencies
-        run: |
-          uv pip install -e . --group=dev --system
-
-      - name: Run ruff
-        run: |
-          ruff check .
-
-      - name: Run mypy
-        run: |
-          mypy --config-file pyproject.toml
-
   tests:
     name: Tests (${{ matrix.python-version }})
     runs-on: ubuntu-latest

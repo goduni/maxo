@@ -45,11 +45,7 @@ class AttachmentRequestBuilder:
         photos: Omittable[list[str] | None] = Omitted(),
     ) -> Self:
         self._items.append(
-            PhotoAttachmentRequest.factory(
-                url=url,
-                token=token,
-                photos=photos,
-            ),
+            PhotoAttachmentRequest.factory(url=url, token=token, photos=photos),
         )
         return self
 
@@ -87,19 +83,12 @@ class AttachmentRequestBuilder:
         return self
 
     def add_inline_keyboard(self, buttons: Sequence[Sequence[InlineButtons]]) -> Self:
-        self._items.append(
-            InlineKeyboardAttachmentRequest.factory(
-                buttons=buttons,
-            ),
-        )
+        self._items.append(InlineKeyboardAttachmentRequest.factory(buttons=buttons))
         return self
 
     def add_location(self, latitude: Decimal, longitude: Decimal) -> Self:
         self._items.append(
-            LocationAttachmentRequest(
-                latitude=latitude,
-                longitude=longitude,
-            ),
+            LocationAttachmentRequest(latitude=latitude, longitude=longitude),
         )
         return self
 
@@ -114,10 +103,5 @@ class AttachmentRequestBuilder:
         url: Omittable[str | None] = Omitted(),
         token: Omittable[str | None] = Omitted(),
     ) -> Self:
-        self._items.append(
-            ShareAttachmentRequest.factory(
-                url=url,
-                token=token,
-            ),
-        )
+        self._items.append(ShareAttachmentRequest.factory(url=url, token=token))
         return self

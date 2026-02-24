@@ -1,8 +1,5 @@
 from abc import abstractmethod
-from typing import (
-    Protocol,
-    TypeVar,
-)
+from typing import Protocol, TypeVar
 
 from maxo.routing.ctx import Ctx
 from maxo.routing.updates.base import BaseUpdate

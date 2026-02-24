@@ -33,12 +33,7 @@ class BaseKeyBuilder(Protocol):
 
 
 class DefaultKeyBuilder(BaseKeyBuilder):
-    __slots__ = (
-        "prefix",
-        "separator",
-        "with_bot_id",
-        "with_destiny",
-    )
+    __slots__ = ("prefix", "separator", "with_bot_id", "with_destiny")
 
     def __init__(
         self,
@@ -53,11 +48,7 @@ class DefaultKeyBuilder(BaseKeyBuilder):
         self.with_bot_id = with_bot_id
         self.with_destiny = with_destiny
 
-    def build(
-        self,
-        key: StorageKey,
-        type_: StorageKeyType | None = None,
-    ) -> str:
+    def build(self, key: StorageKey, type_: StorageKeyType | None = None) -> str:
         parts = [self.prefix, str(key.chat_id), str(key.user_id)]
 
         if self.with_bot_id:

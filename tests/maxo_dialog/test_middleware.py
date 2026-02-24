@@ -2,13 +2,7 @@ import pytest
 
 from maxo import Dispatcher
 from maxo.bot.bot import Bot
-from maxo.dialogs import (
-    Dialog,
-    DialogManager,
-    StartMode,
-    Window,
-    setup_dialogs,
-)
+from maxo.dialogs import Dialog, DialogManager, StartMode, Window, setup_dialogs
 from maxo.dialogs.test_tools import MockMessageManager
 from maxo.dialogs.test_tools.bot_client import BotClient, FakeBot
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage

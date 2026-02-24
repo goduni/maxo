@@ -1,30 +1,22 @@
 # ruff: noqa: E501
 
-from decimal import Decimal
 from typing import assert_never
 
-from maxo.omit import is_not_omitted
 from maxo.types import (
     Attachments,
     AttachmentsRequests,
-    AudioAttachment,
     AudioAttachmentRequest,
-    ContactAttachment,
     ContactAttachmentRequest,
-    FileAttachment,
     FileAttachmentRequest,
     InlineKeyboardAttachment,
     InlineKeyboardAttachmentRequest,
     Keyboard,
     LocationAttachment,
     LocationAttachmentRequest,
-    PhotoAttachment,
     PhotoAttachmentRequest,
     ShareAttachment,
     ShareAttachmentRequest,
-    StickerAttachment,
     StickerAttachmentRequest,
-    VideoAttachment,
     VideoAttachmentRequest,
 )
 
@@ -40,9 +32,7 @@ def request_to_attachment(request: AttachmentsRequests) -> Attachments:
             longitude=float(request.longitude),
         )
     if isinstance(request, ShareAttachmentRequest):
-        return ShareAttachment(
-            payload=request.payload,
-        )
+        return ShareAttachment(payload=request.payload)
 
     if isinstance(
         request,
@@ -63,42 +53,3 @@ def request_to_attachment(request: AttachmentsRequests) -> Attachments:
         )
 
     assert_never(request)
-
-
-def attachment_to_request(attachment: Attachments) -> AttachmentsRequests:
-    if isinstance(attachment, PhotoAttachment):
-        return PhotoAttachmentRequest.factory(token=attachment.payload.token)
-    if isinstance(attachment, VideoAttachment):
-        return VideoAttachmentRequest.factory(token=attachment.payload.token)
-    if isinstance(attachment, AudioAttachment):
-        return AudioAttachmentRequest.factory(token=attachment.payload.token)
-    if isinstance(attachment, FileAttachment):
-        return FileAttachmentRequest.factory(token=attachment.payload.token)
-    if isinstance(attachment, StickerAttachment):
-        return StickerAttachmentRequest.factory(code=attachment.payload.code)
-    if isinstance(attachment, InlineKeyboardAttachment):
-        return InlineKeyboardAttachmentRequest.factory(
-            buttons=attachment.payload.buttons,
-        )
-    if isinstance(attachment, LocationAttachment):
-        return LocationAttachmentRequest(
-            latitude=Decimal(str(attachment.latitude)),
-            longitude=Decimal(str(attachment.longitude)),
-        )
-    if isinstance(attachment, ShareAttachment):
-        return ShareAttachmentRequest.factory(
-            url=attachment.payload.url,
-            token=attachment.payload.token,
-        )
-    if isinstance(attachment, ContactAttachment):
-        contact_id = (
-            attachment.payload.max_info.id
-            if is_not_omitted(attachment.payload.max_info)
-            else None
-        )
-        return ContactAttachmentRequest.factory(
-            contact_id=contact_id,
-            vcf_info=attachment.payload.vcf_info,
-        )
-
-    assert_never(attachment)

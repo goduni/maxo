@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Any
 
 from maxo.dialogs.api.entities import (
     AccessSettings,
@@ -10,10 +11,7 @@ from maxo.dialogs.api.entities import (
     StartMode,
 )
 from maxo.dialogs.api.internal import Widget
-from maxo.dialogs.api.protocols import (
-    BaseDialogManager,
-    DialogManager,
-)
+from maxo.dialogs.api.protocols import BaseDialogManager, DialogManager
 from maxo.fsm import State
 
 
@@ -104,7 +102,7 @@ class SubManager(DialogManager):
 
     async def done(
         self,
-        result: Data | None = None,
+        result: Any = None,
         show_mode: ShowMode | None = None,
     ) -> None:
         await self.manager.done(result, show_mode)
@@ -128,18 +126,10 @@ class SubManager(DialogManager):
             access_settings=access_settings,
         )
 
-    async def switch_to(
-        self,
-        state: State,
-        show_mode: ShowMode | None = None,
-    ) -> None:
+    async def switch_to(self, state: State, show_mode: ShowMode | None = None) -> None:
         await self.manager.switch_to(state, show_mode)
 
-    async def update(
-        self,
-        data: dict,
-        show_mode: ShowMode | None = None,
-    ) -> None:
+    async def update(self, data: dict, show_mode: ShowMode | None = None) -> None:
         self.current_context().dialog_data.update(data)
         await self.show(show_mode)
 

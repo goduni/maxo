@@ -1,7 +1,7 @@
 from maxo.enums.text_format import TextFormat
 from maxo.errors import AttributeIsEmptyError
 from maxo.omit import Omittable, Omitted, is_defined
-from maxo.types.attachments import AttachmentsRequests
+from maxo.types.attachments import Attachments, AttachmentsRequests
 from maxo.types.base import MaxoType
 from maxo.types.new_message_link import NewMessageLink
 
@@ -16,7 +16,7 @@ class NewMessageBody(MaxoType):
         text: Новый текст сообщения
     """
 
-    attachments: list[AttachmentsRequests] | None = None
+    attachments: list[AttachmentsRequests | Attachments] | None = None
     """Вложения сообщения. Если пусто, все вложения будут удалены"""
     link: NewMessageLink | None = None
     """Ссылка на сообщение"""
@@ -29,7 +29,7 @@ class NewMessageBody(MaxoType):
     """Если false, участники чата не будут уведомлены (по умолчанию `true`)"""
 
     @property
-    def unsafe_attachments(self) -> list[AttachmentsRequests]:
+    def unsafe_attachments(self) -> list[AttachmentsRequests | Attachments]:
         if is_defined(self.attachments):
             return self.attachments
 

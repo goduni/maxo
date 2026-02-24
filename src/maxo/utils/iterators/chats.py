@@ -8,12 +8,7 @@ from maxo.types.chat import Chat
 
 
 class ChatsIterator(AsyncIterator[Chat]):
-    __slots__ = (
-        "_bot",
-        "_chats",
-        "_count",
-        "_marker",
-    )
+    __slots__ = ("_bot", "_chats", "_count", "_marker")
 
     def __init__(
         self,
@@ -35,10 +30,7 @@ class ChatsIterator(AsyncIterator[Chat]):
             return self._chats.popleft()
 
         while True:
-            result = await self._bot.get_chats(
-                count=self._count,
-                marker=self._marker,
-            )
+            result = await self._bot.get_chats(count=self._count, marker=self._marker)
 
             if result.marker is None or is_omitted(result.marker):
                 raise StopAsyncIteration

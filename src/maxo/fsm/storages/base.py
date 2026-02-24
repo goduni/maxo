@@ -8,18 +8,14 @@ from maxo.fsm.key_builder import StorageKey
 from maxo.fsm.state import State
 
 _RawState = NewType("_RawState", str)
-type RawState = _RawState | None
+RawState = _RawState | None
 
 
 class BaseStorage(ABC):
     __slots__ = ()
 
     @abstractmethod
-    async def set_state(
-        self,
-        key: StorageKey,
-        state: State | None = None,
-    ) -> None:
+    async def set_state(self, key: StorageKey, state: State | None = None) -> None:
         raise NotImplementedError
 
     @abstractmethod
@@ -27,11 +23,7 @@ class BaseStorage(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def set_data(
-        self,
-        key: StorageKey,
-        data: MutableMapping[str, Any],
-    ) -> None:
+    async def set_data(self, key: StorageKey, data: MutableMapping[str, Any]) -> None:
         raise NotImplementedError
 
     @abstractmethod

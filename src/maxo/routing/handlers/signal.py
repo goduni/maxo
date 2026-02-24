@@ -1,13 +1,7 @@
 import asyncio
 import inspect
 from functools import partial
-from typing import (
-    Any,
-    Generic,
-    Protocol,
-    TypeVar,
-    runtime_checkable,
-)
+from typing import Any, Generic, Protocol, TypeVar, runtime_checkable
 
 from maxo.routing.ctx import Ctx
 from maxo.routing.filters.always import AlwaysTrueFilter
@@ -28,10 +22,7 @@ class SignalHandlerFn(Protocol[_SignalT, _ReturnT_co]):
     ) -> _ReturnT_co: ...
 
 
-class SignalHandler(
-    Handler[_SignalT, _ReturnT_co],
-    Generic[_SignalT, _ReturnT_co],
-):
+class SignalHandler(Handler[_SignalT, _ReturnT_co], Generic[_SignalT, _ReturnT_co]):
     __slots__ = (
         "_awaitable",
         "_filter",

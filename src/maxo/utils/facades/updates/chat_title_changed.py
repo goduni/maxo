@@ -4,10 +4,7 @@ from maxo.utils.facades.methods.chat import ChatMethodsFacade
 from maxo.utils.facades.updates.base import BaseUpdateFacade
 
 
-class ChatTitleChangedFacade(
-    BaseUpdateFacade[ChatTitleChanged],
-    ChatMethodsFacade,
-):
+class ChatTitleChangedFacade(BaseUpdateFacade[ChatTitleChanged], ChatMethodsFacade):
     @property
     def chat_id(self) -> int:
         return self._update.chat_id

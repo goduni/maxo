@@ -11,10 +11,7 @@ from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.dialogs.api.protocols import DialogManager, DialogProtocol
 from maxo.dialogs.widgets.common import ManagedWidget, WhenCondition
-from maxo.dialogs.widgets.common.items import (
-    ItemsGetterVariant,
-    get_items_getter,
-)
+from maxo.dialogs.widgets.common.items import ItemsGetterVariant, get_items_getter
 from maxo.dialogs.widgets.text import Case, Text
 from maxo.dialogs.widgets.widget_event import (
     WidgetEventProcessor,

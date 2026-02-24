@@ -4,19 +4,19 @@ from typing import Any
 
 from maxo.dialogs.integrations.magic_filter import DialogMagic
 
-ItemsGetter = Callable[[dict], Sequence]
-ItemsGetterVariant = str | ItemsGetter | DialogMagic | Sequence
+ItemsGetter = Callable[[dict[Any, Any]], Sequence[Any]]
+ItemsGetterVariant = str | ItemsGetter | DialogMagic | Sequence[Any]
 
 
-def _get_identity(items: Sequence) -> ItemsGetter:
-    def identity(data: Any) -> Sequence:
+def _get_identity(items: Sequence[Any]) -> ItemsGetter:
+    def identity(data: Any) -> Sequence[Any]:
         return items
 
     return identity
 
 
 def _get_magic_getter(f: DialogMagic) -> ItemsGetter:
-    def items_magic(data: dict) -> Sequence:
+    def items_magic(data: dict[Any, Any]) -> Sequence[Any]:
         items = f.resolve(data)
         if isinstance(items, Sequence):
             return items
@@ -30,6 +30,6 @@ def get_items_getter(attr_val: ItemsGetterVariant) -> ItemsGetter:
         return itemgetter(attr_val)
     if isinstance(attr_val, DialogMagic):
         return _get_magic_getter(attr_val)
-    if isinstance(attr_val, Callable):
+    if callable(attr_val):
         return attr_val
     return _get_identity(attr_val)

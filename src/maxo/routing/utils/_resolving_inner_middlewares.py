@@ -19,18 +19,12 @@ def resolve_middlewares(
     _resolving_middlewares(router, middlewares)
 
     for children_router in router.children_routers:
-        resolve_middlewares(
-            children_router,
-            middlewares.copy(),
-        )
+        resolve_middlewares(children_router, middlewares.copy())
 
 
 def _resolving_middlewares(
     router: BaseRouter,
-    middlewares: MutableMapping[
-        type[BaseUpdate],
-        MutableSequence[BaseMiddleware[Any]],
-    ],
+    middlewares: MutableMapping[type[BaseUpdate], MutableSequence[BaseMiddleware[Any]]],
 ) -> None:
     for update_tp, observer in router.observers.items():
         new_inners = (*middlewares[update_tp],)

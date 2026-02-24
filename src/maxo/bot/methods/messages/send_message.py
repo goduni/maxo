@@ -2,7 +2,7 @@ from maxo.bot.methods.base import MaxoMethod
 from maxo.bot.methods.markers import Body, Query
 from maxo.enums.text_format import TextFormat
 from maxo.omit import Omittable, Omitted
-from maxo.types.attachments import AttachmentsRequests
+from maxo.types.attachments import Attachments, AttachmentsRequests
 from maxo.types.new_message_link import NewMessageLink
 from maxo.types.send_message_result import SendMessageResult
 
@@ -61,7 +61,7 @@ class SendMessage(MaxoMethod[SendMessageResult]):
     user_id: Query[Omittable[int]] = Omitted()
     """Если вы хотите отправить сообщение пользователю, укажите его ID"""
 
-    attachments: Body[list[AttachmentsRequests] | None] = None
+    attachments: Body[list[AttachmentsRequests | Attachments] | None] = None
     """Вложения сообщения. Если пусто, все вложения будут удалены"""
     link: Body[NewMessageLink | None] = None
     """Ссылка на сообщение"""

@@ -80,4 +80,7 @@ class ShareAttachment(Attachment):
         )
 
     def to_request(self) -> ShareAttachmentRequest:
-        return ShareAttachmentRequest.factory(token=self.payload.token)
+        return ShareAttachmentRequest.factory(
+            token=self.payload.token,
+            url=self.payload.url,
+        )

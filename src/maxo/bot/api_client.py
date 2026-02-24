@@ -3,7 +3,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any, Never
 
-from adaptix import P, Retort, dumper, loader
+from adaptix import Chain, P, Retort, dumper, loader
 from aiohttp import ClientSession
 from unihttp.clients.aiohttp import AiohttpAsyncClient
 from unihttp.http import HTTPResponse
@@ -234,6 +234,7 @@ class MaxApiClient(AiohttpAsyncClient):
                 dumper(
                     P[Attachments],
                     lambda attachment: attachment.to_request(),
+                    chain=Chain.FIRST,
                 ),
             ],
         )

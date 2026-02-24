@@ -6,6 +6,7 @@ from maxo.errors import AttributeIsEmptyError
 from maxo.omit import Omittable, Omitted, is_defined
 from maxo.types.attachment import Attachment
 from maxo.types.share_attachment_payload import ShareAttachmentPayload
+from maxo.types.share_attachment_request import ShareAttachmentRequest
 
 
 class ShareAttachment(Attachment):
@@ -76,4 +77,10 @@ class ShareAttachment(Attachment):
         raise AttributeIsEmptyError(
             obj=self,
             attr="title",
+        )
+
+    def to_request(self) -> ShareAttachmentRequest:
+        return ShareAttachmentRequest.factory(
+            token=self.payload.token,
+            url=self.payload.url,
         )

@@ -5,6 +5,7 @@ from maxo.errors import AttributeIsEmptyError
 from maxo.omit import Omittable, Omitted, is_defined, is_not_omitted
 from maxo.types.attachment import Attachment
 from maxo.types.media_attachment_payload import MediaAttachmentPayload
+from maxo.types.video_attachment_request import VideoAttachmentRequest
 from maxo.types.video_thumbnail import VideoThumbnail
 
 
@@ -110,3 +111,6 @@ class VideoAttachment(Attachment):
             obj=self,
             attr="width",
         )
+
+    def to_request(self) -> VideoAttachmentRequest:
+        return VideoAttachmentRequest.factory(token=self.payload.token)

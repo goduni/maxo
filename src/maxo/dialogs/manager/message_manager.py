@@ -25,7 +25,6 @@ from maxo.types import (
     PhotoAttachmentRequest,
     VideoAttachmentRequest,
 )
-from maxo.utils.helpers import attachment_to_request
 from maxo.utils.upload_media import FSInputFile, InputFile
 
 logger = getLogger(__name__)
@@ -175,7 +174,7 @@ class MessageManager(MessageManagerProtocol):
         logger.debug("remove_inline_kbd in %s", old_message.recipient)
         try:
             new_attachments = [
-                attachment_to_request(attach)
+                attach.to_request()
                 for attach in old_message.attachments
                 if attach.type != AttachmentType.INLINE_KEYBOARD
             ]

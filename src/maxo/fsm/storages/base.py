@@ -8,7 +8,7 @@ from maxo.fsm.key_builder import StorageKey
 from maxo.fsm.state import State
 
 _RawState = NewType("_RawState", str)
-type RawState = _RawState | None
+RawState = _RawState | None
 
 
 class BaseStorage(ABC):

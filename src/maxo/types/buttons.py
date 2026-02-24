@@ -7,7 +7,7 @@ from maxo.types.open_app_button import OpenAppButton
 from maxo.types.request_contact_button import RequestContactButton
 from maxo.types.request_geo_location_button import RequestGeoLocationButton
 
-type InlineButtons = (
+InlineButtons = (
     CallbackButton
     | LinkButton
     | RequestGeoLocationButton

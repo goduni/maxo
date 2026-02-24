@@ -3,6 +3,7 @@ from typing import Self
 from maxo.enums.attachment_type import AttachmentType
 from maxo.types.attachment import Attachment
 from maxo.types.sticker_attachment_payload import StickerAttachmentPayload
+from maxo.types.sticker_attachment_request import StickerAttachmentRequest
 
 
 class StickerAttachment(Attachment):
@@ -48,3 +49,6 @@ class StickerAttachment(Attachment):
             width=width,
             height=height,
         )
+
+    def to_request(self) -> StickerAttachmentRequest:
+        return StickerAttachmentRequest.factory(code=self.payload.code)

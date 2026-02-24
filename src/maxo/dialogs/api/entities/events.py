@@ -18,7 +18,7 @@ from maxo.types import Chat, User
 
 from .update_event import DialogUpdateEvent
 
-type ChatEvent = (
+ChatEvent = (
     MessageCreated
     | MessageCallback
     | BotStarted

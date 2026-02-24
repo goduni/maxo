@@ -6,7 +6,7 @@ from maxo.types.strong_markup import StrongMarkup
 from maxo.types.underline_markup import UnderlineMarkup
 from maxo.types.user_mention_markup import UserMentionMarkup
 
-type MarkupElements = (
+MarkupElements = (
     EmphasizedMarkup
     | LinkMarkup
     | MonospacedMarkup

@@ -11,12 +11,12 @@ from .media import Media, MultiMedia
 from .text import Format, Multi as MultiText, Text
 from .widget_event import WidgetEventProcessor
 
-type WidgetSrc = (
+WidgetSrc = (
     str | Text | Keyboard | MessageHandlerFunc | Media | BaseInput | LinkPreviewBase
 )
 
-type SingleGetterBase = DataGetter | dict
-type GetterVariant = (
+SingleGetterBase = DataGetter | dict
+GetterVariant = (
     SingleGetterBase | list[SingleGetterBase] | tuple[SingleGetterBase, ...] | None
 )
 

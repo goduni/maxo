@@ -7,7 +7,14 @@ import asyncio
 import logging
 import os
 
-from dishka import AsyncContainer, Provider, Scope, make_async_container, provide
+from dishka import (
+    AsyncContainer,
+    FromDishka,
+    Provider,
+    Scope,
+    make_async_container,
+    provide,
+)
 
 from maxo import Bot, Dispatcher
 from maxo.integrations.dishka import setup_dishka
@@ -42,7 +49,7 @@ class AppProvider(Provider):
 async def start_handler(
     message: MessageCreated,
     facade: MessageCreatedFacade,
-    greeter: GreeterService,
+    greeter: FromDishka[GreeterService],
 ) -> None:
     text = greeter.greet("друг")
     await facade.answer_text(text)
@@ -53,7 +60,7 @@ async def main() -> None:
     container: AsyncContainer = make_async_container(AppProvider())
     bot = await container.get(Bot)
     dp = await container.get(Dispatcher)
-    # Auto_inject=True - зависимости подставляются в хендлеры по типам аргументов
+    # auto_inject=True - зависимости подставляются в хендлеры по типам аргументов
     setup_dishka(container, dp, auto_inject=True)
     dp.message_created.handler(start_handler, CommandStart())
     try:

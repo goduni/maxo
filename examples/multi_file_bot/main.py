@@ -16,11 +16,11 @@ from maxo.utils.long_polling import LongPolling
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
 
-    TOKEN = os.environ.get("TOKEN") or os.environ.get("BOT_TOKEN")
-    if not TOKEN:
+    token = os.environ.get("TOKEN") or os.environ.get("BOT_TOKEN")
+    if not token:
         raise RuntimeError("Задайте TOKEN или BOT_TOKEN в окружении")
 
-    bot = Bot(TOKEN)
+    bot = Bot(token)
     dp = Dispatcher()
     dp.include(start_router, echo_router)
     LongPolling(dp).run(bot)

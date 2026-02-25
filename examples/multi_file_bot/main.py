@@ -6,24 +6,20 @@
 
 import logging
 import os
-import sys
-from pathlib import Path
-
-# Чтобы из этой папки импортировать handlers при любом текущем каталоге
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from handlers import echo_router, start_router
 
 from maxo import Bot, Dispatcher
 from maxo.utils.long_polling import LongPolling
 
-TOKEN = os.environ.get("TOKEN") or os.environ.get("BOT_TOKEN")
-if not TOKEN:
-    raise RuntimeError("Задайте TOKEN или BOT_TOKEN в окружении")
-
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
+
+    TOKEN = os.environ.get("TOKEN") or os.environ.get("BOT_TOKEN")
+    if not TOKEN:
+        raise RuntimeError("Задайте TOKEN или BOT_TOKEN в окружении")
+
     bot = Bot(TOKEN)
     dp = Dispatcher()
     dp.include(start_router, echo_router)

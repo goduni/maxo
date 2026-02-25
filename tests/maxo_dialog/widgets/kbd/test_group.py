@@ -23,7 +23,7 @@ from maxo.routing.updates import MessageCreated
 
 
 @pytest.mark.asyncio
-async def test_render_group(mock_manager) -> None:
+async def test_render_group(mock_manager: DialogManager) -> None:
     group = Group(
         Button(Const("1"), id="first"),
         Button(Const("2"), id="second"),
@@ -45,7 +45,7 @@ async def test_render_group(mock_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_render_group_with_width(mock_manager) -> None:
+async def test_render_group_with_width(mock_manager: DialogManager) -> None:
     group = Group(
         Button(Const("1"), id="first"),
         Button(Const("2"), id="second"),

@@ -20,13 +20,7 @@ class CommandException(Exception):
 
 
 class Command(BaseFilter[MessageCreated]):
-    __slots__ = (
-        "commands",
-        "ignore_case",
-        "ignore_mention",
-        "magic",
-        "prefix",
-    )
+    __slots__ = ("commands", "ignore_case", "ignore_mention", "magic", "prefix")
 
     def __init__(
         self,
@@ -145,11 +139,7 @@ class Command(BaseFilter[MessageCreated]):
 
 
 class CommandStart(Command):
-    def __init__(
-        self,
-        ignore_case: bool = False,
-        ignore_mention: bool = False,
-    ) -> None:
+    def __init__(self, ignore_case: bool = False, ignore_mention: bool = False) -> None:
         super().__init__(
             "start",
             prefix="/",

@@ -44,6 +44,7 @@ bot = Bot(token=os.environ["TOKEN"])
 dp = Dispatcher()
 
 
+# Пример обработки всех типов апдейтов: сообщения, колбэки, события чата/бота
 @dp.message_created()
 async def message_created_handler(
     message_created: MessageCreated,
@@ -68,15 +69,15 @@ async def message_edited_handler(
 
 @dp.message_callback()
 async def message_callback_handler(
-    messag_callback: MessageCallback,
+    message_callback: MessageCallback,
     facade: MessageCallbackFacade,
 ) -> None:
     await facade.callback_answer(notification="Ты нажал кнопку!")
     await facade.answer_text(
         f"Данные колбэка "
-        f"(ID: {messag_callback.callback.callback_id}, "
-        f"сообщение ID: {messag_callback.unsafe_message.body.mid}): "
-        f"{messag_callback.callback.payload}",
+        f"(ID: {message_callback.callback.callback_id}, "
+        f"сообщение ID: {message_callback.unsafe_message.body.mid}): "
+        f"{message_callback.callback.payload}",
     )
 
 

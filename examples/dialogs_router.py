@@ -35,6 +35,7 @@ async def get_phone(**__: Any) -> dict[str, Any]:
     return {"phone": "+78005553535"}
 
 
+# Getter подставляет данные в окно; SwitchTo/Back/Next - переходы между состояниями
 start_dialog = Dialog(
     Window(
         Multi(Const("Привет,"), Format("{username} {phone}!"), sep=" "),
@@ -63,6 +64,7 @@ async def start(
     message: MessageCreated,
     dialog_manager: DialogManager,
 ) -> None:
+    # RESET_STACK - сброс стека при старте; data передаётся в диалог
     await dialog_manager.start(
         state=StartSG.first,
         show_mode=ShowMode.SEND,

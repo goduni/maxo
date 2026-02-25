@@ -16,7 +16,7 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/K1rL3s/maxo?style=flat)](https://github.com/K1rL3s/maxo/stargazers)
 [![Supported python versions](https://img.shields.io/pypi/pyversions/maxo.svg?style=flat)](https://pypi.org/project/maxo/)
 [![Docs](https://img.shields.io/readthedocs/maxo?style=flat)](https://maxo.readthedocs.io)
-[![Tests](https://img.shields.io/github/actions/workflow/status/K1rL3s/maxo/analyze.yml?style=flat&label=tests)](https://github.com/K1rL3s/maxo/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/K1rL3s/maxo/test.yml?style=flat&label=tests)](https://github.com/K1rL3s/maxo/actions)
 [![Coverage](https://codecov.io/gh/K1rL3s/maxo/graph/badge.svg?style=flat)](https://codecov.io/gh/K1rL3s/maxo)
 
 </div>
@@ -166,3 +166,4 @@ if __name__ == "__main__":
 
 ## Связь
 Если у вас есть вопросы, вы можете задать их в Телеграме [\@maxo_py](https://t.me/maxo_py) или [Максе](https://max.ru/join/rwJmWA4B5AipBiJdWRkORGjxFmqnJPUhJbQxxmscrnc)
+

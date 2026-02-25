@@ -1,15 +1,18 @@
 import operator
+from typing import Any, cast
+from unittest.mock import Mock
 
 import pytest
 
+from maxo.dialogs import DialogManager
+from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.widgets.kbd import Toggle
 from maxo.dialogs.widgets.text import Format
-from maxo.types import MaxoType
 
 
 @pytest.mark.asyncio
-async def test_render_toggle(mock_manager) -> None:
-    toggle = Toggle(
+async def test_render_toggle(mock_manager: DialogManager) -> None:
+    toggle: Toggle[Any] = Toggle(
         Format("{item[1]}"),
         id="fruit",
         item_id_getter=operator.itemgetter(0),
@@ -23,7 +26,7 @@ async def test_render_toggle(mock_manager) -> None:
 
     assert keyboard[0][0].text == "Apple"
 
-    await toggle.set_checked(MaxoType(), "2", mock_manager)
+    await toggle.set_checked(cast(ChatEvent, Mock()), "2", mock_manager)
 
     keyboard = await toggle.render_keyboard(
         data={},

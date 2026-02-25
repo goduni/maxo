@@ -14,10 +14,10 @@ def test_maxo_error() -> None:
     assert err.bar == "2"
 
     with pytest.raises(TypeError):
-        MyError(foo=1)
+        MyError(foo=1)  # type: ignore[call-arg]
 
     with pytest.raises(TypeError):
-        MyError(bar="2")
+        MyError(bar="2")  # type: ignore[call-arg]
 
     with pytest.raises(TypeError):
-        MyError(1, "2", "3")
+        MyError(1, "2", "3")  # type: ignore[call-arg]

@@ -3,10 +3,7 @@ from maxo.utils.facades.methods.chat import ChatMethodsFacade
 from maxo.utils.facades.updates.base import BaseUpdateFacade
 
 
-class MessageRemovedFacade(
-    BaseUpdateFacade[MessageRemoved],
-    ChatMethodsFacade,
-):
+class MessageRemovedFacade(BaseUpdateFacade[MessageRemoved], ChatMethodsFacade):
     @property
     def message_id(self) -> str:
         return self._update.message_id

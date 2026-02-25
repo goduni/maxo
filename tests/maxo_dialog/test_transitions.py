@@ -20,6 +20,7 @@ from maxo.fsm.state import State, StatesGroup
 from maxo.fsm.storages.memory import SimpleEventIsolation
 from maxo.routing.filters import CommandStart
 from maxo.routing.signals import AfterStartup, BeforeStartup
+from maxo.routing.updates import MessageCreated
 from maxo.types import Message
 
 
@@ -32,7 +33,11 @@ class SecondarySG(StatesGroup):
     start = State()
 
 
-async def start(message: Message, ctx: Ctx, dialog_manager: DialogManager) -> None:
+async def start(
+    message: MessageCreated,
+    ctx: Ctx,
+    dialog_manager: DialogManager,
+) -> None:
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 
@@ -81,7 +86,7 @@ def dp(message_manager: MockMessageManager) -> Dispatcher:
 
 
 @pytest.fixture
-def client(dp) -> BotClient:
+def client(dp: Dispatcher) -> BotClient:
     return BotClient(dp)
 
 
@@ -91,7 +96,11 @@ def bot() -> Bot:
 
 
 @pytest.mark.asyncio
-async def test_start(bot, message_manager, client) -> None:
+async def test_start(
+    bot: Bot,
+    message_manager: MockMessageManager,
+    client: BotClient,
+) -> None:
     # start
     await client.send("/start")
     first_message = message_manager.one_message()
@@ -100,7 +109,12 @@ async def test_start(bot, message_manager, client) -> None:
 
 
 @pytest.mark.asyncio
-async def test_next_back(dp, bot, message_manager, client) -> None:
+async def test_next_back(
+    dp: Dispatcher,
+    bot: Bot,
+    message_manager: MockMessageManager,
+    client: BotClient,
+) -> None:
     await dp.feed_signal(BeforeStartup(), client.bot)
     await dp.feed_signal(AfterStartup(), client.bot)
 
@@ -130,7 +144,12 @@ async def test_next_back(dp, bot, message_manager, client) -> None:
 
 
 @pytest.mark.asyncio
-async def test_finish_last(dp, bot, message_manager, client) -> None:
+async def test_finish_last(
+    dp: Dispatcher,
+    bot: Bot,
+    message_manager: MockMessageManager,
+    client: BotClient,
+) -> None:
     await dp.feed_signal(BeforeStartup(), client.bot)
     await dp.feed_signal(AfterStartup(), client.bot)
 
@@ -149,10 +168,16 @@ async def test_finish_last(dp, bot, message_manager, client) -> None:
 
 
 @pytest.mark.asyncio
-async def test_reset_stack(dp, bot, message_manager, client) -> None:
+async def test_reset_stack(
+    dp: Dispatcher,
+    bot: Bot,
+    message_manager: MockMessageManager,
+    client: BotClient,
+) -> None:
     await dp.feed_signal(BeforeStartup(), client.bot)
     await dp.feed_signal(AfterStartup(), client.bot)
 
+    first_message: Message | None = None
     for _ in range(200):
         message_manager.reset_history()
         await client.send("/start")
@@ -160,6 +185,8 @@ async def test_reset_stack(dp, bot, message_manager, client) -> None:
         assert first_message.body.text == "First"
 
     message_manager.reset_history()
+
+    assert first_message is not None
     callback_id = await client.click(
         first_message,
         InlineButtonTextLocator("Cancel"),
@@ -170,7 +197,12 @@ async def test_reset_stack(dp, bot, message_manager, client) -> None:
 
 
 @pytest.mark.asyncio
-async def test_subdialog(dp, bot, message_manager, client) -> None:
+async def test_subdialog(
+    dp: Dispatcher,
+    bot: Bot,
+    message_manager: MockMessageManager,
+    client: BotClient,
+) -> None:
     await dp.feed_signal(BeforeStartup(), client.bot)
     await dp.feed_signal(AfterStartup(), client.bot)
 

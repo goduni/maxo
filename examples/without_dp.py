@@ -5,11 +5,12 @@ import os
 from maxo import Bot
 
 
+# Отправка сообщения без Dispatcher - только Bot и API
 async def main() -> None:
     logging.basicConfig(level=logging.DEBUG)
     token = os.environ["TOKEN"]
     chat_id = os.environ.get("CHAT_ID")
-    message = os.environ.get("MESSAGE", "Hello, World!")
+    message = os.environ.get("MESSAGE", "Привет, мир!")
 
     if chat_id is None:
         raise ValueError("CHAT_ID environment variable is not set")

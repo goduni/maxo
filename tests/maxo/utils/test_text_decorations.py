@@ -4,6 +4,7 @@ from maxo.types import (
     EmphasizedMarkup,
     LinkMarkup,
     MarkupElement,
+    MarkupElements,
     MonospacedMarkup,
     StrikethroughMarkup,
     StrongMarkup,
@@ -56,7 +57,7 @@ class TestTextDecoration:
     def test_apply_single_entity(
         self,
         decorator: TextDecoration,
-        entity: MarkupElement,
+        entity: MarkupElements,
         result: str,
     ) -> None:
         assert decorator.apply_entity(entity, "test") == result
@@ -64,7 +65,7 @@ class TestTextDecoration:
     def test_unknown_apply_entity(self) -> None:
         assert (
             html_decoration.apply_entity(
-                MarkupElement(type="unknown", from_=0, length=4),
+                MarkupElement(type="unknown", from_=0, length=4),  # type: ignore[arg-type]
                 "<test>",
             )
             == "&lt;test&gt;"
@@ -190,7 +191,7 @@ class TestTextDecoration:
         self,
         decorator: TextDecoration,
         text: str,
-        entities: list[MarkupElement] | None,
+        entities: list[MarkupElements] | None,
         result: str,
     ) -> None:
         assert decorator.unparse(text, entities) == result

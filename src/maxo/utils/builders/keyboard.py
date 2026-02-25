@@ -86,25 +86,13 @@ class KeyboardBuilder:
         self._keyboard = keyboard
         self._validator = validator
 
-    def add_callback(
-        self,
-        text: str,
-        payload: str,
-    ) -> Self:
-        self.add(
-            CallbackButton(
-                text=text,
-                payload=payload,
-            ),
-        )
+    def add_callback(self, text: str, payload: str) -> Self:
+        self.add(CallbackButton(text=text, payload=payload))
         return self
 
     def add_link(self, text: str, url: str) -> Self:
         self.add(
-            LinkButton(
-                text=text,
-                url=url,
-            ),
+            LinkButton(text=text, url=url),
         )
         return self
 
@@ -122,10 +110,7 @@ class KeyboardBuilder:
         quick: Omittable[bool] = Omitted(),
     ) -> Self:
         self.add(
-            RequestGeoLocationButton(
-                text=text,
-                quick=quick,
-            ),
+            RequestGeoLocationButton(text=text, quick=quick),
         )
         return self
 

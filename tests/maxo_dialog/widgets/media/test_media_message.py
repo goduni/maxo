@@ -15,7 +15,7 @@ from maxo.enums import AttachmentType
 from maxo.fsm.key_builder import DefaultKeyBuilder
 from maxo.fsm.state import State, StatesGroup
 from maxo.routing.filters import Command
-from maxo.types import Message
+from maxo.routing.updates import MessageCreated
 
 
 class MainSG(StatesGroup):
@@ -35,11 +35,11 @@ dialog = Dialog(
 )
 
 
-async def start_url(message: Message, dialog_manager: DialogManager) -> None:
+async def start_url(message: MessageCreated, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.with_url, mode=StartMode.RESET_STACK)
 
 
-async def start_path(message: Message, dialog_manager: DialogManager) -> None:
+async def start_path(message: MessageCreated, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.with_path, mode=StartMode.RESET_STACK)
 
 
@@ -60,6 +60,7 @@ async def test_click() -> None:
     # with url parameter
     await client.send("/url")
     first_message = message_manager.one_message()
+    assert first_message.body.attachments is not None
     assert any(a.type == AttachmentType.IMAGE for a in first_message.body.attachments)
 
     message_manager.reset_history()
@@ -67,4 +68,5 @@ async def test_click() -> None:
     # with path parameter
     await client.send("/path")
     first_message = message_manager.one_message()
+    assert first_message.body.attachments is not None
     assert any(a.type == AttachmentType.IMAGE for a in first_message.body.attachments)

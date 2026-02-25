@@ -4,10 +4,7 @@ from maxo.utils.facades.methods.message import MessageMethodsFacade
 from maxo.utils.facades.updates.base import BaseUpdateFacade
 
 
-class MessageCreatedFacade(
-    BaseUpdateFacade[MessageCreated],
-    MessageMethodsFacade,
-):
+class MessageCreatedFacade(BaseUpdateFacade[MessageCreated], MessageMethodsFacade):
     @property
     def message(self) -> Message:
         return self._update.message

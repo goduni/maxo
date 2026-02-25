@@ -1,18 +1,24 @@
 from typing import Any, Final
 
+from maxo import loggers
 from maxo.enums import ChatType
 from maxo.omit import is_defined
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces.middleware import BaseMiddleware, NextMiddleware
 from maxo.routing.signals.update import MaxoUpdate
-from maxo.routing.updates import BotStopped
 from maxo.routing.updates.bot_added_to_chat import BotAddedToChat
 from maxo.routing.updates.bot_removed_from_chat import BotRemovedFromChat
 from maxo.routing.updates.bot_started import BotStarted
+from maxo.routing.updates.bot_stopped import BotStopped
 from maxo.routing.updates.chat_title_changed import ChatTitleChanged
+from maxo.routing.updates.dialog_cleared import DialogCleared
+from maxo.routing.updates.dialog_muted import DialogMuted
+from maxo.routing.updates.dialog_removed import DialogRemoved
+from maxo.routing.updates.dialog_unmuted import DialogUnmuted
 from maxo.routing.updates.message_callback import MessageCallback
 from maxo.routing.updates.message_created import MessageCreated
 from maxo.routing.updates.message_edited import MessageEdited
+from maxo.routing.updates.message_removed import MessageRemoved
 from maxo.routing.updates.user_added_to_chat import UserAddedToChat
 from maxo.routing.updates.user_removed_from_chat import UserRemovedFromChat
 from maxo.types import User
@@ -20,29 +26,100 @@ from maxo.types.update_context import UpdateContext
 
 UPDATE_CONTEXT_KEY: Final = "update_context"
 EVENT_FROM_USER_KEY: Final = "event_from_user"
+EVENT_CHAT_KEY: Final = "event_chat"
 
 
-# TODO: Определять UpdateContext и User в одном методе
 class UpdateContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
+    """
+    Мидлварь, заполняющий контекст апдейта (chat_id, user_id.
+
+    При обогащении — chat, user.
+
+    Args:
+        enrich: при True запрашивать чат и при необходимости пользователя через Bot API.
+        Можно также передать enrich_update_context=True в workflow_data
+        (например при LongPolling.run).
+
+    """
+
+    def __init__(self, enrich: bool = False) -> None:
+        self._enrich = enrich
+
     async def __call__(
         self,
         update: MaxoUpdate[Any],
         ctx: Ctx,
         next: NextMiddleware[MaxoUpdate[Any]],
     ) -> Any:
-        update_context = self._resolve_update_context(update.update)
-        ctx[UPDATE_CONTEXT_KEY] = update_context
+        do_enrich = self._enrich or ctx.get("enrich_update_context", False)
+        update_context = await self._resolve_update_context(
+            update.update,
+            ctx,
+            do_enrich,
+        )
 
-        user = self._resolve_user(update.update)
-        if user is not None:
-            ctx[EVENT_FROM_USER_KEY] = user
+        ctx[UPDATE_CONTEXT_KEY] = update_context
+        if update_context.user is not None:
+            ctx[EVENT_FROM_USER_KEY] = update_context.user
+        if update_context.chat is not None:
+            ctx[EVENT_CHAT_KEY] = update_context.chat
 
         return await next(ctx)
 
-    def _resolve_update_context(self, update: Any) -> UpdateContext:
+    async def _enrich_context(self, ctx: Ctx, update_context: UpdateContext) -> None:
+        """Дополняет контекст данными чата и пользователя через Bot API."""
+        bot = ctx["bot"]
+
+        if update_context.chat_id is not None and update_context.chat is None:
+            try:
+                loggers.update_context.debug(
+                    "Обогащение контекста чатом: chat_id=%s",
+                    update_context.chat_id,
+                )
+                chat = await bot.get_chat(chat_id=update_context.chat_id)
+                update_context.chat = chat
+                update_context.type = chat.type
+            except Exception:  # noqa: BLE001
+                loggers.update_context.warning(
+                    "Не удалось обогатить контекст чатом",
+                    exc_info=True,
+                )
+
+        if update_context.chat is not None and is_defined(
+            update_context.chat.dialog_with_user,
+        ):
+            update_context.user = update_context.chat.unsafe_dialog_with_user
+        elif (
+            update_context.user_id is not None
+            and update_context.chat_id is not None
+            and update_context.user is None
+        ):
+            chat_id = update_context.chat_id
+            user_id = update_context.user_id
+            try:
+                members = await bot.get_members(chat_id=chat_id, user_ids=[user_id])
+                if members.members:
+                    update_context.user = members.members[0]
+                else:
+                    raise ValueError(  # noqa: TRY301
+                        f"Юзер user_id={user_id} не найден в чате chat_id={chat_id}",
+                    )
+            except Exception:  # noqa: BLE001
+                loggers.update_context.warning(
+                    "Не удалось загрузить участника чата",
+                    exc_info=True,
+                )
+
+    async def _resolve_update_context(
+        self,
+        update: Any,
+        ctx: Ctx,
+        do_enrich: bool,
+    ) -> UpdateContext:
         chat_id = None
         user_id = None
-        chat_type = ChatType.DIALOG
+        chat_type: ChatType | None = None
+        user: User | None = None
 
         if isinstance(
             update,
@@ -52,60 +129,51 @@ class UpdateContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):
                 BotStarted,
                 BotStopped,
                 ChatTitleChanged,
+                DialogCleared,
+                DialogMuted,
+                DialogRemoved,
+                DialogUnmuted,
                 UserAddedToChat,
                 UserRemovedFromChat,
             ),
         ):
             chat_id = update.chat_id
             user_id = update.user.user_id
+            user = update.user
             if hasattr(update, "is_channel"):
                 chat_type = ChatType.CHANNEL if update.is_channel else ChatType.CHAT
         elif isinstance(update, MessageCallback):
             user_id = update.user.user_id
-            if update.message is not None and update.message.body is not None:
+            user = update.callback.user
+            if update.message is not None:
                 chat_id = (
                     update.message.recipient.chat_id or update.message.recipient.user_id
                 )
                 chat_type = update.message.recipient.chat_type
-
         elif isinstance(update, (MessageEdited, MessageCreated)):
             user_id = (
                 update.message.sender.user_id
                 if is_defined(update.message.sender)
                 else None
             )
-
-            if update.message and update.message.body is not None:
+            user = update.message.sender if is_defined(update.message.sender) else None
+            if update.message is not None:
                 chat_id = (
                     update.message.recipient.chat_id or update.message.recipient.user_id
                 )
                 chat_type = update.message.recipient.chat_type
+        elif isinstance(update, MessageRemoved):
+            chat_id = update.chat_id
+            user_id = update.user_id
+            chat_type = None
 
-        return UpdateContext(
+        update_context = UpdateContext(
             chat_id=chat_id,
             user_id=user_id,
             type=chat_type,
+            user=user,
         )
+        if do_enrich and "bot" in ctx:
+            await self._enrich_context(ctx, update_context)
 
-    def _resolve_user(
-        self,
-        update: Any,
-    ) -> User | None:
-        if isinstance(update, MessageCreated):
-            return update.message.sender
-        if isinstance(update, MessageCallback):
-            return update.callback.user
-        if isinstance(
-            update,
-            (
-                UserAddedToChat,
-                UserRemovedFromChat,
-                BotAddedToChat,
-                BotRemovedFromChat,
-                BotStarted,
-                BotStopped,
-            ),
-        ):
-            return update.user
-        # TODO: Остальные ивенты
-        return None
+        return update_context

@@ -23,7 +23,7 @@ class PhotoAttachmentRequest(AttachmentRequest):
         *,
         url: Omittable[str | None] = Omitted(),
         token: Omittable[str | None] = Omitted(),
-        photos: Omittable[list[str] | None] = Omitted(),
+        photos: Omittable[list[str] | None] = Omitted(),  # TODO: Проверить кто это
     ) -> Self:
         """
         Фабричный метод.

@@ -4,6 +4,7 @@ import tempfile
 
 import pytest
 
+from maxo.dialogs.api.entities import MediaId
 from maxo.dialogs.context.media_storage import MediaIdStorage
 from maxo.enums import AttachmentType
 
@@ -27,7 +28,7 @@ async def test_get_media_id() -> None:
             filename,
             None,
             AttachmentType.FILE,
-            "test1",
+            MediaId(token="test1"),  # noqa: S106
         )
 
         media_id = await manager.get_media_id(
@@ -35,7 +36,7 @@ async def test_get_media_id() -> None:
             None,
             AttachmentType.FILE,
         )
-        assert media_id == "test1"
+        assert media_id == MediaId(token="test1")  # noqa: S106
 
         await asyncio.sleep(0.1)
 

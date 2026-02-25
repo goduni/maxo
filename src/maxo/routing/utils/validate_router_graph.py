@@ -7,9 +7,7 @@ from maxo.routing.interfaces.router import BaseRouter
 
 
 @overload
-def validate_router_graph(
-    router: BaseRouter,
-) -> None: ...
+def validate_router_graph(router: BaseRouter) -> None: ...
 
 
 @overload

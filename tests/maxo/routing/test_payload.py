@@ -1,8 +1,9 @@
 import dataclasses
+from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum, auto
 from fractions import Fraction
-from typing import Optional, Union
+from typing import Any, Optional, Union
 from uuid import UUID, uuid4
 
 import pytest
@@ -242,7 +243,7 @@ class TestPayload:
             (MyStringEnum.FOO, "FOO"),
         ],
     )
-    def test_encode_value_positive(self, value, expected) -> None:
+    def test_encode_value_positive(self, value: object, expected: str) -> None:
         callback = MyPayload(foo="test", bar=42)
         assert callback._encode_value("test", value) == expected
 
@@ -252,10 +253,15 @@ class TestPayload:
             ...,
             object,
             object(),
-            User(user_id=42, is_bot=False, first_name="test", last_activity_time=0),
+            User(
+                user_id=42,
+                is_bot=False,
+                first_name="test",
+                last_activity_time=datetime.fromtimestamp(0, tz=UTC),
+            ),
         ],
     )
-    def test_encode_value_negative(self, value) -> None:
+    def test_encode_value_negative(self, value: object) -> None:
         callback = MyPayload(foo="test", bar=42)
         with pytest.raises(ValueError, match="can not be packed to callback data"):
             callback._encode_value("test", value)
@@ -314,7 +320,7 @@ class TestPayload:
 
     def test_unpack_optional(self) -> None:
         with pytest.raises(ValueError, match=r"Cannot decode"):
-            assert MyPayload.unpack("test:test:")
+            MyPayload.unpack("test:test:")
 
         class MyPayload1(Payload, prefix="test1"):
             foo: str
@@ -352,7 +358,7 @@ class TestPayload:
             int | None,
         ],
     )
-    def test_unpack_optional_wo_default(self, hint) -> None:
+    def test_unpack_optional_wo_default(self, hint: Any) -> None:
         """Test Payload without default optional."""
 
         class TgData(Payload, prefix="tg"):

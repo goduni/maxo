@@ -1,16 +1,18 @@
 import operator
-from unittest.mock import AsyncMock
+from typing import cast
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
+from maxo.dialogs import DialogManager
+from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.widgets.kbd import Multiselect
 from maxo.dialogs.widgets.text import Format
-from maxo.types import MaxoType
 
 
 @pytest.mark.asyncio
-async def test_check_multiselect(mock_manager) -> None:
-    multiselect = Multiselect(
+async def test_check_multiselect(mock_manager: DialogManager) -> None:
+    multiselect: Multiselect[str] = Multiselect(
         Format("✓ {item[1]}"),
         Format("{item[1]}"),
         id="fruit",
@@ -20,15 +22,15 @@ async def test_check_multiselect(mock_manager) -> None:
 
     assert multiselect.get_checked(mock_manager) == []
 
-    await multiselect.set_checked(MaxoType(), "1", True, mock_manager)
-    await multiselect.set_checked(MaxoType(), "3", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "1", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "3", True, mock_manager)
 
     assert multiselect.get_checked(mock_manager) == ["1", "3"]
 
 
 @pytest.mark.asyncio
-async def test_min_selected_multiselect(mock_manager) -> None:
-    multiselect = Multiselect(
+async def test_min_selected_multiselect(mock_manager: DialogManager) -> None:
+    multiselect: Multiselect[str] = Multiselect(
         Format("✓ {item[1]}"),
         Format("{item[1]}"),
         id="fruit",
@@ -37,19 +39,19 @@ async def test_min_selected_multiselect(mock_manager) -> None:
         min_selected=2,
     )
 
-    await multiselect.set_checked(MaxoType(), "1", True, mock_manager)
-    await multiselect.set_checked(MaxoType(), "3", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "1", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "3", True, mock_manager)
 
     assert multiselect.get_checked(mock_manager) == ["1", "3"]
 
-    await multiselect.set_checked(MaxoType(), "3", False, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "3", False, mock_manager)
 
     assert multiselect.get_checked(mock_manager) == ["1", "3"]
 
 
 @pytest.mark.asyncio
-async def test_max_selected_multiselect(mock_manager) -> None:
-    multiselect = Multiselect(
+async def test_max_selected_multiselect(mock_manager: DialogManager) -> None:
+    multiselect: Multiselect[str] = Multiselect(
         Format("✓ {item[1]}"),
         Format("{item[1]}"),
         id="fruit",
@@ -58,19 +60,19 @@ async def test_max_selected_multiselect(mock_manager) -> None:
         max_selected=2,
     )
 
-    await multiselect.set_checked(MaxoType(), "1", True, mock_manager)
-    await multiselect.set_checked(MaxoType(), "3", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "1", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "3", True, mock_manager)
 
     assert multiselect.get_checked(mock_manager) == ["1", "3"]
 
-    await multiselect.set_checked(MaxoType(), "2", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "2", True, mock_manager)
 
     assert multiselect.get_checked(mock_manager) == ["1", "3"]
 
 
 @pytest.mark.asyncio
-async def test_reset_checked_multiselect(mock_manager) -> None:
-    multiselect = Multiselect(
+async def test_reset_checked_multiselect(mock_manager: DialogManager) -> None:
+    multiselect: Multiselect[str] = Multiselect(
         Format("✓ {item[1]}"),
         Format("{item[1]}"),
         id="fruit",
@@ -78,20 +80,20 @@ async def test_reset_checked_multiselect(mock_manager) -> None:
         items=[("1", "Apple"), ("2", "Banana"), ("3", "Orange")],
     )
 
-    await multiselect.set_checked(MaxoType(), "1", True, mock_manager)
-    await multiselect.set_checked(MaxoType(), "3", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "1", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "3", True, mock_manager)
 
     assert multiselect.get_checked(mock_manager) == ["1", "3"]
 
-    await multiselect.reset_checked(MaxoType(), mock_manager)
+    await multiselect.reset_checked(cast(ChatEvent, Mock()), mock_manager)
 
     assert multiselect.get_checked(mock_manager) == []
 
 
 @pytest.mark.asyncio
-async def test_on_state_changed_multiselect(mock_manager) -> None:
+async def test_on_state_changed_multiselect(mock_manager: DialogManager) -> None:
     on_state_changed = AsyncMock()
-    multiselect = Multiselect(
+    multiselect: Multiselect[str] = Multiselect(
         Format("✓ {item[1]}"),
         Format("{item[1]}"),
         id="fruit",
@@ -100,14 +102,14 @@ async def test_on_state_changed_multiselect(mock_manager) -> None:
         on_state_changed=on_state_changed,
     )
 
-    await multiselect.set_checked(MaxoType(), "1", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "1", True, mock_manager)
 
     on_state_changed.assert_called_once()
 
 
 @pytest.mark.asyncio
-async def test_render_multiselect(mock_manager) -> None:
-    multiselect = Multiselect(
+async def test_render_multiselect(mock_manager: DialogManager) -> None:
+    multiselect: Multiselect[str] = Multiselect(
         Format("✓ {item[1]}"),
         Format("{item[1]}"),
         id="fruit",
@@ -116,10 +118,14 @@ async def test_render_multiselect(mock_manager) -> None:
     )
 
     keyboard = await multiselect.render_keyboard(data={}, manager=mock_manager)
+    assert keyboard[0][0].text == "Apple"
+    assert keyboard[0][1].text == "Banana"
+    assert keyboard[0][2].text == "Orange"
 
-    await multiselect.set_checked(MaxoType(), "1", True, mock_manager)
-    await multiselect.set_checked(MaxoType(), "3", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "1", True, mock_manager)
+    await multiselect.set_checked(cast(ChatEvent, Mock()), "3", True, mock_manager)
 
+    keyboard = await multiselect.render_keyboard(data={}, manager=mock_manager)
     assert keyboard[0][0].text == "✓ Apple"
     assert keyboard[0][1].text == "Banana"
     assert keyboard[0][2].text == "✓ Orange"

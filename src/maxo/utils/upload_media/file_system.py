@@ -8,11 +8,7 @@ from maxo.utils.upload_media.base import InputFile
 
 
 class FSInputFile(InputFile):
-    __slots__ = (
-        "_file_name",
-        "_path",
-        "_type",
-    )
+    __slots__ = ("_file_name", "_path", "_type")
 
     def __init__(
         self,

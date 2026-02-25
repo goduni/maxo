@@ -17,10 +17,7 @@ from maxo.dialogs.api.exceptions import (
     UnknownState,
 )
 from maxo.dialogs.api.internal import CONTEXT_KEY, STACK_KEY, STORAGE_KEY
-from maxo.dialogs.api.protocols import (
-    DialogRegistryProtocol,
-    StackAccessValidator,
-)
+from maxo.dialogs.api.protocols import DialogRegistryProtocol, StackAccessValidator
 from maxo.dialogs.utils import remove_intent_id
 from maxo.enums import ChatType
 from maxo.fsm.storages.base import BaseEventIsolation, BaseStorage

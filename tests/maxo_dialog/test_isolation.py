@@ -10,12 +10,12 @@ from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
 from maxo.fsm.key_builder import DefaultKeyBuilder
 from maxo.fsm.storages.memory import SimpleEventIsolation
 from maxo.routing.filters import CommandStart
-from maxo.types import Message
+from maxo.routing.updates import MessageCreated
 
 
 async def start(
-    _message: Message,
-    data: list,
+    message: MessageCreated,
+    data: list[int],
     event_common: Event,
 ) -> None:
     data.append(1)
@@ -26,7 +26,7 @@ async def start(
 @pytest.mark.repeat(10)
 async def test_concurrent_events() -> None:
     event_common = Event()
-    data = []
+    data: list[int] = []
     key_builder = DefaultKeyBuilder(with_destiny=True)
     event_isolation = SimpleEventIsolation(key_builder=key_builder)
     dp = Dispatcher(

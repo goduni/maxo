@@ -30,6 +30,7 @@ key_builder = DefaultKeyBuilder(with_destiny=True)
 dp = Dispatcher(key_builder=key_builder)
 
 
+# Диалог - цепочка Window (окон) с виджетами (Text, Media, Input)
 class DialogSG(StatesGroup):
     greeting = State()
     age = State()
@@ -56,7 +57,7 @@ async def name_handler(
     dialog_manager.dialog_data["name"] = message.message.body.text
 
     facade: MessageCreatedFacade = dialog_manager.middleware_data["facade"]
-    await facade.answer_text(f"Nice to meet you, {message.message.body.text}")
+    await facade.answer_text(f"Привет, {message.message.body.text}")
 
     await dialog_manager.next()
 
@@ -67,7 +68,7 @@ async def other_type_handler(
     dialog_manager: DialogManager,
 ) -> None:
     facade: MessageCreatedFacade = dialog_manager.middleware_data["facade"]
-    await facade.answer_text("Text is expected")
+    await facade.answer_text("Ожидался текст")
 
 
 async def on_finish(
@@ -80,7 +81,7 @@ async def on_finish(
         return
 
     facade: MessageCallbackFacade = dialog_manager.middleware_data["facade"]
-    await facade.callback_answer("Thank you. To start again click /start")
+    await facade.callback_answer("Спасибо. Чтобы начать заново - /start")
 
     await dialog_manager.done()
 
@@ -97,7 +98,7 @@ async def on_age_changed(
 
 dialog = Dialog(
     Window(
-        Const("Greetings! Please, introduce yourself:"),
+        Const("Привет! Представься, пожалуйста:"),
         StaticMedia(path=BASE_DIR / "files" / "watermelon.jpg"),
         StaticMedia(path=BASE_DIR / "files" / "naked-watermelon.png"),
         MessageInput(name_handler, content_types=AttachmentType.TEXT),
@@ -105,7 +106,7 @@ dialog = Dialog(
         state=DialogSG.greeting,
     ),
     Window(
-        Format("{name}! How old are you?"),
+        Format("{name}! Сколько тебе лет?"),
         Select(
             Format("{item}"),
             items=["0-12", "12-18", "18-25", "25-40", "40+"],
@@ -119,14 +120,14 @@ dialog = Dialog(
     ),
     Window(
         Multi(
-            Format("{name}! Thank you for your answers."),
-            Const("Hope you are not smoking", when="can_smoke"),
+            Format("{name}! Спасибо за ответы."),
+            Const("Надеюсь, не куришь", when="can_smoke"),
             sep="\n\n",
         ),
         Row(
             Back(),
-            SwitchTo(Const("Restart"), id="restart", state=DialogSG.greeting),
-            Button(Const("Finish"), on_click=on_finish, id="finish"),
+            SwitchTo(Const("Заново"), id="restart", state=DialogSG.greeting),
+            Button(Const("Готово"), on_click=on_finish, id="finish"),
         ),
         getter=get_data,
         state=DialogSG.finish,
@@ -136,7 +137,8 @@ dialog = Dialog(
 
 @dp.message_created(CommandStart())
 async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
-    # it is important to reset stack because user wants to restart everything
+    # StartMode.RESET_STACK: сброс стека при старте, пользователь с первого окна;
+    # иначе возможен переход в уже идущий диалог с сохранённым стеком
     await dialog_manager.start(DialogSG.greeting, mode=StartMode.RESET_STACK)
 
 

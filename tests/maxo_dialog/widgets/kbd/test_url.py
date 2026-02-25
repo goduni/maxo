@@ -1,11 +1,13 @@
 import pytest
 
+from maxo.dialogs import DialogManager
 from maxo.dialogs.widgets.kbd import Url
 from maxo.dialogs.widgets.text import Const
+from maxo.types import LinkButton
 
 
 @pytest.mark.asyncio
-async def test_render_url(mock_manager) -> None:
+async def test_render_url(mock_manager: DialogManager) -> None:
     url = Url(
         Const("Github"),
         Const("https://github.com/Tishka17/aiogram_dialog/"),
@@ -13,5 +15,7 @@ async def test_render_url(mock_manager) -> None:
 
     keyboard = await url.render_keyboard(data={}, manager=mock_manager)
 
-    assert keyboard[0][0].text == "Github"
-    assert keyboard[0][0].url == "https://github.com/Tishka17/aiogram_dialog/"
+    button = keyboard[0][0]
+    assert isinstance(button, LinkButton)
+    assert button.text == "Github"
+    assert button.url == "https://github.com/Tishka17/aiogram_dialog/"

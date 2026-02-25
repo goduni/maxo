@@ -40,7 +40,7 @@ def message_manager() -> MockMessageManager:
 
 
 @pytest.fixture
-def dp(message_manager) -> Dispatcher:
+def dp(message_manager: MockMessageManager) -> Dispatcher:
     key_builder = DefaultKeyBuilder(with_destiny=True)
     event_isolation = SimpleEventIsolation(key_builder=key_builder)
     dp = Dispatcher(
@@ -54,12 +54,16 @@ def dp(message_manager) -> Dispatcher:
 
 
 @pytest.fixture
-def client(dp) -> BotClient:
+def client(dp: Dispatcher) -> BotClient:
     return BotClient(dp)
 
 
 @pytest.mark.asyncio
-async def test_click(dp, client, message_manager) -> None:
+async def test_click(
+    dp: Dispatcher,
+    client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.message_created.handler(start, CommandStart())
     await client.send("/start")
     first_message = message_manager.one_message()
@@ -67,7 +71,11 @@ async def test_click(dp, client, message_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_request_join(dp, client, message_manager) -> None:
+async def test_request_join(
+    dp: Dispatcher,
+    client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.user_added_to_chat.handler(start)
 
     await dp.feed_signal(BeforeStartup(), client.bot)
@@ -79,7 +87,11 @@ async def test_request_join(dp, client, message_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_my_chat_member_update(dp, client, message_manager) -> None:
+async def test_my_chat_member_update(
+    dp: Dispatcher,
+    client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.bot_added_to_chat.handler(start)
 
     await dp.feed_signal(BeforeStartup(), client.bot)

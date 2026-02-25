@@ -74,9 +74,5 @@ class Observer(Protocol[_UpdateT, _HandlerT, _HandlerFnT]):
         raise NotImplementedError
 
     @abstractmethod
-    async def execute_handler(
-        self,
-        ctx: Ctx,
-        handler: _HandlerT,
-    ) -> _ReturnT_co:
+    async def execute_handler(self, ctx: Ctx, handler: _HandlerT) -> _ReturnT_co:
         raise NotImplementedError

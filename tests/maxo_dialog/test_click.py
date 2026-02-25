@@ -1,16 +1,11 @@
+from collections.abc import Callable
 from typing import Any
 from unittest.mock import Mock
 
 import pytest
 
 from maxo import Dispatcher
-from maxo.dialogs import (
-    Dialog,
-    DialogManager,
-    StartMode,
-    Window,
-    setup_dialogs,
-)
+from maxo.dialogs import Dialog, DialogManager, StartMode, Window, setup_dialogs
 from maxo.dialogs.test_tools import BotClient, MockMessageManager
 from maxo.dialogs.test_tools.keyboard import InlineButtonTextLocator
 from maxo.dialogs.test_tools.memory_storage import JsonMemoryStorage
@@ -21,7 +16,7 @@ from maxo.fsm.state import State, StatesGroup
 from maxo.fsm.storages.memory import SimpleEventIsolation
 from maxo.routing.filters import CommandStart
 from maxo.routing.signals import AfterStartup, BeforeStartup
-from maxo.types import Message
+from maxo.routing.updates import MessageCallback, MessageCreated
 
 
 class MainSG(StatesGroup):
@@ -29,19 +24,28 @@ class MainSG(StatesGroup):
     next = State()
 
 
-async def on_click(_event, _button, manager: DialogManager) -> None:
+async def on_click(
+    event: MessageCallback,
+    _button: Button,
+    manager: DialogManager,
+) -> None:
     manager.middleware_data["usecase"]()
     await manager.next()
 
 
-async def on_finish(_event, _button, manager: DialogManager) -> None:
+async def on_finish(
+    event: MessageCallback,
+    button: Button,
+    manager: DialogManager,
+) -> None:
     await manager.done()
 
 
-async def second_getter(user_getter, **_kwargs: Any) -> dict[str, Any]:
-    return {
-        "user": user_getter(),
-    }
+async def second_getter(
+    user_getter: Callable[[], str],
+    **_kwargs: Any,
+) -> dict[str, Any]:
+    return {"user": user_getter()}
 
 
 dialog = Dialog(
@@ -59,7 +63,7 @@ dialog = Dialog(
 )
 
 
-async def start(message: Message, dialog_manager: DialogManager) -> None:
+async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 
@@ -101,10 +105,7 @@ async def test_click() -> None:
 
     # click next
     message_manager.reset_history()
-    callback_id = await client.click(
-        first_message,
-        InlineButtonTextLocator("Button"),
-    )
+    callback_id = await client.click(first_message, InlineButtonTextLocator("Button"))
 
     message_manager.assert_answered(callback_id)
     usecase.assert_called()

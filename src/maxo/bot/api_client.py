@@ -3,7 +3,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any, Never
 
-from adaptix import P, Retort, dumper, loader
+from adaptix import Chain, P, Retort, dumper, loader
 from aiohttp import ClientSession
 from unihttp.clients.aiohttp import AiohttpAsyncClient
 from unihttp.http import HTTPResponse
@@ -55,6 +55,7 @@ from maxo.routing.updates import (
     UserRemovedFromChat,
 )
 from maxo.types import (
+    Attachments,
     AudioAttachment,
     AudioAttachmentRequest,
     CallbackButton,
@@ -229,6 +230,11 @@ class MaxApiClient(AiohttpAsyncClient):
                     | P[Omittable[TextFormat]]
                     | P[Omittable[TextFormat | None]],
                     lambda item: item or self._text_format,
+                ),
+                dumper(
+                    P[Attachments],
+                    lambda attachment: attachment.to_request(),
+                    chain=Chain.FIRST,
                 ),
             ],
         )

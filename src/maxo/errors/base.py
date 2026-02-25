@@ -4,10 +4,7 @@ from typing import Any, TypeVar, dataclass_transform
 T = TypeVar("T")
 
 
-@dataclass_transform(
-    frozen_default=False,
-    kw_only_default=False,
-)
+@dataclass_transform(frozen_default=False, kw_only_default=False)
 class _MaxoErrorMetaClass(type):
     def __new__(
         cls,

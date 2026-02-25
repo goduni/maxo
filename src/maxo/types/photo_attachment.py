@@ -3,6 +3,7 @@ from typing import Self
 from maxo.enums.attachment_type import AttachmentType
 from maxo.types.attachment import Attachment
 from maxo.types.photo_attachment_payload import PhotoAttachmentPayload
+from maxo.types.photo_attachment_request import PhotoAttachmentRequest
 
 
 class PhotoAttachment(Attachment):
@@ -41,3 +42,6 @@ class PhotoAttachment(Attachment):
                 url=url,
             ),
         )
+
+    def to_request(self) -> PhotoAttachmentRequest:
+        return PhotoAttachmentRequest.factory(token=self.payload.token)

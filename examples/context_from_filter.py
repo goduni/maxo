@@ -12,6 +12,7 @@ from maxo.utils.long_polling import LongPolling
 dp = Dispatcher()
 
 
+# Фильтр при совпадении записывает в ctx - хендлер получает name из ctx
 class HelloFilter(BaseFilter[MessageCreated]):
     def __init__(self, name: str | None = None) -> None:
         self.name = name
@@ -22,7 +23,7 @@ class HelloFilter(BaseFilter[MessageCreated]):
         ctx: Ctx,
     ) -> bool:
         text = update.message.body.text
-        if text is not None and text.casefold() == "hello":
+        if text is not None and text.casefold() == "привет":
             user: User = ctx["event_from_user"]
             ctx["name"] = user.fullname
             return True
@@ -36,7 +37,7 @@ async def my_handler(
     facade: MessageCreatedFacade,
     name: str,
 ) -> Any:
-    return await facade.answer_text(f"Hello, {name}!")
+    return await facade.answer_text(f"Привет, {name}!")
 
 
 def main() -> None:

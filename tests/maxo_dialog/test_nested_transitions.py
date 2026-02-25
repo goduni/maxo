@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from maxo import Dispatcher
@@ -16,7 +18,7 @@ from maxo.dialogs.widgets.text import Const, Format
 from maxo.fsm.state import State, StatesGroup
 from maxo.routing.filters import CommandStart
 from maxo.routing.signals import AfterStartup, BeforeStartup
-from maxo.types import Message
+from maxo.routing.updates import MessageCreated
 
 
 class MainSG(StatesGroup):
@@ -31,19 +33,19 @@ class ThirdSG(StatesGroup):
     start = State()
 
 
-async def start(message: Message, dialog_manager: DialogManager) -> None:
+async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 
-async def on_start_main(data, dialog_manager: DialogManager) -> None:
+async def on_start_main(data: Any, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(SecondarySG.start)
 
 
-async def on_start_sub(_, dialog_manager: DialogManager) -> None:
+async def on_start_sub(_: Any, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(ThirdSG.start)
 
 
-async def on_process_result_sub(_, __, dialog_manager: DialogManager) -> None:
+async def on_process_result_sub(_: Any, __: Any, dialog_manager: DialogManager) -> None:
     await dialog_manager.done()
 
 
@@ -53,12 +55,12 @@ def message_manager() -> MockMessageManager:
 
 
 @pytest.fixture
-def client(dp) -> BotClient:
+def client(dp: Dispatcher) -> BotClient:
     return BotClient(dp)
 
 
 @pytest.fixture
-def dp(message_manager: MockMessageManager):
+def dp(message_manager: MockMessageManager) -> Dispatcher:
     dp = Dispatcher(storage=JsonMemoryStorage())
     dp.message_created.handler(start, CommandStart())
 
@@ -96,7 +98,11 @@ def dp(message_manager: MockMessageManager):
 
 
 @pytest.mark.asyncio
-async def test_start(dp, message_manager, client) -> None:
+async def test_start(
+    dp: Dispatcher,
+    message_manager: MockMessageManager,
+    client: BotClient,
+) -> None:
     await dp.feed_signal(BeforeStartup(), client.bot)
     await dp.feed_signal(AfterStartup(), client.bot)
 

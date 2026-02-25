@@ -42,10 +42,7 @@ class BaseLogicFilter(BaseFilter[_UpdateT], Generic[_UpdateT]):
 class AndFilter(BaseLogicFilter[_UpdateT], Generic[_UpdateT]):
     _filters: Sequence[Filter[_UpdateT]]
 
-    def __init__(
-        self,
-        *filters: Filter[_UpdateT],
-    ) -> None:
+    def __init__(self, *filters: Filter[_UpdateT]) -> None:
         self._filters = filters
         super().__init__()
 

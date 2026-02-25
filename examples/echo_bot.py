@@ -10,6 +10,7 @@ bot = Bot(os.environ["TOKEN"])
 dp = Dispatcher()
 
 
+# Без фильтра - хендлер получает любое сообщение
 @dp.message_created()
 async def echo_handler(
     update: MessageCreated,

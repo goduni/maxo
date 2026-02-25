@@ -2,11 +2,12 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from maxo.dialogs import DialogManager
 from maxo.dialogs.widgets.kbd import Counter
 
 
 @pytest.mark.asyncio
-async def test_set_value_counter(mock_manager) -> None:
+async def test_set_value_counter(mock_manager: DialogManager) -> None:
     counter = Counter(id="counter")
 
     assert counter.get_value(mock_manager) == 0
@@ -17,7 +18,7 @@ async def test_set_value_counter(mock_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_min_value_counter(mock_manager) -> None:
+async def test_min_value_counter(mock_manager: DialogManager) -> None:
     counter = Counter(id="counter", min_value=10)
 
     assert counter.get_value(mock_manager) == 0
@@ -28,7 +29,7 @@ async def test_min_value_counter(mock_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_max_value_counter(mock_manager) -> None:
+async def test_max_value_counter(mock_manager: DialogManager) -> None:
     counter = Counter(id="counter", max_value=10)
 
     assert counter.get_value(mock_manager) == 0
@@ -38,14 +39,14 @@ async def test_max_value_counter(mock_manager) -> None:
     assert counter.get_value(mock_manager) == 0
 
 
-def test_default_counter(mock_manager) -> None:
+def test_default_counter(mock_manager: DialogManager) -> None:
     counter = Counter(id="counter", default=10)
 
     assert counter.get_value(mock_manager) == 10
 
 
 @pytest.mark.asyncio
-async def test_on_value_changed_counter(mock_manager) -> None:
+async def test_on_value_changed_counter(mock_manager: DialogManager) -> None:
     on_value_changed = AsyncMock()
     counter = Counter(id="counter", on_value_changed=on_value_changed)
 

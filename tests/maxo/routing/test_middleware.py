@@ -7,7 +7,8 @@ import pytest
 from maxo.enums import ChatType
 from maxo.routing.ctx import Ctx
 from maxo.routing.dispatcher import Dispatcher
-from maxo.routing.filters import AlwaysFalseFilter, AlwaysTrueFilter
+from maxo.routing.filters import AlwaysFalseFilter, AlwaysTrueFilter, BaseFilter
+from maxo.routing.interfaces import NextMiddleware
 from maxo.routing.routers.simple import Router
 from maxo.routing.sentinels import UNHANDLED
 from maxo.routing.signals import BeforeStartup
@@ -66,7 +67,11 @@ async def handler(_: Any, ctx: Ctx) -> Any:
 
 
 def middleware_factory(name: str) -> Callable[..., Any]:
-    async def middleware(update, ctx, next) -> Any:
+    async def middleware(
+        update: MessageCreated,
+        ctx: Ctx,
+        next: NextMiddleware[MessageCreated],
+    ) -> Any:
         ctx["execution_order"].append(f"{name}_pre")
         result = await next(ctx)
         ctx["execution_order"].append(f"{name}_post")
@@ -111,7 +116,11 @@ async def test_middleware_execution_order(context: Ctx) -> None:
 async def test_middleware_stops_propagation(context: Ctx) -> None:
     dp = Dispatcher()
 
-    async def stopping_middleware(update, ctx, next) -> Any:
+    async def stopping_middleware(
+        update: MessageCreated,
+        ctx: Ctx,
+        next: NextMiddleware[MessageCreated],
+    ) -> Any:
         ctx["execution_order"].append("stopping_middleware")
         return "STOPPED"
 
@@ -135,11 +144,12 @@ async def test_middleware_stops_propagation(context: Ctx) -> None:
 async def test_outer_middleware_runs_if_filter_fails(context: Ctx) -> None:
     dp = Dispatcher()
 
-    async def update_filter(_: Any, ctx: Ctx) -> bool:
-        ctx["execution_order"].append("filter")
-        return False
+    class UpdateFilter(BaseFilter[MessageCreated]):
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+            ctx["execution_order"].append("filter")
+            return False
 
-    dp.message_created.filter(update_filter)
+    dp.message_created.filter(UpdateFilter())
     dp.message_created.handler(handler)
     dp.message_created.middleware.outer.add(middleware_factory("outer"))
 
@@ -190,7 +200,11 @@ async def test_nested_router_middleware_execution(context: Ctx) -> None:
 
 @pytest.mark.asyncio
 async def test_one_call_per_event_with_routers(context: Ctx) -> None:
-    async def outer_middleware(update, ctx, next) -> Any:
+    async def outer_middleware(
+        update: MessageCreated,
+        ctx: Ctx,
+        next: NextMiddleware[MessageCreated],
+    ) -> Any:
         ctx["calls"] += 1
         return await next(ctx)
 

@@ -14,6 +14,8 @@ from maxo.utils.long_polling import LongPolling
 router = Router()
 
 
+# KeyboardBuilder: callback, link, request_contact, request_geo_location;
+# adjust — кол-во кнопок в ряд
 @router.message_created(CommandStart())
 async def start_handler(
     update: MessageCreated,

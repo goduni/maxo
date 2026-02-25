@@ -11,6 +11,7 @@ bot = Bot(os.environ["TOKEN"])
 dp = Dispatcher()
 
 
+# Html_text / md_text - сырой разбор; format задаёт отображение (HTML или Markdown)
 @dp.message_created()
 async def text_decoration_handler(
     update: MessageCreated,

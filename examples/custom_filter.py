@@ -10,6 +10,7 @@ from maxo.utils.long_polling import LongPolling
 dp = Dispatcher()
 
 
+# Кастомный фильтр - проверяет точное совпадение текста
 class MyFilter(BaseFilter[MessageCreated]):
     def __init__(self, my_text: str) -> None:
         self.my_text = my_text
@@ -20,9 +21,9 @@ class MyFilter(BaseFilter[MessageCreated]):
         return update.message.body.text == self.my_text
 
 
-@dp.message_created(MyFilter("hello"))
+@dp.message_created(MyFilter("привет"))
 async def my_handler(message: MessageCreated, facade: MessageCreatedFacade) -> None:
-    await facade.answer_text("Hello from custom filter!")
+    await facade.answer_text("Ответ из кастомного фильтра!")
 
 
 def main() -> None:

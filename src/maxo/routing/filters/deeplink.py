@@ -6,17 +6,10 @@ from maxo.utils.payload import decode_payload
 
 
 class DeeplinkFilter(BaseFilter[BotStarted]):
-    def __init__(
-        self,
-        deep_link_encoded: bool = False,
-    ) -> None:
+    def __init__(self, deep_link_encoded: bool = False) -> None:
         self.deep_link_encoded = deep_link_encoded
 
-    async def __call__(
-        self,
-        event: BotStarted,
-        ctx: Ctx,
-    ) -> bool:
+    async def __call__(self, event: BotStarted, ctx: Ctx) -> bool:
         if not isinstance(event, BotStarted):
             return False
 

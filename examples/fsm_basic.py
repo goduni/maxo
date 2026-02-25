@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 dp = Dispatcher()
 
 
+# FSM: состояния и переходы между ними, данные в fsm_context
 class Form(StatesGroup):
     name = State()
     like_bots = State()
@@ -32,10 +33,10 @@ async def command_start(
     fsm_context: FSMContext,
 ) -> None:
     await fsm_context.set_state(Form.name)
-    await facade.answer_text("Hi there! What's your name?")
+    await facade.answer_text("Привет! Как тебя зовут?")
 
 
-@dp.message_created(MagicFilter(F.text.casefold() == "cancel"))
+@dp.message_created(MagicFilter(F.text.casefold() == "отмена"))
 async def cancel_handler(
     message: MessageCreated,
     facade: MessageCreatedFacade,
@@ -47,7 +48,7 @@ async def cancel_handler(
 
     logger.info("Cancelling state %r", current_state)
     await fsm_context.clear()
-    await facade.answer_text("Cancelled.")
+    await facade.answer_text("Отменено.")
 
 
 @dp.message_created(StateFilter(Form.name))
@@ -59,11 +60,11 @@ async def process_name(
     await fsm_context.update_data(name=message.message.body.text)
     await fsm_context.set_state(Form.like_bots)
     await facade.answer_text(
-        f"Nice to meet you, {message.message.body.text}!\nDid you like to write bots?",
+        f"Приятно познакомиться, {message.message.body.text}!\nНравится писать ботов?",
         keyboard=KeyboardBuilder()
         .add(
-            MessageButton(text="Yes"),
-            MessageButton(text="No"),
+            MessageButton(text="Да"),
+            MessageButton(text="Нет"),
         )
         .build(),
     )
@@ -72,7 +73,7 @@ async def process_name(
 @dp.message_created(
     AndFilter(
         StateFilter(Form.like_bots),
-        MagicFilter(F.text.casefold() == "no"),
+        MagicFilter(F.text.casefold() == "нет"),
     ),
 )
 async def process_dont_like_write_bots(
@@ -82,14 +83,14 @@ async def process_dont_like_write_bots(
 ) -> None:
     data = await fsm_context.get_data()
     await fsm_context.clear()
-    await facade.answer_text("Not bad not terrible.\nSee you soon.")
+    await facade.answer_text("Ну ладно.\nДо встречи.")
     await show_summary(facade=facade, data=data, positive=False)
 
 
 @dp.message_created(
     AndFilter(
         StateFilter(Form.like_bots),
-        MagicFilter(F.text.casefold() == "yes"),
+        MagicFilter(F.text.casefold() == "да"),
     ),
 )
 async def process_like_write_bots(
@@ -99,7 +100,7 @@ async def process_like_write_bots(
 ) -> None:
     await fsm_context.set_state(Form.language)
     await facade.reply_text(
-        "Cool! I'm too!\nWhat programming language did you use for it?",
+        "Круто! Я тоже!\nНа каком языке программировал?",
     )
 
 
@@ -108,7 +109,7 @@ async def process_unknown_write_bots(
     message: MessageCreated,
     facade: MessageCreatedFacade,
 ) -> None:
-    await facade.reply_text("I don't understand you :(")
+    await facade.reply_text("Не понял :(")
 
 
 @dp.message_created(StateFilter(Form.language))
@@ -122,7 +123,7 @@ async def process_language(
 
     if message.message.body.text and message.message.body.text.casefold() == "python":
         await facade.reply_text(
-            "Python, you say? That's the language that makes my circuits light up! 😉",
+            "Python? Это тот язык, от которого у меня загораются схемы! 😉",
         )
 
     await show_summary(facade=facade, data=data)
@@ -134,12 +135,12 @@ async def show_summary(
     positive: bool = True,
 ) -> None:
     name = data["name"]
-    language = data.get("language", "<something unexpected>")
-    text = f"I'll keep in mind that, {name}, "
+    language = data.get("language", "<не указано>")
+    text = f"Запомню: {name}, "
     text += (
-        f"you like to write bots with {language}."
+        f"тебе нравится писать ботов на {language}."
         if positive
-        else "you don't like to write bots, so sad..."
+        else "тебе не нравится писать ботов, жаль..."
     )
     await facade.answer_text(text=text)
 

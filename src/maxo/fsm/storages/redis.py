@@ -41,11 +41,7 @@ class RedisStorage(BaseStorage):
         self.json_loads = json_loads
         self.json_dumps = json_dumps
 
-    async def set_state(
-        self,
-        key: StorageKey,
-        state: State | None = None,
-    ) -> None:
+    async def set_state(self, key: StorageKey, state: State | None = None) -> None:
         built_key = self.key_builder.build(key, StorageKeyType.STATE)
         if state is None:
             await self.redis.delete(built_key)
@@ -56,21 +52,14 @@ class RedisStorage(BaseStorage):
                 ex=self.state_ttl,
             )
 
-    async def get_state(
-        self,
-        key: StorageKey,
-    ) -> str | None:
+    async def get_state(self, key: StorageKey) -> str | None:
         built_key = self.key_builder.build(key, StorageKeyType.STATE)
         value = await self.redis.get(built_key)
         if isinstance(value, bytes):
             return value.decode("utf-8")
         return cast(str | None, value)
 
-    async def set_data(
-        self,
-        key: StorageKey,
-        data: MutableMapping[str, Any],
-    ) -> None:
+    async def set_data(self, key: StorageKey, data: MutableMapping[str, Any]) -> None:
         built_key = self.key_builder.build(key, StorageKeyType.DATA)
         if not data:
             await self.redis.delete(built_key)
@@ -81,10 +70,7 @@ class RedisStorage(BaseStorage):
                 ex=self.data_ttl,
             )
 
-    async def get_data(
-        self,
-        key: StorageKey,
-    ) -> MutableMapping[str, Any]:
+    async def get_data(self, key: StorageKey) -> MutableMapping[str, Any]:
         built_key = self.key_builder.build(key, StorageKeyType.DATA)
         value = await self.redis.get(built_key)
         if value is None:
@@ -123,11 +109,7 @@ DEFAULT_REDIS_LOCK_KWARGS = {"timeout": 60}
 
 
 class RedisEventIsolation(BaseEventIsolation):
-    __slots__ = (
-        "key_builder",
-        "lock_kwargs",
-        "redis",
-    )
+    __slots__ = ("key_builder", "lock_kwargs", "redis")
 
     def __init__(
         self,
@@ -145,10 +127,7 @@ class RedisEventIsolation(BaseEventIsolation):
         self.lock_kwargs = lock_kwargs
 
     @asynccontextmanager
-    async def lock(
-        self,
-        key: StorageKey,
-    ) -> AsyncIterator[None]:
+    async def lock(self, key: StorageKey) -> AsyncIterator[None]:
         redis_key = self.key_builder.build(key, StorageKeyType.LOCK)
         async with self.redis.lock(name=redis_key, **self.lock_kwargs, lock_class=Lock):
             yield

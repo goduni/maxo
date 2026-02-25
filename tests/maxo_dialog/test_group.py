@@ -5,6 +5,7 @@ import pytest
 
 from maxo import Dispatcher
 from maxo.dialogs import (
+    BaseDialogManager,
     Dialog,
     DialogManager,
     StartMode,
@@ -40,7 +41,7 @@ async def start(event: Any, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
 
-async def start_shared(event: Any, dialog_manager: DialogManager) -> None:
+async def start_shared(event: Any, dialog_manager: BaseDialogManager) -> None:
     dialog_manager = dialog_manager.bg(stack_id=GROUP_STACK_ID)
     await dialog_manager.start(MainSG.start, mode=StartMode.RESET_STACK)
 
@@ -60,7 +61,7 @@ def message_manager() -> MockMessageManager:
 
 
 @pytest.fixture
-def dp(message_manager) -> Dispatcher:
+def dp(message_manager: MockMessageManager) -> Dispatcher:
     key_builder = DefaultKeyBuilder(with_destiny=True)
     event_isolation = SimpleEventIsolation(key_builder=key_builder)
     dp = Dispatcher(
@@ -74,17 +75,22 @@ def dp(message_manager) -> Dispatcher:
 
 
 @pytest.fixture
-def client(dp) -> BotClient:
+def client(dp: Dispatcher) -> BotClient:
     return BotClient(dp, chat_id=-1, user_id=1, chat_type=ChatType.CHAT)
 
 
 @pytest.fixture
-def second_client(dp) -> BotClient:
+def second_client(dp: Dispatcher) -> BotClient:
     return BotClient(dp, chat_id=-1, user_id=2, chat_type=ChatType.CHAT)
 
 
 @pytest.mark.asyncio
-async def test_second_user(dp, client, second_client, message_manager) -> None:
+async def test_second_user(
+    dp: Dispatcher,
+    client: BotClient,
+    second_client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.message_created.handler(start, CommandStart())
     await client.send("/start")
     first_message = message_manager.one_message()
@@ -100,7 +106,12 @@ async def test_second_user(dp, client, second_client, message_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_change_settings(dp, client, second_client, message_manager) -> None:
+async def test_change_settings(
+    dp: Dispatcher,
+    client: BotClient,
+    second_client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.message_created.handler(start, CommandStart())
     dp.message_created.handler(add_shared, Command("add"))
 
@@ -134,7 +145,12 @@ async def test_change_settings(dp, client, second_client, message_manager) -> No
 
 
 @pytest.mark.asyncio
-async def test_change_settings_bg(dp, client, second_client, message_manager) -> None:
+async def test_change_settings_bg(
+    dp: Dispatcher,
+    client: BotClient,
+    second_client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.message_created.handler(start, CommandStart())
     dp.message_created.handler(add_shared, Command("add"))
 
@@ -168,7 +184,11 @@ async def test_change_settings_bg(dp, client, second_client, message_manager) ->
 
 
 @pytest.mark.asyncio
-async def test_same_user(dp, client, message_manager) -> None:
+async def test_same_user(
+    dp: Dispatcher,
+    client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.message_created.handler(start, CommandStart())
 
     await dp.feed_signal(BeforeStartup(), client.bot)
@@ -189,7 +209,12 @@ async def test_same_user(dp, client, message_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_shared_stack(dp, client, second_client, message_manager) -> None:
+async def test_shared_stack(
+    dp: Dispatcher,
+    client: BotClient,
+    second_client: BotClient,
+    message_manager: MockMessageManager,
+) -> None:
     dp.message_created.handler(start_shared, CommandStart())
 
     await dp.feed_signal(BeforeStartup(), client.bot)

@@ -3,11 +3,7 @@ from maxo.utils.upload_media.base import InputFile
 
 
 class BufferedInputFile(InputFile):
-    __slots__ = (
-        "_data",
-        "_file_name",
-        "_type",
-    )
+    __slots__ = ("_data", "_file_name", "_type")
 
     def __init__(
         self,

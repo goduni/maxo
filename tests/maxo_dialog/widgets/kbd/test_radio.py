@@ -1,17 +1,19 @@
 import operator
 from datetime import UTC, datetime
-from unittest.mock import AsyncMock
+from typing import Any, cast
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
+from maxo.dialogs import DialogManager
+from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.widgets.kbd import Radio
 from maxo.dialogs.widgets.text import Format
-from maxo.types import MaxoType
 
 
 @pytest.mark.asyncio
-async def test_check_radio(mock_manager) -> None:
-    radio = Radio(
+async def test_check_radio(mock_manager: DialogManager) -> None:
+    radio: Radio[Any] = Radio(
         Format("🔘 {item[1]}"),
         Format("⚪️ {item[1]}"),
         id="fruit",
@@ -22,17 +24,17 @@ async def test_check_radio(mock_manager) -> None:
     current_checked_fruit = radio.get_checked(mock_manager)
     assert current_checked_fruit is None
 
-    await radio.set_checked(MaxoType(), "2", mock_manager)
+    await radio.set_checked(cast(ChatEvent, Mock()), "2", mock_manager)
 
     assert radio.is_checked("2", mock_manager)
 
 
 @pytest.mark.asyncio
-async def test_validation_radio(mock_manager) -> None:
+async def test_validation_radio(mock_manager: DialogManager) -> None:
     def validate_datetime(text: str) -> datetime:
         return datetime.fromtimestamp(int(text), tz=UTC)
 
-    radio = Radio(
+    radio: Radio[Any] = Radio(
         Format("🔘 {item[1]}"),
         Format("⚪️ {item[1]}"),
         id="datetime",
@@ -58,7 +60,7 @@ async def test_validation_radio(mock_manager) -> None:
     assert current_checked_date is None
 
     await radio.set_checked(
-        MaxoType(),
+        cast(ChatEvent, Mock()),
         int(datetime(2024, 5, 30, tzinfo=UTC).timestamp()),
         mock_manager,
     )
@@ -73,9 +75,9 @@ async def test_validation_radio(mock_manager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_on_state_changed_radio(mock_manager) -> None:
+async def test_on_state_changed_radio(mock_manager: DialogManager) -> None:
     on_state_changed = AsyncMock()
-    radio = Radio(
+    radio: Radio[Any] = Radio(
         Format("🔘 {item[1]}"),
         Format("⚪️ {item[1]}"),
         id="fruit",
@@ -84,6 +86,6 @@ async def test_on_state_changed_radio(mock_manager) -> None:
         on_state_changed=on_state_changed,
     )
 
-    await radio.set_checked(MaxoType(), "2", mock_manager)
+    await radio.set_checked(cast(ChatEvent, Mock()), "2", mock_manager)
 
     on_state_changed.assert_called_once()

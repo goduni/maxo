@@ -1,8 +1,5 @@
 from abc import abstractmethod
-from typing import (
-    Any,
-    Protocol,
-)
+from typing import Any, Protocol
 
 from maxo.dialogs.api.entities import Data, NewMessage
 from maxo.dialogs.api.protocols import DialogProtocol

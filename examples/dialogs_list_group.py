@@ -87,17 +87,7 @@ list_dialog = Dialog(
     ),
 )
 
-key_builder = DefaultKeyBuilder(with_destiny=True)
-events_isolation = SimpleEventIsolation(key_builder=key_builder)
-dp = Dispatcher(
-    storage=MemoryStorage(key_builder=key_builder),
-    events_isolation=events_isolation,
-    key_builder=key_builder,
-)
-dp.include(list_dialog)
 
-
-@dp.message_created(CommandStart())
 async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(ListSG.menu, mode=StartMode.RESET_STACK)
 
@@ -105,6 +95,16 @@ async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
 def main() -> None:
     logging.basicConfig(level=logging.DEBUG)
     bot = Bot(os.environ["TOKEN"])
+    key_builder = DefaultKeyBuilder(with_destiny=True)
+    events_isolation = SimpleEventIsolation(key_builder=key_builder)
+    dp = Dispatcher(
+        storage=MemoryStorage(key_builder=key_builder),
+        events_isolation=events_isolation,
+        key_builder=key_builder,
+    )
+    dp.include(list_dialog)
+    dp.message_created.handler(start, CommandStart())
+
     setup_dialogs(dp, events_isolation=events_isolation)
     LongPolling(dp).run(bot)
 

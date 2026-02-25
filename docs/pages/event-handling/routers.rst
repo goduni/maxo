@@ -16,7 +16,7 @@
     from maxo.utils.facades import MessageCreatedFacade
     from maxo.utils.long_polling import LongPolling
 
-    bot = Bot(token="...")
+    bot = Bot(token="ВАШ_ТОКЕН")
     dispatcher = Dispatcher()
     
     # Регистрация обработчиков прямо в диспетчере (так как он тоже Router)
@@ -81,6 +81,7 @@
     from maxo.routing.filters import BaseFilter
     from maxo.routing.updates.message_created import MessageCreated
     from maxo.routing.ctx import Ctx
+    from maxo.utils.facades import MessageCreatedFacade
 
     class IsGroupChat(BaseFilter[MessageCreated]):
         """Пропускает только сообщения из групповых чатов."""

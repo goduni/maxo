@@ -52,7 +52,7 @@ Dependency Injection (DI)
 Вы можете передавать произвольные данные в обработчики через фильтры и мидлвари.
 
 1.  **Через фильтры**: если фильтр возвращает словарь (``dict``), эти данные будут добавлены в аргументы обработчика (``kwargs``).
-2.  **Через мидлвари**: мидлварь может изменить ``ctx`` или вызвать ``handler(ctx, **kwargs)``, добавив новые аргументы.
+2.  **Через мидлвари**: мидлварь может изменить ``ctx`` добавляя новые значения.
 
 .. code-block:: python
 
@@ -66,7 +66,7 @@ Dependency Injection (DI)
         async def __call__(self, update: MessageCreated, ctx: Ctx) -> dict | bool:
             user = await get_user_from_db(update.message.sender.user_id)
             if user:
-                return {"user": user} # Передаем user в обработчик
+                ctx["user"] = user # Передаем user в обработчик
             return False
 
     @router.message_created(UserFilter())

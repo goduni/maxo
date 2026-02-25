@@ -95,6 +95,8 @@ ExceptionMessageFilter
     from maxo.routing.ctx import Ctx
     from maxo.utils.facades import MessageCreatedFacade
 
+    import logging
+
     class MyCustomError(Exception):
         pass
 

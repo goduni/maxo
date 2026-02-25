@@ -72,7 +72,7 @@ Magic Filter
 -----------------------
 
 Фильтр – это любой вызываемый объект (callable), принимающий ``update`` и возвращающий ``bool`` (или ``Awaitable[bool]``).
-Также фильтр может вернуть словарь, который будет передан в аргументы обработчика (как dependency injection).
+Если фильтру нужно передать данные обработчику, он может сохранить их напрямую в словарь ``ctx``, так как контекст является мутабельным и общим для всего цикла обработки.
 
 .. code-block:: python
 
@@ -84,10 +84,10 @@ Magic Filter
         async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
             return update.message.body.text == "foo"
 
-Пример: фильтр с параметром и DI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Пример: фильтр с параметром и пробросом данных
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Фильтр может принимать аргументы конструктора и возвращать словарь с данными, которые станут доступны обработчику:
+Фильтр может принимать аргументы конструктора и складывать промежуточные вычисления в ``ctx``:
 
 .. code-block:: python
 
@@ -101,11 +101,12 @@ Magic Filter
         def __init__(self, min_length: int):
             self.min_length = min_length
 
-        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool | dict:
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
             text = update.message.body.text or ""
             if len(text) >= self.min_length:
-                # Возвращаем словарь – значения попадут в аргументы обработчика
-                return {"text_length": len(text)}
+                # Сохраняем вычисленное значение в контекст
+                ctx["text_length"] = len(text)
+                return True
             return False
 
     @router.message_created(MinLengthFilter(10))

@@ -100,7 +100,7 @@ Url
     from maxo.dialogs.widgets.kbd import Url
     from maxo.dialogs.widgets.text import Const
 
-    Url(Const("Открыть сайт"), Const("https://example.com"), id="link")
+    Url(Const("Открыть сайт"), Const("https://example.com"))
 
 Row, Column, Group
 ------------------

@@ -56,6 +56,7 @@ from maxo.routing.updates import (
 )
 from maxo.types import (
     Attachments,
+    AttachmentsRequests,
     AudioAttachment,
     AudioAttachmentRequest,
     CallbackButton,
@@ -120,11 +121,7 @@ _has_tag_providers = concat_provider(
     has_tag_provider(EmphasizedMarkup, "type", MarkupElementType.EMPHASIZED),
     has_tag_provider(LinkMarkup, "type", MarkupElementType.LINK),
     has_tag_provider(MonospacedMarkup, "type", MarkupElementType.MONOSPACED),
-    has_tag_provider(
-        StrikethroughMarkup,
-        "type",
-        MarkupElementType.STRIKETHROUGH,
-    ),
+    has_tag_provider(StrikethroughMarkup, "type", MarkupElementType.STRIKETHROUGH),
     has_tag_provider(StrongMarkup, "type", MarkupElementType.STRONG),
     has_tag_provider(UnderlineMarkup, "type", MarkupElementType.UNDERLINE),
     has_tag_provider(UserMentionMarkup, "type", MarkupElementType.USER_MENTION),
@@ -145,26 +142,10 @@ _has_tag_providers = concat_provider(
     # ---> KeyboardButtonType <---
     has_tag_provider(CallbackButton, "type", ButtonType.CALLBACK),
     has_tag_provider(LinkButton, "type", ButtonType.LINK),
-    has_tag_provider(
-        RequestContactButton,
-        "type",
-        ButtonType.REQUEST_CONTACT,
-    ),
-    has_tag_provider(
-        RequestGeoLocationButton,
-        "type",
-        ButtonType.REQUEST_GEO_LOCATION,
-    ),
-    has_tag_provider(
-        OpenAppButton,
-        "type",
-        ButtonType.OPEN_APP,
-    ),
-    has_tag_provider(
-        MessageButton,
-        "type",
-        ButtonType.MESSAGE,
-    ),
+    has_tag_provider(RequestContactButton, "type", ButtonType.REQUEST_CONTACT),
+    has_tag_provider(RequestGeoLocationButton, "type", ButtonType.REQUEST_GEO_LOCATION),
+    has_tag_provider(OpenAppButton, "type", ButtonType.OPEN_APP),
+    has_tag_provider(MessageButton, "type", ButtonType.MESSAGE),
 )
 
 
@@ -232,8 +213,8 @@ class MaxApiClient(AiohttpAsyncClient):
                     lambda item: item or self._text_format,
                 ),
                 dumper(
-                    P[Attachments],
-                    lambda attachment: attachment.to_request(),
+                    P[AttachmentsRequests | Attachments],
+                    lambda x: x.to_request() if isinstance(x, Attachments) else x,
                     chain=Chain.FIRST,
                 ),
             ],

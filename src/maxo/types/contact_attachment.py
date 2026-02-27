@@ -45,7 +45,7 @@ class ContactAttachment(Attachment):
             name=(
                 self.payload.max_info.first_name
                 if is_defined(self.payload.max_info)
-                else Omitted()
+                else None
             ),
             contact_id=(
                 self.payload.max_info.user_id

@@ -44,6 +44,14 @@ class BaseRouter(Protocol):
     def include(self, *routers: "BaseRouter") -> None:
         raise NotImplementedError
 
+    # Подражание aiogram
+    def include_router(self, router: "BaseRouter") -> None:
+        return self.include(router)
+
+    # Подражание aiogram
+    def include_routers(self, *routers: "BaseRouter") -> None:
+        return self.include(*routers)
+
     @abstractmethod
     async def trigger_child(self, ctx: Ctx) -> Any:
         raise NotImplementedError

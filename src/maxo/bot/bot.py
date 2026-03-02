@@ -1,9 +1,12 @@
+import json
 import pathlib
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
-from typing import BinaryIO, Self, TypeVar
+from typing import Any, BinaryIO, Self, TypeVar
 
+from aiohttp import ClientSession
 from unihttp.bind_method import bind_method
+from unihttp.middlewares import AsyncMiddleware
 
 from maxo.bot.api_client import MaxApiClient
 from maxo.bot.methods import (
@@ -55,17 +58,34 @@ _MethodResultT = TypeVar("_MethodResultT", bound=MaxoType)
 
 
 class Bot:
-    __slots__ = ("_state", "_text_format", "_token", "_warming_up")
+    __slots__ = (
+        "_json_dumps",
+        "_json_loads",
+        "_middleware",
+        "_session",
+        "_state",
+        "_text_format",
+        "_token",
+        "_warming_up",
+    )
 
     def __init__(
         self,
         token: str,
         text_format: TextFormat | None = None,
         warming_up: bool = True,
+        middleware: list[AsyncMiddleware] | None = None,
+        session: ClientSession | None = None,
+        json_dumps: Callable[[Any], str] = json.dumps,
+        json_loads: Callable[[str | bytes | bytearray], Any] = json.loads,
     ) -> None:
         self._token = token
         self._text_format = text_format
         self._warming_up = warming_up
+        self._middleware = middleware
+        self._session = session
+        self._json_dumps = json_dumps
+        self._json_loads = json_loads
 
         self._state = EmptyBotState()
 
@@ -77,7 +97,15 @@ class Bot:
         if self.state.started:
             return
 
-        api_client = MaxApiClient(self._token, self._warming_up, self._text_format)
+        api_client = MaxApiClient(
+            token=self._token,
+            warming_up=self._warming_up,
+            text_format=self._text_format,
+            middleware=self._middleware,
+            session=self._session,
+            json_dumps=self._json_dumps,
+            json_loads=self._json_loads,
+        )
         self._state = ConnectingBotState(api_client=api_client)
 
         info = await self.get_my_info()

@@ -136,6 +136,7 @@ class LongPolling:
                     type(exception).__name__,
                     exception,
                 )
+                backoff.next()
                 loggers.dispatcher.warning(
                     "Sleep for %f seconds and try again... "
                     "(tryings = %d, username = @%s, bot id = %d)",
@@ -144,8 +145,7 @@ class LongPolling:
                     bot_username,
                     bot_id,
                 )
-                await asyncio.sleep(backoff.current_delay)
-                backoff.next()
+                await backoff.sleep()
                 continue
 
             if failed:

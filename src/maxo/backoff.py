@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 from random import normalvariate
 
@@ -73,3 +74,6 @@ class Backoff:
         self._counter = 0
         self._current_delay = 0.0
         self._next_delay = self.min_delay
+
+    async def sleep(self) -> None:
+        await asyncio.sleep(self.current_delay)

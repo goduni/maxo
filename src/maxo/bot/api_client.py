@@ -177,9 +177,6 @@ class MaxApiClient(AiohttpAsyncClient):
         if "User-Agent" not in session.headers:
             session.headers["User-Agent"] = f"maxo/{__version__}"
 
-        if middleware is None:
-            middleware = []
-
         request_dumper = self._init_method_dumper()
         response_loader = self._init_response_loader()
 

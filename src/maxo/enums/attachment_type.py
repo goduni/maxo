@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import TypeAlias
 
 
 class AttachmentType(StrEnum):
@@ -15,6 +16,9 @@ class AttachmentType(StrEnum):
     STICKER = "sticker"
     VIDEO = "video"
 
+    # Подражание aiogram
+    DOCUMENT = FILE
+
 
 # Подражание aiogram
-ContentType = AttachmentType
+ContentType: TypeAlias = AttachmentType

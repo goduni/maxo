@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
 from maxo.enums import MessageLinkType, TextFormat
-from maxo.omit import Omittable, Omitted
+from maxo.omit import Omittable, Omitted, is_omitted
 from maxo.types.buttons import InlineButtons
 from maxo.types.chat import Chat
 from maxo.types.chat_members_list import ChatMembersList
@@ -44,6 +44,12 @@ class MessageMethodsFacade(AttachmentsFacade, ABC):
             user_id=recipient.user_id,
             chat_type=recipient.chat_type,
         )
+
+        if (
+            is_omitted(disable_link_preview)
+            and self.bot.defaults.disable_link_preview is not None
+        ):
+            disable_link_preview = self.bot.defaults.disable_link_preview
 
         attachments = await self.build_attachments(
             base=[],

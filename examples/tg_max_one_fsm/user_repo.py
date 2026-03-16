@@ -65,12 +65,31 @@ class UserRepo:
             shared_id = str(uuid.uuid4().int)
             cursor = await db.execute(
                 (
-                    "INSERT INTO users (external_id, external_type, shared_id) "
+                    "INSERT OR IGNORE INTO users "
+                    "(external_id, external_type, shared_id) "
                     "VALUES (?, ?, ?)"
                 ),
                 (external_id, external_type.value, shared_id),
             )
             await db.commit()
+
+            if cursor.lastrowid == 0 or cursor.rowcount == 0:
+                # Concurrent insert happened, re-fetch
+                cursor = await db.execute(
+                    (
+                        "SELECT id, shared_id FROM users "
+                        "WHERE external_id = ? AND external_type = ?"
+                    ),
+                    (external_id, external_type.value),
+                )
+                row = await cursor.fetchone()
+                db_id, shared_id = row
+                return DbUser(
+                    id=DbId(db_id),
+                    external_id=external_id,
+                    external_type=external_type,
+                    shared_id=SharedId(int(shared_id)),
+                )
 
             db_id = cursor.lastrowid
             return DbUser(

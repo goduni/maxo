@@ -88,7 +88,7 @@ class WebhookEngine(ABC):
                 payload={"detail": "Bad request"},
             )
 
-        update = MaxoUpdate(update=bot.retort.dump(raw_update, Updates))
+        update = MaxoUpdate(update=bot.retort.load(raw_update, Updates))
 
         if self.handle_in_background:
             return await self._handle_request_background(bot=bot, update=update)

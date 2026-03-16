@@ -1,4 +1,4 @@
-from mypy.types import NewType
+from typing import NewType
 
 MaxId = NewType("MaxId", int)
 TgId = NewType("TgId", int)

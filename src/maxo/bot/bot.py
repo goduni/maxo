@@ -107,6 +107,7 @@ class Bot:
 
     @property
     def token(self) -> str:
+        """Bot API token. Treat as secret — avoid logging or exposing."""
         return self._token
 
     async def start(self) -> None:

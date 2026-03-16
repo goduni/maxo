@@ -66,7 +66,7 @@ async def start_handler(update: MessageCreated, facade: MessageCreatedFacade) ->
         as_numbered_list(
             "Нумерованный список:",
             "Элемент 1",
-            "Эleмент 2",
+            "Элeмент 2",
             "Элемент 3",
             start=4,
         ),

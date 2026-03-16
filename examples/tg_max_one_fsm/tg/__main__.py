@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from pathlib import Path
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command, CommandObject, CommandStart
@@ -75,7 +76,7 @@ async def handle_deeplink(
             shared_id_to_link=shared_id_to_link,
         )
         await message.answer("Аккаунты успешно связаны!")
-    except (IndexError, ValueError):
+    except (IndexError, ValueError, TypeError):
         await message.answer("Использование: /link <shared_id>")
 
 
@@ -116,7 +117,8 @@ async def main() -> None:
     token = os.environ["TG_TOKEN"]
     redis_url = os.environ["REDIS_URL"]
 
-    user_repo = UserRepo("../db.sqlite")
+    db_path = (Path(__file__).parent.parent / "db.sqlite").resolve()
+    user_repo = UserRepo(db_path)
     await user_repo.create_table()
 
     key_builder = DefaultKeyBuilder(prefix="fsm", separator=":", with_bot_id=False)

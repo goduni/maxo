@@ -163,7 +163,9 @@ async def test_dp_update_handler(update: MessageCreated, bot) -> None:
     triggered = False
 
     @dp.update()
-    async def update_handler(_) -> None:
+    async def update_handler(update: MaxoUpdate[MessageCreated]) -> None:
+        assert isinstance(update, MaxoUpdate)
+        assert isinstance(update.update, MessageCreated)
         nonlocal triggered
         triggered = True
 

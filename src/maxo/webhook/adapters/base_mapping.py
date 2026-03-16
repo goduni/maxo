@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import ItemsView, Iterator, KeysView, Mapping, ValuesView
 from typing import Any, Generic, TypeVar
 
-M = TypeVar("M", bound=Mapping)
+M = TypeVar("M", bound=Mapping[str, Any])
 
 
 class MappingABC(ABC, Generic[M]):

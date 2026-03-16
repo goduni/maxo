@@ -32,7 +32,7 @@ class StaticSecretToken(SecretToken):
     def __init__(self, token: str) -> None:
         if not SECRET_TOKEN_PATTERN.match(token):
             raise ValueError(
-                "Invalid secret token format. Must be 1-256 characters, "
+                "Invalid secret token format. Must be 5-256 characters, "
                 "only A-Z, a-z, 0-9, -",
             )
         self._token = token

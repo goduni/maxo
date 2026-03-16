@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from ipaddress import IPv4Address, IPv6Address
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
@@ -33,13 +34,13 @@ class BoundRequest(ABC, Generic[R]):
 
     @property
     @abstractmethod
-    def headers(self) -> MappingABC:
+    def headers(self) -> MappingABC[Mapping[str, Any]]:
         """Get request headers."""
         raise NotImplementedError
 
     @property
     @abstractmethod
-    def query_params(self) -> MappingABC:
+    def query_params(self) -> MappingABC[Mapping[str, Any]]:
         """Get request query parameters."""
         raise NotImplementedError
 

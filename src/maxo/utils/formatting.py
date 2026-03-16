@@ -310,6 +310,9 @@ def _unparse_entities(
 
 def as_line(*items: NodeType, end: str = "\n", sep: str = "") -> Text:
     r"""Wrap multiple nodes into line with :code:`\n` at the end of line."""
+    if not items:
+        return Text(end)
+
     if sep:
         nodes = []
         for item in items[:-1]:
@@ -322,6 +325,9 @@ def as_line(*items: NodeType, end: str = "\n", sep: str = "") -> Text:
 
 def as_list(*items: NodeType, sep: str = "\n") -> Text:
     """Wrap each element to separated lines."""
+    if not items:
+        return Text()
+
     nodes = []
     for item in items[:-1]:
         nodes.extend([item, sep])

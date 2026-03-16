@@ -14,7 +14,7 @@ warnings.warn(
 
 from maxo.routing.filters.always import AlwaysFalseFilter, AlwaysTrueFilter
 from maxo.routing.filters.base import BaseFilter
-from maxo.routing.filters.command import Command, CommandStart
+from maxo.routing.filters.command import Command, CommandObject, CommandStart
 from maxo.routing.filters.deeplink import DeeplinkFilter
 from maxo.routing.filters.exception import ExceptionMessageFilter, ExceptionTypeFilter
 from maxo.routing.filters.logic import (
@@ -33,6 +33,7 @@ __all__ = (
     "AndFilter",
     "BaseFilter",
     "Command",
+    "CommandObject",
     "CommandStart",
     "DeeplinkFilter",
     "ExceptionMessageFilter",

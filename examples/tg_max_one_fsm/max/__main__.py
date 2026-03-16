@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from pathlib import Path
 
 from magic_filter import F
 
@@ -89,7 +90,7 @@ async def handle_deeplink(
             shared_id_to_link=shared_id_to_link,
         )
         await facade.send_message(text="Аккаунты успешно связаны!")
-    except (IndexError, ValueError):
+    except (IndexError, ValueError, TypeError):
         await facade.send_message(text="Использование: /link <shared_id>")
 
 
@@ -139,7 +140,8 @@ async def main() -> None:
     token = os.environ["MAX_TOKEN"]
     redis_url = os.environ["REDIS_URL"]
 
-    user_repo = UserRepo("../db.sqlite")
+    db_path = (Path(__file__).parent.parent / "db.sqlite").resolve()
+    user_repo = UserRepo(str(db_path))
     await user_repo.create_table()
 
     key_builder = DefaultKeyBuilder(prefix="fsm", separator=":", with_bot_id=False)

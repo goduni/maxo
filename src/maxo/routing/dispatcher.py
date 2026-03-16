@@ -109,6 +109,7 @@ class Dispatcher(Router):
 
     async def _feed_update_handler(self, update: MaxoUpdate[Any], ctx: Ctx) -> Any:
         ctx_copy = Ctx(dict(ctx))
+        ctx_copy["ctx"] = ctx_copy
         ctx_copy["update"] = update.update
 
         result = await self.trigger(ctx_copy)

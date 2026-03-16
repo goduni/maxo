@@ -7,7 +7,6 @@ from typing import Any, cast
 from aiohttp import ContentTypeError
 from aiohttp.web import Application, Request
 from aiohttp.web_response import Response, json_response
-from aiosignal import Signal
 
 from maxo.webhook.adapters.aiohttp.mapping import (
     AiohttpHeadersMapping,
@@ -26,7 +25,7 @@ class AiohttpBoundRequest(BoundRequest[Request]):
         try:
             return await self.request.json()
         except ContentTypeError as e:
-            raise JSONDecodeError from e
+            raise JSONDecodeError(str(e), "", 0) from e
 
     @property
     def client_ip(self) -> IPv4Address | IPv6Address | str | None:
@@ -57,13 +56,16 @@ class AiohttpWebAdapter(WebAdapter):
         app: Application,
         path: str,
         handler: Callable[[BoundRequest[Any]], Awaitable[Any]],
-        on_startup: Signal[Application] | None = None,
-        on_shutdown: Signal[Application] | None = None,
+        on_startup: Callable[..., Awaitable[Any]] | None = None,
+        on_shutdown: Callable[..., Awaitable[Any]] | None = None,
     ) -> None:
         async def endpoint(request: Request) -> Any:
             return await handler(self.bind(request))
 
         app.router.add_route(method="POST", path=path, handler=endpoint)
+
+        # Лучше определить lifespan в app
+        # https://fastapi.tiangolo.com/advanced/events/#alternative-events-deprecated
         if on_startup is not None:
             app.on_startup.append(on_startup)
         if on_shutdown is not None:

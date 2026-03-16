@@ -1,10 +1,8 @@
-from dataclasses import dataclass
-
 from maxo.enums import TextFormat
+from maxo.types import MaxoType
 
 
-@dataclass
-class BotDefaults:
+class BotDefaults(MaxoType):
     """Default values for bot API calls."""
 
     text_format: TextFormat | None = None

@@ -49,13 +49,17 @@ class FastApiWebAdapter(WebAdapter):
         app: FastAPI,
         path: str,
         handler: Callable[[BoundRequest], Awaitable[Any]],
-        on_startup: None = None,
-        on_shutdown: None = None,
+        on_startup: Callable[..., Awaitable[Any]] | None = None,
+        on_shutdown: Callable[..., Awaitable[Any]] | None = None,
     ) -> None:
         async def endpoint(request: Request) -> Any:
             return await handler(self.bind(request))
 
         app.add_api_route(path=path, endpoint=endpoint, methods=["POST"])
+        if on_startup is not None:
+            app.add_event_handler("startup", on_startup)
+        if on_shutdown is not None:
+            app.add_event_handler("shutdown", on_shutdown)
 
     def create_json_response(
         self,

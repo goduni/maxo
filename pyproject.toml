@@ -217,7 +217,9 @@ line-length = 88
 target-version = ["py312"]
 include = 'src/.*\.py$|tests/.*\.py$|examples/.*\.py$'
 
-[tool.pytest]
+[tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "DEBUG"
+
+[tool.pytest_asyncio]
 asyncio_mode = "strict"

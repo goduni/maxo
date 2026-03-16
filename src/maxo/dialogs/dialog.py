@@ -237,7 +237,7 @@ class Dialog(Router, DialogProtocol):
                 manager,
             )
 
-    def include(self, *routers: BaseRouter) -> BaseRouter:
+    def include(self, *routers: BaseRouter) -> None:
         raise TypeError("Dialog cannot include routers")
 
     async def process_close(

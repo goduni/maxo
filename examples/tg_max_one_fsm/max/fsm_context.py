@@ -5,14 +5,15 @@ from maxo.fsm.key_builder import StorageKey
 from maxo.fsm.storages.base import BaseEventIsolation, BaseStorage
 from maxo.routing.ctx import Ctx
 from maxo.routing.interfaces.middleware import BaseMiddleware, NextMiddleware
+from maxo.routing.middlewares.fsm_context import (
+    FSM_CONTEXT_KEY,
+    FSM_CONTEXT_STATE_KEY,
+    FSM_STORAGE_KEY,
+    RAW_STATE_KEY,
+)
 from maxo.routing.signals.update import MaxoUpdate
 
 from ..user_repo import DbUser
-
-FSM_STORAGE_KEY = "fsm_storage"
-FSM_CONTEXT_KEY = "fsm_context"
-FSM_CONTEXT_STATE_KEY = "state"  # same as "fsm_context", Подражаение aiogram
-RAW_STATE_KEY = "raw_state"
 
 
 class SharedFSMContextMiddleware(BaseMiddleware[MaxoUpdate[Any]]):

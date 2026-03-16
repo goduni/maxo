@@ -41,7 +41,7 @@ class TokenEngine(WebhookEngine):
             security=security,
             handle_in_background=handle_in_background,
         )
-        self.routing: TokenRouting = routing  # for type checker
+        self.routing = routing
         self.bot_config = bot_config or BotConfig()
         self._bots: dict[str, Bot] = {}
 

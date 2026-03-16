@@ -64,8 +64,6 @@ class AiohttpWebAdapter(WebAdapter):
 
         app.router.add_route(method="POST", path=path, handler=endpoint)
 
-        # Лучше определить lifespan в app
-        # https://fastapi.tiangolo.com/advanced/events/#alternative-events-deprecated
         if on_startup is not None:
             app.on_startup.append(on_startup)
         if on_shutdown is not None:

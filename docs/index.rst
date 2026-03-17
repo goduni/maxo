@@ -151,3 +151,10 @@ Contributors
    :hidden:
 
    pages/botapi/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Полезные заметки
+   :hidden:
+
+   pages/useful_notes

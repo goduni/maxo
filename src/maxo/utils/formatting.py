@@ -245,6 +245,10 @@ class Strikethrough(Text):
     type = MarkupElementType.STRIKETHROUGH
 
 
+class BlockQuote(Text):
+    type = MarkupElementType.QUOTE
+
+
 class Monospaced(Text):
     type = MarkupElementType.MONOSPACED
 
@@ -265,6 +269,7 @@ class Mention(Text):
 
 NODE_TYPES: dict[str | None, type[Text]] = {
     Text.type: Text,
+    BlockQuote.type: BlockQuote,
     Bold.type: Bold,
     Italic.type: Italic,
     Underline.type: Underline,

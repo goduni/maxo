@@ -7,6 +7,7 @@ from maxo.types.strong_markup import StrongMarkup
 from maxo.types.underline_markup import UnderlineMarkup
 from maxo.types.user_mention_markup import UserMentionMarkup
 from maxo.utils.formatting import (
+    BlockQuote,
     Bold,
     Italic,
     Link,
@@ -64,6 +65,10 @@ class TestNode:
             (
                 Mention("test", user_id=42),
                 '<a href="max://user/42">test</a>',
+            ),
+            (
+                BlockQuote("test"),
+                "<blockquote>test</blockquote>",
             ),
         ],
     )

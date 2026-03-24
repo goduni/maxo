@@ -86,7 +86,7 @@ Text API (``maxo.utils.formatting``)
 ---------------
 
 * ``Text`` — базовый контейнер, принимает произвольные узлы
-* ``Bold``, ``Italic``, ``Underline``, ``Strikethrough``, ``Monospaced`` — обёртки форматирования
+* ``Bold``, ``Italic``, ``Underline``, ``Strikethrough``, ``Monospaced``, ``BlockQuote`` — обёртки форматирования
 * ``Link(*body, url="https://...")`` — ссылка
 * ``Mention("Полное имя", user_id=123)`` — упоминание (текст должен быть полным именем)
 

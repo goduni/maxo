@@ -1,22 +1,24 @@
+import typing
 from datetime import UTC, datetime
 
 from adaptix import Chain, P, Retort, dumper, loader
+from mypyc.ir.ops import TypeVar
 from unihttp.markers import QueryMarker
 from unihttp.serializers.adaptix import DEFAULT_RETORT, for_marker
 
 from maxo._internal._adaptix.concat_provider import concat_provider
 from maxo._internal._adaptix.has_tag_provider import has_tag_provider
 from maxo.bot.defaults import BotDefaults
+from maxo.bot.methods import EditMessage, SendMessage
 from maxo.bot.warming_up import WarmingUpType, warming_up_retort
 from maxo.enums import (
     AttachmentRequestType,
     AttachmentType,
     ButtonType,
     MarkupElementType,
-    TextFormat,
     UpdateType,
 )
-from maxo.omit import Omittable
+from maxo.omit import is_omitted
 from maxo.routing.updates import (
     BotAddedToChat,
     BotRemovedFromChat,
@@ -53,6 +55,7 @@ from maxo.types import (
     LocationAttachmentRequest,
     MessageButton,
     MonospacedMarkup,
+    NewMessageBody,
     OpenAppButton,
     PhotoAttachment,
     PhotoAttachmentRequest,
@@ -137,6 +140,23 @@ def create_retort(
     if defaults is None:
         defaults = BotDefaults()
 
+    types_text_format = SendMessage | EditMessage | NewMessageBody
+    T = TypeVar("T", bound=types_text_format)
+
+    def _set_text_format_default(method: T) -> T:
+        if is_omitted(method.format):
+            method.format = defaults.text_format
+        return method
+
+    types_disable_link_preview = SendMessage
+    T = TypeVar("T", bound=types_text_format)
+
+    def _set_disable_link_preview_default(method: T) -> T:
+        if is_omitted(method.disable_link_preview):
+            method.disable_link_preview = defaults.disable_link_preview
+        return method
+
+
     retort = DEFAULT_RETORT.extend(
         recipe=[
             TAG_PROVIDERS,
@@ -153,11 +173,14 @@ def create_retort(
                 lambda seq: ",".join(str(el) for el in seq),
             ),
             dumper(
-                P[TextFormat]
-                | P[TextFormat | None]
-                | P[Omittable[TextFormat]]
-                | P[Omittable[TextFormat | None]],
-                lambda item: item or defaults.text_format,
+                P[*typing.get_args(types_text_format)],
+                _set_text_format_default,
+                chain=Chain.FIRST,
+            ),
+            dumper(
+                P[types_disable_link_preview],
+                _set_disable_link_preview_default,
+                chain=Chain.FIRST,
             ),
             dumper(
                 P[AttachmentsRequests | Attachments],

@@ -12,5 +12,5 @@ async def start_handler(
     facade: MessageCreatedFacade,
 ) -> None:
     await facade.answer_text(
-        "Привет! Я бот из нескольких модулей. Напиши что-нибудь — отвечу эхом.",
+        "Привет! Я бот из нескольких модулей. Напиши что-нибудь - отвечу эхом.",
     )

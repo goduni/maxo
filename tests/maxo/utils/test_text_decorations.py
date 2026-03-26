@@ -1,5 +1,6 @@
 import pytest
 
+from maxo.enums import MarkupElementType
 from maxo.types import (
     EmphasizedMarkup,
     LinkMarkup,
@@ -51,6 +52,16 @@ class TestTextDecoration:
                 markdown_decoration,
                 UserMentionMarkup(from_=0, length=4, user_id=42),
                 "[test](max://user/42)",
+            ),
+            (
+                html_decoration,
+                MarkupElement(type=MarkupElementType.QUOTE, from_=0, length=4),
+                "<blockquote>test</blockquote>",
+            ),
+            (
+                markdown_decoration,
+                MarkupElement(type=MarkupElementType.QUOTE, from_=0, length=4),
+                "> test",
             ),
         ],
     )

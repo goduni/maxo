@@ -7,6 +7,7 @@ class MarkupElementType(StrEnum):
     EMPHASIZED = "emphasized"
     LINK = "link"
     MONOSPACED = "monospaced"
+    QUOTE = "quote"  # Самодельное поле
     STRIKETHROUGH = "strikethrough"
     STRONG = "strong"
     UNDERLINE = "underline"

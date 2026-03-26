@@ -212,3 +212,6 @@ test.py
 
 # codegen
 .butcher
+
+docs/superpowers/
+uv.lock

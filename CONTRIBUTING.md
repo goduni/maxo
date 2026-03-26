@@ -5,8 +5,8 @@
 ## Требования
 
 - Python 3.12+
-- [uv](https://docs.astral.sh/uv/) — менеджер пакетов
-- [just](https://github.com/casey/just) — запуск команд (опционально, но рекомендуется)
+- [uv](https://docs.astral.sh/uv/) - менеджер пакетов
+- [just](https://github.com/casey/just) - запуск команд (опционально, но рекомендуется)
 
 ## Начало работы
 
@@ -35,7 +35,7 @@ uv sync --group dev
 just lint       # ruff, codespell, bandit, slotscheck
 just mypy       # строгая проверка типов
 just test       # pytest с покрытием
-just test-all   # nox — тесты на Python 3.12, 3.13, 3.14
+just test-all   # nox - тесты на Python 3.12, 3.13, 3.14
 just all        # всё вместе
 ```
 

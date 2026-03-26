@@ -7,6 +7,7 @@ from maxo.types.strong_markup import StrongMarkup
 from maxo.types.underline_markup import UnderlineMarkup
 from maxo.types.user_mention_markup import UserMentionMarkup
 from maxo.utils.formatting import (
+    BlockQuote,
     Bold,
     Italic,
     Link,
@@ -64,6 +65,10 @@ class TestNode:
             (
                 Mention("test", user_id=42),
                 '<a href="max://user/42">test</a>',
+            ),
+            (
+                BlockQuote("test"),
+                "<blockquote>test</blockquote>",
             ),
         ],
     )
@@ -285,7 +290,7 @@ class TestGetItemUnicode:
     def test_sizeof_emoji(self):
         """Baseline: emoji takes 2 UTF-16 code units, not 1."""
         assert sizeof("👋") == 2
-        assert len("👋") == 1  # code points – the source of the bug
+        assert len("👋") == 1  # code points - the source of the bug
 
     def test_len_of_node_with_emoji_string_body(self):
         """len(Text(...)) must return UTF-16 units (sizeof), not code points."""
@@ -397,9 +402,9 @@ class TestGetItemUnicode:
         node = Text.from_entities(
             text="Hello",
             entities=[
-                # shorter / inner — arrives first (wrong order)
+                # shorter / inner - arrives first (wrong order)
                 MarkupElement(type=MarkupElementType.EMPHASIZED, from_=0, length=3),
-                # longer / outer — arrives second
+                # longer / outer - arrives second
                 MarkupElement(type=MarkupElementType.STRONG, from_=0, length=5),
             ],
         )
@@ -413,9 +418,9 @@ class TestGetItemUnicode:
         node = Text.from_entities(
             text="Hello",
             entities=[
-                # longer / outer — arrives first (correct order)
+                # longer / outer - arrives first (correct order)
                 MarkupElement(type=MarkupElementType.STRONG, from_=0, length=5),
-                # shorter / inner — arrives second
+                # shorter / inner - arrives second
                 MarkupElement(type=MarkupElementType.EMPHASIZED, from_=0, length=3),
             ],
         )
@@ -431,9 +436,9 @@ class TestGetItemUnicode:
         node = Text.from_entities(
             text="Hi! there",
             entities=[
-                # innermost, shortest — arrives first
+                # innermost, shortest - arrives first
                 MarkupElement(type=MarkupElementType.EMPHASIZED, from_=0, length=2),
-                # outermost, longest — arrives last
+                # outermost, longest - arrives last
                 MarkupElement(type=MarkupElementType.STRIKETHROUGH, from_=0, length=9),
                 # middle
                 MarkupElement(type=MarkupElementType.STRONG, from_=0, length=3),
@@ -450,7 +455,7 @@ class TestGetItemUnicode:
         Without the fix inner entities are appended first during tree
         traversal and the stable sort preserves that wrong order.
         """
-        # Bold covers "Hel" + "lo" = offsets 0–5; Italic covers "Hel" = offsets 0–3.
+        # Bold covers "Hel" + "lo" = offsets 0-5; Italic covers "Hel" = offsets 0-3.
         node = Text(Bold(Italic("Hel"), "lo"))
         _, entities = node.render()
 

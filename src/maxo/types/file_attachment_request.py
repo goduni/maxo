@@ -24,7 +24,7 @@ class FileAttachmentRequest(AttachmentRequest):
         Фабричный метод.
 
         Args:
-            token: Токен — уникальный ID загруженного медиафайла.
+            token: Токен - уникальный ID загруженного медиафайла.
 
         """
         return cls(

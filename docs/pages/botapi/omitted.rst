@@ -3,8 +3,8 @@ Omitted
 
 При работе с API часто нужно отличить два случая:
 
-- **Параметр не передан** — сервер оставляет текущее значение без изменений.
-- **Параметр равен** ``None`` — сервер обнуляет (удаляет) значение.
+- **Параметр не передан** - сервер оставляет текущее значение без изменений.
+- **Параметр равен** ``None`` - сервер обнуляет (удаляет) значение.
 
 В Python оба случая обычно выражаются через ``None``, что создаёт неоднозначность.
 **maxo** решает эту проблему с помощью sentinel-объекта ``Omitted``.
@@ -19,11 +19,11 @@ Omitted
 
     from maxo.bot.methods.messages.edit_message import EditMessage
 
-    # Отправляем запрос БЕЗ поля attachments в JSON —
+    # Отправляем запрос БЕЗ поля attachments в JSON -
     # сервер не трогает текущие вложения.
     edit = EditMessage(message_id="123", text="Новый текст")
 
-    # Отправляем запрос с attachments=None —
+    # Отправляем запрос с attachments=None -
     # сервер УДАЛЯЕТ все вложения.
     edit = EditMessage(message_id="123", text="Новый текст", attachments=None)
 
@@ -43,7 +43,7 @@ Omitted
     from maxo.bot.methods.messages.send_message import SendMessage
 
     msg = SendMessage(text="Привет!")
-    # chat_id, user_id, notify, format — всё Omitted().
+    # chat_id, user_id, notify, format - всё Omitted().
     # В запрос попадёт только {"text": "Привет!"}
 
     msg = SendMessage(text="Привет!", chat_id=123, notify=False)
@@ -51,9 +51,9 @@ Omitted
     #   query: ?chat_id=123
     #   body:  {"text": "Привет!", "notify": false}
 
-Если значение ``Omitted()`` — поле не отправляется.
-Если значение ``None`` — поле отправляется как ``null``.
-Если значение задано — поле отправляется как есть.
+Если значение ``Omitted()`` - поле не отправляется.
+Если значение ``None`` - поле отправляется как ``null``.
+Если значение задано - поле отправляется как есть.
 
 
 Модуль ``maxo.omit``
@@ -109,13 +109,13 @@ Guard-функции
    * - Функция
      - Описание
    * - ``is_omitted(value)``
-     - ``True``, если значение — ``Omitted``
+     - ``True``, если значение - ``Omitted``
    * - ``is_not_omitted(value)``
-     - ``True``, если значение — **не** ``Omitted`` (может быть ``None``)
+     - ``True``, если значение - **не** ``Omitted`` (может быть ``None``)
    * - ``is_defined(value)``
-     - ``True``, если значение — **не** ``Omitted`` **и не** ``None``
+     - ``True``, если значение - **не** ``Omitted`` **и не** ``None``
    * - ``is_not_defined(value)``
-     - ``True``, если значение — ``Omitted`` **или** ``None``
+     - ``True``, если значение - ``Omitted`` **или** ``None``
 
 .. code-block:: python
 
@@ -130,7 +130,7 @@ Guard-функции
     else:
         print(f"Значение: {value}")
 
-    # is_defined — удобная проверка «есть реальное значение»
+    # is_defined - удобная проверка «есть реальное значение»
     if is_defined(value):
         print(f"Точно число: {value + 1}")  # mypy знает, что value: int
 
@@ -139,13 +139,13 @@ Omitted в объектах ответа
 -------------------------
 
 ``Omitted`` используется не только при отправке запросов, но и в объектах,
-которые приходят **от** API. MAX.ru может не включать некоторые поля в ответ —
+которые приходят **от** API. MAX.ru может не включать некоторые поля в ответ -
 например, ``sender`` у сообщения в канале или ``pinned_message`` у чата,
 если закреплённого сообщения нет.
 
 В таких случаях поле будет содержать ``Omitted()``, а не ``None``.
 Это важное отличие: ``None`` означает, что API явно вернул ``null``,
-а ``Omitted()`` — что поле **отсутствовало** в JSON.
+а ``Omitted()`` - что поле **отсутствовало** в JSON.
 
 .. code-block:: python
 
@@ -183,11 +183,11 @@ Omitted в объектах ответа
 
     @dispatcher.message_created()
     async def handler(update: MessageCreated, facade: MessageCreatedFacade) -> None:
-        # Безопасный доступ — проверяйте сами:
+        # Безопасный доступ - проверяйте сами:
         if is_defined(update.message.sender):
             name = update.message.sender.first_name
 
-        # Или используйте unsafe_ — короче, но бросит исключение,
+        # Или используйте unsafe_ - короче, но бросит исключение,
         # если поля нет:
         try:
             name = update.message.unsafe_sender.first_name

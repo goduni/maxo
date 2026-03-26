@@ -78,8 +78,8 @@ ExceptionMessageFilter
 В обработчик ошибки передаются следующие аргументы:
 
 1.  **event**: объект :class:`~maxo.routing.updates.error.ErrorEvent`. Содержит:
-    - ``event.exception`` – само исключение.
-    - ``event.update`` – исходное событие (Update), при обработке которого возникла ошибка.
+    - ``event.exception`` - само исключение.
+    - ``event.update`` - исходное событие (Update), при обработке которого возникла ошибка.
 2.  **facade**: объект :class:`~maxo.utils.facades.updates.error.ErrorEventFacade`.
 3.  **ctx**: контекст выполнения.
 

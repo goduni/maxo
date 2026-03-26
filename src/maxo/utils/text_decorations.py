@@ -43,6 +43,9 @@ class TextDecoration(ABC):
         }:
             return cast(str, getattr(self, entity.type)(value=text))
 
+        if entity.type == MarkupElementType.QUOTE:
+            return self.blockquote(value=text)
+
         if entity.type == MarkupElementType.USER_MENTION:
             # Когда у юзеров появятся юзернеймы, поддерживать их
             # Сейчас есть только user_id
@@ -103,6 +106,10 @@ class TextDecoration(ABC):
             yield self.quote(remove_surrogates(text[offset:length]))
 
     @abstractmethod
+    def blockquote(self, value: str) -> str:
+        pass
+
+    @abstractmethod
     def emphasized(self, value: str) -> str:
         pass
 
@@ -137,6 +144,10 @@ class HtmlDecoration(TextDecoration):
     UNDERLINE_TAG = "u"
     STRIKETHROUGH_TAG = "s"
     MONOSPACED_TAG = "pre"
+    BLOCKQUOTE_TAG = "blockquote"
+
+    def blockquote(self, value: str) -> str:
+        return f"<{self.BLOCKQUOTE_TAG}>{value}</{self.BLOCKQUOTE_TAG}>"
 
     def emphasized(self, value: str) -> str:
         return f"<{self.EMPHASIZED_TAG}>{value}</{self.EMPHASIZED_TAG}>"
@@ -162,6 +173,9 @@ class HtmlDecoration(TextDecoration):
 
 class MarkdownDecoration(TextDecoration):
     MARKDOWN_QUOTE_PATTERN: Pattern[str] = re.compile(r"([_*\[\]()~`>#+\-=|{}.!\\])")
+
+    def blockquote(self, value: str) -> str:
+        return "\n".join(f"> {line}" for line in value.splitlines())
 
     def emphasized(self, value: str) -> str:
         return f"_{value}_"

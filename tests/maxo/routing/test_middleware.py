@@ -173,6 +173,97 @@ async def test_nested_router_middleware_execution(ctx: Ctx) -> None:
 
 
 @pytest.mark.asyncio
+async def test_router_filter_false_skips_router_inner_middleware(ctx: Ctx) -> None:
+    dp = Dispatcher()
+    router = Router("child")
+    dp.include(router)
+
+    class RouterFilter(BaseFilter[MessageCreated]):
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+            ctx["execution_order"].append("filter")
+            return False
+
+    router.message_created.filter(RouterFilter())
+    router.message_created.middleware.inner.add(middleware_factory("inner"))
+    router.message_created.handler(handler)
+
+    await dp.feed_signal(BeforeStartup())
+    ctx["execution_order"] = []
+    result = await dp.trigger(ctx)
+
+    assert result is UNHANDLED
+    assert ctx["execution_order"] == ["filter"]
+
+
+@pytest.mark.asyncio
+async def test_router_filter_true_enters_router_inner_middleware(ctx: Ctx) -> None:
+    dp = Dispatcher()
+    router = Router("child")
+    dp.include(router)
+
+    class RouterFilter(BaseFilter[MessageCreated]):
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+            ctx["execution_order"].append("filter")
+            return True
+
+    router.message_created.filter(RouterFilter())
+    router.message_created.middleware.inner.add(middleware_factory("inner"))
+    router.message_created.handler(handler)
+
+    await dp.feed_signal(BeforeStartup())
+    ctx["execution_order"] = []
+    result = await dp.trigger(ctx)
+
+    assert result == "OK"
+    assert ctx["execution_order"] == [
+        "filter",
+        "inner_pre",
+        "handler",
+        "inner_post",
+    ]
+
+
+@pytest.mark.asyncio
+async def test_first_router_inner_middleware_skipped_second_router_handles(
+    ctx: Ctx,
+) -> None:
+    dp = Dispatcher()
+    first_router = Router("first")
+    second_router = Router("second")
+    dp.include(first_router, second_router)
+
+    class FirstRouterFilter(BaseFilter[MessageCreated]):
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+            ctx["execution_order"].append("first_filter")
+            return False
+
+    class SecondRouterFilter(BaseFilter[MessageCreated]):
+        async def __call__(self, update: MessageCreated, ctx: Ctx) -> bool:
+            ctx["execution_order"].append("second_filter")
+            return True
+
+    async def second_handler(_: Any, ctx: Ctx) -> str:
+        ctx["execution_order"].append("second_handler")
+        return "OK"
+
+    first_router.message_created.filter(FirstRouterFilter())
+    first_router.message_created.middleware.inner.add(middleware_factory("first_inner"))
+    second_router.message_created.filter(SecondRouterFilter())
+    second_router.message_created.handler(second_handler)
+
+    await dp.feed_signal(BeforeStartup())
+    ctx["execution_order"] = []
+    result = await dp.trigger(ctx)
+
+    assert result == "OK"
+    assert ctx["execution_order"] == [
+        "first_filter",
+        "second_filter",
+        "second_handler",
+    ]
+
+
+@pytest.mark.asyncio
 async def test_one_call_per_event_with_routers(ctx: Ctx) -> None:
     async def outer_middleware(
         update: MessageCreated,

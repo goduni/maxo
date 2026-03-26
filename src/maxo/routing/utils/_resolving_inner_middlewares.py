@@ -19,16 +19,12 @@ def resolve_middlewares(
     _resolving_middlewares(router, middlewares)
 
     for children_router in router.children_routers:
-        resolve_middlewares(
-            children_router,
-            defaultdict(
-                list,
-                {
-                    update_tp: list(current_middlewares)
-                    for update_tp, current_middlewares in middlewares.items()
-                },
-            ),
-        )
+        # https://github.com/K1rL3s/maxo/pull/85
+        new_middlewares = {
+            update_tp: list(current_middlewares)
+            for update_tp, current_middlewares in middlewares.items()
+        }
+        resolve_middlewares(children_router, defaultdict(list, new_middlewares))
 
 
 def _resolving_middlewares(

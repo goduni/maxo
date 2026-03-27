@@ -84,8 +84,6 @@ async def test_save_load_stack_with_all_attachments():
     )
 
     await storage_proxy.save_stack(original_stack)
-    # When stack is saved it is unlocked, so we need to lock it again to load
-    await storage_proxy.unlock()
     loaded_stack = await storage_proxy.load_stack("test_stack")
 
     assert loaded_stack is not None

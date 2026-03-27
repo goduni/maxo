@@ -47,7 +47,7 @@ class FilterObject(CallableObject):
     magic: DialogMagic | None = None
 
     def __post_init__(self) -> None:
-        if isinstance(self.callback, DialogMagic):
+        if isinstance(self.callback, DialogMagic):  # type: ignore[misc]
             self.magic = self.callback
             self.callback = self.callback.resolve
 

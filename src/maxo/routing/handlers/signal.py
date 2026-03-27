@@ -56,7 +56,7 @@ class SignalHandler(Handler[_SignalT, _ReturnT_co], Generic[_SignalT, _ReturnT_c
 
     def _prepare_kwargs(self, ctx: Ctx) -> dict[str, Any]:
         if self._varkw:
-            return ctx
+            return dict(ctx)
 
         return {k: ctx[k] for k in self._params if k in ctx}
 

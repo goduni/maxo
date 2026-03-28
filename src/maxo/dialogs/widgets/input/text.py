@@ -74,7 +74,7 @@ class TextInput(BaseInput, Generic[T]):
     ) -> bool:
         if message.message.body is None:
             return False
-        if message.message.body.text is None:
+        if not message.message.body.text:
             return False
 
         if self.filter and not await self.filter.call(

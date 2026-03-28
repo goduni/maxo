@@ -12,11 +12,10 @@ from maxo.dialogs import (
     Window,
     setup_dialogs,
 )
-from maxo.dialogs.widgets.input import MessageInput
+from maxo.dialogs.widgets.input import ManagedTextInput, MessageInput, TextInput
 from maxo.dialogs.widgets.kbd import Back, Button, Row, Select, SwitchTo
 from maxo.dialogs.widgets.media import StaticMedia
 from maxo.dialogs.widgets.text import Const, Format, Multi
-from maxo.enums import AttachmentType
 from maxo.fsm import State, StatesGroup
 from maxo.fsm.key_builder import DefaultKeyBuilder
 from maxo.routing.filters import CommandStart
@@ -48,13 +47,15 @@ async def get_data(dialog_manager: DialogManager, **__: Any) -> dict[str, Any]:
 
 async def name_handler(
     message: MessageCreated,
-    message_input: MessageInput,
+    text_input: ManagedTextInput[str],
     dialog_manager: DialogManager,
+    name: str,
 ) -> None:
     if dialog_manager.is_preview():
         await dialog_manager.next()
         return
-    dialog_manager.dialog_data["name"] = message.message.body.text
+
+    dialog_manager.dialog_data["name"] = name
 
     facade: MessageCreatedFacade = dialog_manager.middleware_data["facade"]
     await facade.answer_text(f"Привет, {message.message.body.text}")
@@ -101,7 +102,7 @@ dialog = Dialog(
         Const("Привет! Представься, пожалуйста:"),
         StaticMedia(path=BASE_DIR / "files" / "watermelon.jpg"),
         StaticMedia(path=BASE_DIR / "files" / "naked-watermelon.png"),
-        MessageInput(name_handler, content_types=AttachmentType.TEXT),
+        TextInput(id="name_handler", on_success=name_handler),
         MessageInput(other_type_handler),
         state=DialogSG.greeting,
     ),

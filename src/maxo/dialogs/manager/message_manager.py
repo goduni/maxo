@@ -169,7 +169,7 @@ class MessageManager(MessageManagerProtocol):
         bot: Bot,
         old_message: OldMessage | None,
     ) -> Message | None:
-        if not old_message:
+        if not old_message or old_message.keyboard is None:
             return None
         logger.debug("remove_inline_kbd in %s", old_message.recipient)
         try:

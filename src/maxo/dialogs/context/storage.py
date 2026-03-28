@@ -8,6 +8,10 @@ from maxo.enums import ChatType
 from maxo.fsm import State, StatesGroup
 from maxo.fsm.key_builder import StorageKey
 from maxo.fsm.storages.base import BaseEventIsolation, BaseStorage
+from maxo.serialization import create_retort
+from maxo.types import Attachments
+
+retort = create_retort()
 
 
 class StorageProxy:
@@ -63,6 +67,13 @@ class StorageProxy:
         access_settings = self._default_access_settings(stack_id)
         if not data:
             return Stack(_id=fixed_stack_id, access_settings=access_settings)
+
+        if "last_attachments" in data:
+            data["last_attachments"] = retort.load(
+                data["last_attachments"],
+                list[Attachments],
+            )
+
         return Stack(access_settings=access_settings, **data)
 
     async def save_context(self, context: Context | None) -> None:
@@ -104,6 +115,10 @@ class StorageProxy:
                 "intents": stack.intents,
                 "last_message_id": stack.last_message_id,
                 "last_sequence_id": stack.last_sequence_id,
+                "last_attachments": retort.dump(
+                    stack.last_attachments,
+                    list[Attachments],
+                ),
             }
             await self.storage.set_data(
                 key=self._stack_key(stack.id),

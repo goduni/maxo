@@ -61,7 +61,7 @@ class UpdateHandler(
 
     def _prepare_kwargs(self, ctx: Ctx) -> dict[str, Any]:
         if self._varkw:
-            return ctx
+            return dict(ctx)
 
         return {k: ctx[k] for k in self._params if k in ctx}
 
@@ -69,6 +69,7 @@ class UpdateHandler(
         return await self._filter(ctx["update"], ctx)
 
     async def __call__(self, ctx: Ctx) -> _ReturnT_co:
+        # потому что update это первый аргумент в хендлерах
         update = ctx.pop("update")
         wrapped = partial(self._handler_fn, update, **self._prepare_kwargs(ctx))
         ctx["update"] = update

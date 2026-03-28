@@ -34,6 +34,8 @@ class CallableObject:
         return {k: kwargs[k] for k in self.params if k in kwargs}
 
     async def call(self, *args: Any, **kwargs: Any) -> Any:
+        # потому что update это первый аргумент в фильтрах и хендлерах
+        kwargs.pop("update", None)
         wrapped = partial(self.callback, *args, **self._prepare_kwargs(kwargs))
         if self.awaitable:
             return await wrapped()
@@ -45,7 +47,7 @@ class FilterObject(CallableObject):
     magic: DialogMagic | None = None
 
     def __post_init__(self) -> None:
-        if isinstance(self.callback, DialogMagic):
+        if isinstance(self.callback, DialogMagic):  # type: ignore[misc]
             self.magic = self.callback
             self.callback = self.callback.resolve
 

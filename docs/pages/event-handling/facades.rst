@@ -29,6 +29,58 @@
 - **Управление клавиатурами**: методы для быстрой отправки или редактирования клавиатур.
 - **Доступ к боту**: через свойство ``facade.bot`` всегда доступен экземпляр бота.
 
+Отправка медиа
+--------------
+
+Фасады поддерживают отправку медиа двумя способами:
+
+- **Загрузка файла** - через ``InputFile`` (``BufferedInputFile``, ``FSInputFile``). Файл загружается на сервер автоматически.
+- **По токену** - через ``MediaAttachmentsRequests`` (``PhotoAttachmentRequest``, ``VideoAttachmentRequest`` и т.д.). Используется, когда медиа уже загружено ранее и известен его токен.
+
+Оба варианта можно передавать в параметр ``media`` методов ``send_message``, ``send_media`` и ``edit_message``. Тип ``MediaInput`` объединяет оба варианта:
+
+.. code-block:: python
+
+    from maxo.utils.facades.methods.attachments import MediaInput
+
+Загрузка файла
+~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from maxo.utils.upload_media import BufferedInputFile
+
+    photo = BufferedInputFile.image(content, "photo.jpg")
+    await facade.send_media(media=photo, text="Новое фото")
+
+Отправка по токену
+~~~~~~~~~~~~~~~~~~
+
+Если медиа уже было загружено или получено из входящего сообщения, можно использовать токен напрямую:
+
+.. code-block:: python
+
+    from maxo.types import PhotoAttachmentRequest
+
+    photo = PhotoAttachmentRequest.factory(token=token)
+    await facade.send_media(media=photo, text="Фото по токену")
+
+Комбинирование
+~~~~~~~~~~~~~~
+
+Можно смешивать оба типа в одном вызове - порядок вложений сохраняется:
+
+.. code-block:: python
+
+    from maxo.types import PhotoAttachmentRequest, VideoAttachmentRequest
+    from maxo.utils.upload_media import BufferedInputFile
+
+    media = [
+        BufferedInputFile.image(new_photo_bytes, "photo.jpg"),
+        VideoAttachmentRequest.factory(token=existing_video_token),
+    ]
+    await facade.send_message(text="Микс медиа", media=media)
+
 Список доступных фасадов
 ------------------------
 

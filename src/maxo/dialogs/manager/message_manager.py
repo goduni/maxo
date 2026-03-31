@@ -25,6 +25,7 @@ from maxo.types import (
     PhotoAttachmentRequest,
     VideoAttachmentRequest,
 )
+from maxo.utils.facades.methods.attachments import MediaInput
 from maxo.utils.upload_media import FSInputFile, InputFile
 
 logger = getLogger(__name__)
@@ -294,10 +295,7 @@ class MessageManager(MessageManagerProtocol):
         facade = DialogAttachmentsFacade(bot, media_id_storage=self.media_id_storage)
         return await facade.build_attachments(base=base, keyboard=keyboard, files=files)
 
-    def _convert_media(
-        self,
-        media: MediaAttachment,
-    ) -> InputFile | MediaAttachmentsRequests | None:
+    def _convert_media(self, media: MediaAttachment) -> MediaInput | None:
         if media.media_id:
             token = media.media_id.token
             url = None

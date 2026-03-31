@@ -11,8 +11,7 @@ from maxo.types.message import Message
 from maxo.types.message_list import MessageList
 from maxo.types.new_message_link import NewMessageLink
 from maxo.types.simple_query_result import SimpleQueryResult
-from maxo.utils.facades.methods.attachments import AttachmentsFacade
-from maxo.utils.upload_media import InputFile
+from maxo.utils.facades.methods.attachments import AttachmentsFacade, MediaInput
 
 
 class ChatMethodsFacade(AttachmentsFacade, ABC):
@@ -29,7 +28,7 @@ class ChatMethodsFacade(AttachmentsFacade, ABC):
         format: TextFormat | None = None,
         disable_link_preview: Omittable[bool] = Omitted(),
         keyboard: Sequence[Sequence[InlineButtons]] | None = None,
-        media: Sequence[InputFile] | None = None,
+        media: Sequence[MediaInput] | None = None,
     ) -> Message:
         attachments = await self.build_attachments(
             base=[],

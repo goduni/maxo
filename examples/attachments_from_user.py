@@ -34,9 +34,8 @@ async def audio_handler(
     facade: MessageCreatedFacade,
 ) -> None:
     await facade.answer_text("Получил голосовое сообщение")
-    await facade.bot.send_message(
-        chat_id=facade.chat_id,
-        attachments=[update.message.body.audio],
+    await facade.send_message(
+        media=[update.message.body.audio.to_request()],
     )
 
 
@@ -57,10 +56,9 @@ async def file_handler(
     update: MessageCreated,
     facade: MessageCreatedFacade,
 ) -> None:
-    await facade.answer_text("Получил сообщение с файлами")
-    await facade.bot.send_message(
-        chat_id=facade.chat_id,
-        attachments=[update.message.body.file],
+    await facade.answer_text("Получил сообщение с файлом")
+    await facade.send_message(
+        media=[update.message.body.file.to_request()],
     )
 
 
@@ -70,9 +68,8 @@ async def image_handler(
     facade: MessageCreatedFacade,
 ) -> None:
     await facade.answer_text("Получил сообщение с изображениями")
-    await facade.bot.send_message(
-        chat_id=facade.chat_id,
-        attachments=update.message.body.photo,
+    await facade.send_message(
+        media=[photo.to_request() for photo in update.message.body.photo],
     )
 
 
@@ -118,9 +115,8 @@ async def video_handler(
     facade: MessageCreatedFacade,
 ) -> None:
     await facade.answer_text("Получил сообщение с видео")
-    await facade.bot.send_message(
-        chat_id=facade.chat_id,
-        attachments=[update.message.body.video],
+    await facade.send_message(
+        media=[video.to_request() for video in update.message.body.video],
     )
 
 

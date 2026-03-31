@@ -1,5 +1,6 @@
 import asyncio
 from collections.abc import Sequence
+from typing import TypeAlias
 
 from unihttp.http import UploadFile
 
@@ -23,13 +24,15 @@ from maxo.types import (
 from maxo.utils.facades.methods.bot import BotMethodsFacade
 from maxo.utils.upload_media import InputFile
 
+MediaInput: TypeAlias = InputFile | MediaAttachmentsRequests
+
 
 class AttachmentsFacade(BotMethodsFacade):
     async def build_attachments(
         self,
         base: Sequence[AttachmentsRequests],
         keyboard: Sequence[Sequence[InlineButtons]] | None = None,
-        files: Sequence[InputFile] | None = None,
+        files: Sequence[MediaInput] | None = None,
     ) -> Sequence[AttachmentsRequests]:
         attachments = list(base)
 
@@ -41,14 +44,37 @@ class AttachmentsFacade(BotMethodsFacade):
             )
 
         if files:
+            attachments.extend(await self._build_media(files))
+
+        return attachments
+
+    async def _build_media(
+        self,
+        files: Sequence[MediaInput],
+    ) -> list[MediaAttachmentsRequests]:
+        attachments: list[MediaAttachmentsRequests | None] = [None] * len(files)
+        files_to_upload: list[InputFile] = []
+        file_indices: list[int] = []
+
+        for i, file in enumerate(files):
+            if isinstance(file, InputFile):
+                files_to_upload.append(file)
+                file_indices.append(i)
+            else:
+                attachments[i] = file
+
+        if files_to_upload:
+            uploaded_files = await self.build_media_attachments(files_to_upload)
+            for i, uploaded_file in zip(file_indices, uploaded_files, strict=True):
+                attachments[i] = uploaded_file
+
             # TODO: Исправить костыль со сном, https://github.com/K1rL3s/maxo/issues/10
             # maxo.errors.api.MaxBotBadRequestError:
             # ('attachment.not.ready',
             # 'Key: errors.process.attachment.file.not.processed')
-            attachments.extend(await self.build_media_attachments(files))
             await asyncio.sleep(0.5)
 
-        return attachments
+        return [attachment for attachment in attachments if attachment is not None]
 
     async def build_media_attachments(
         self,

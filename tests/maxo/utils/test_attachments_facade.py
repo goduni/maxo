@@ -9,27 +9,37 @@ from maxo.types import (
     VideoAttachmentRequest,
 )
 from maxo.utils.facades.methods.attachments import AttachmentsFacade, MediaInput
+from maxo.utils.facades.methods.message import MessageMethodsFacade
 from maxo.utils.upload_media import BufferedInputFile
 
 
 class DummyFacade(AttachmentsFacade):
+    pass
+
+
+class DummyMessageFacade(MessageMethodsFacade):
     @property
-    def bot(self) -> Bot:
-        return self._bot
+    def message(self) -> object:
+        return AsyncMock()
 
 
 @pytest.fixture
-def bot_mock():
+def bot_mock() -> AsyncMock:
     return AsyncMock(spec=Bot)
 
 
 @pytest.fixture
-def facade(bot_mock):
+def facade(bot_mock) -> DummyFacade:
     return DummyFacade(bot=bot_mock)
 
 
+@pytest.fixture
+def message_facade(bot_mock) -> DummyMessageFacade:
+    return DummyMessageFacade(bot=bot_mock)
+
+
 @pytest.mark.asyncio
-async def test_build_media_only_input_files(facade: DummyFacade):
+async def test_build_media_only_input_files(facade: DummyFacade) -> None:
     input_files = [
         BufferedInputFile.image(b"photo_bytes", "photo.jpg"),
         BufferedInputFile.video(b"video_bytes", "video.mp4"),
@@ -60,7 +70,7 @@ async def test_build_media_only_input_files(facade: DummyFacade):
 
 
 @pytest.mark.asyncio
-async def test_build_media_only_requests(facade: DummyFacade):
+async def test_build_media_only_requests(facade: DummyFacade) -> None:
     requests = [
         PhotoAttachmentRequest.factory(token="photo_token"),  # noqa: S106
         VideoAttachmentRequest.factory(token="video_token"),  # noqa: S106
@@ -86,7 +96,7 @@ async def test_build_media_only_requests(facade: DummyFacade):
 
 
 @pytest.mark.asyncio
-async def test_build_media_mixed_order(facade: DummyFacade):
+async def test_build_media_mixed_order(facade: DummyFacade) -> None:
     input_file1 = BufferedInputFile.image(b"photo_bytes", "photo.jpg")
     request1 = VideoAttachmentRequest.factory(token="video_token")  # noqa: S106
     input_file2 = BufferedInputFile.image(b"photo_bytes2", "photo2.jpg")
@@ -127,7 +137,7 @@ async def test_build_media_mixed_order(facade: DummyFacade):
 
 
 @pytest.mark.asyncio
-async def test_build_attachments_no_files(facade: DummyFacade):
+async def test_build_attachments_no_files(facade: DummyFacade) -> None:
     with patch.object(
         facade,
         "_build_media",
@@ -140,7 +150,7 @@ async def test_build_attachments_no_files(facade: DummyFacade):
 
 
 @pytest.mark.asyncio
-async def test_build_attachments_with_files(facade: DummyFacade):
+async def test_build_attachments_with_files(facade: DummyFacade) -> None:
     input_files = [BufferedInputFile.image(b"photo_bytes", "photo.jpg")]
     built_media = [
         PhotoAttachmentRequest.factory(token="photo_token"),  # noqa: S106
@@ -160,3 +170,21 @@ async def test_build_attachments_with_files(facade: DummyFacade):
         build_media_mock.assert_called_once_with(input_files)
 
     assert result == built_media
+
+
+@pytest.mark.asyncio
+async def test_send_media_single_media_attachments_request(
+    message_facade: DummyMessageFacade,
+) -> None:
+    request = PhotoAttachmentRequest.factory(token="photo_token")  # noqa: S106
+
+    with patch.object(
+        message_facade,
+        "send_message",
+        new_callable=AsyncMock,
+    ) as send_message_mock:
+        send_message_mock.return_value = AsyncMock()
+        await message_facade.send_media(media=request)
+
+        send_message_mock.assert_called_once()
+        assert send_message_mock.call_args[1]["media"] == (request,)

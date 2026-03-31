@@ -146,7 +146,7 @@ class Router(BaseRouter):
         )
         return await chain_middlewares(ctx)
 
-    async def _trigger(self, ctx: Ctx, *, observer: Observer) -> Any:
+    async def _trigger(self, ctx: Ctx, *, observer: Observer[Any, Any, Any]) -> Any:
         if not await observer.execute_filter(ctx):
             return UNHANDLED
 

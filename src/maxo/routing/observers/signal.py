@@ -31,9 +31,6 @@ class SignalObserver(
         return handler_fn
 
     async def handler_lookup(self, ctx: Ctx) -> Any:
-        if not await self.execute_filter(ctx):
-            return UNHANDLED
-
         for handler in self._handlers:
             if await handler.execute_filter(ctx):
                 await self.execute_handler(ctx, handler)

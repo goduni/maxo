@@ -5,6 +5,7 @@ import pytest
 from maxo import Router
 from maxo.enums import ChatType
 from maxo.routing.dispatcher import Dispatcher
+from maxo.routing.filters import BaseFilter
 from maxo.routing.middlewares.state import (
     EmptyMiddlewareManagerState,
     StartedMiddlewareManagerState,
@@ -17,6 +18,7 @@ from maxo.routing.signals import (
     BeforeStartup,
     MaxoUpdate,
 )
+from maxo.routing.ctx import Ctx
 from maxo.routing.updates.message_created import MessageCreated
 from maxo.types import Message, MessageBody, Recipient, User
 
@@ -174,3 +176,45 @@ async def test_dp_update_handler(update: MessageCreated, bot) -> None:
 
     await dp.feed_max_update(MaxoUpdate(update=update), bot)
     assert triggered
+
+
+@pytest.mark.asyncio
+async def test_signal_filter_false_blocks_handler() -> None:
+    dp = Dispatcher()
+    order = []
+
+    class BeforeStartupFilter(BaseFilter[BeforeStartup]):
+        async def __call__(self, update: BeforeStartup, ctx: Ctx) -> bool:
+            order.append("filter")
+            return False
+
+    dp.before_startup.filter(BeforeStartupFilter())
+
+    @dp.before_startup()
+    async def before_startup() -> None:
+        order.append("handler")
+
+    await dp.feed_signal(BeforeStartup())
+
+    assert order == ["filter"]
+
+
+@pytest.mark.asyncio
+async def test_signal_filter_called_once() -> None:
+    dp = Dispatcher()
+    order = []
+
+    class BeforeStartupFilter(BaseFilter[BeforeStartup]):
+        async def __call__(self, update: BeforeStartup, ctx: Ctx) -> bool:
+            order.append("filter")
+            return True
+
+    dp.before_startup.filter(BeforeStartupFilter())
+
+    @dp.before_startup()
+    async def before_startup() -> None:
+        order.append("handler")
+
+    await dp.feed_signal(BeforeStartup())
+
+    assert order == ["filter", "handler"]

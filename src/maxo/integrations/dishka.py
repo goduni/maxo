@@ -37,7 +37,7 @@ _ReturnT = TypeVar("_ReturnT")
 _ParamsP = ParamSpec("_ParamsP")
 _UpdateT = TypeVar("_UpdateT", bound=BaseUpdate)
 _SignalT = TypeVar("_SignalT", bound=BaseSignal)
-_Handler = TypeVar("_Handler", bound=UpdateHandler | SignalHandler)
+_Handler = TypeVar("_Handler", bound=UpdateHandler[Any, Any] | SignalHandler[Any, Any])
 
 
 _SignalHandlerFn = Callable[_ParamsP, _ReturnT]

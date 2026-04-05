@@ -1,4 +1,6 @@
 from maxo.enums.update_type import UpdateType
+from maxo.errors import AttributeIsEmptyError
+from maxo.omit import Omittable, Omitted, is_defined
 from maxo.routing.updates.base import MaxUpdate
 from maxo.types.user import User
 
@@ -20,5 +22,16 @@ class DialogUnmuted(MaxUpdate):
     """ID чата, где произошло событие"""
     user: User
     """Пользователь, который включил уведомления"""
-    user_locale: str
+
+    user_locale: Omittable[str] = Omitted()
     """Текущий язык пользователя в формате IETF BCP 47"""
+
+    @property
+    def unsafe_user_locale(self) -> str:
+        if is_defined(self.user_locale):
+            return self.user_locale
+
+        raise AttributeIsEmptyError(
+            obj=self,
+            attr="user_locale",
+        )

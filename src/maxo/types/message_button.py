@@ -23,4 +23,7 @@ class MessageButton(Button):
         if is_defined(self.text):
             return self.text
 
-        raise AttributeIsEmptyError(obj=self, attr="text")
+        raise AttributeIsEmptyError(
+            obj=self,
+            attr="text",
+        )

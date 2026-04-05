@@ -1,4 +1,4 @@
-from maxo.enums import ButtonType
+from maxo.enums.button_type import ButtonType
 from maxo.types.base import MaxoType
 
 

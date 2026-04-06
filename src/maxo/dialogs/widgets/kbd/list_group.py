@@ -58,10 +58,8 @@ class ListGroup(Keyboard):
             b_kbd = await b.render_keyboard(data, sub_manager)
             for row in b_kbd:
                 for btn in row:
-                    if btn.payload:
-                        btn.payload = self._item_payload(
-                            f"{item_id}:{btn.payload}",
-                        )
+                    if hasattr(btn, "payload"):
+                        btn.payload = self._item_payload(f"{item_id}:{btn.payload}")
             kbd.extend(b_kbd)
         return kbd
 

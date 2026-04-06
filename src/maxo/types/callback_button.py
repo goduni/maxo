@@ -15,3 +15,8 @@ class CallbackButton(Button):
 
     payload: str
     """Токен кнопки"""
+
+    # Подражание aiogram
+    @property
+    def callback_data(self) -> str:
+        return self.payload

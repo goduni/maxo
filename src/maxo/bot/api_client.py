@@ -4,7 +4,7 @@ import pathlib
 from collections.abc import AsyncGenerator, Callable
 from typing import Any, BinaryIO, Never
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 from anyio import open_file
 from unihttp.clients.aiohttp import AiohttpAsyncClient
 from unihttp.http import HTTPResponse
@@ -93,7 +93,11 @@ class MaxApiClient(AiohttpAsyncClient):
             raise MaxBotServiceUnavailableError(code, error, message)
         raise MaxBotApiError(code, error, message)
 
-    def validate_response(self, response: HTTPResponse, method: BaseMethod) -> None:
+    def validate_response(
+        self,
+        response: HTTPResponse,
+        method: BaseMethod[Any],
+    ) -> None:
         if (
             response.ok
             and isinstance(response.data, dict)
@@ -112,7 +116,7 @@ class MaxApiClient(AiohttpAsyncClient):
         self,
         url: str | AttachmentPayload,
         destination: BinaryIO | pathlib.Path | str | None = None,
-        timeout: int = 30,
+        timeout: float | ClientTimeout = 30,
         chunk_size: int = 65536,
         seek: bool = True,
     ) -> BinaryIO | None:
@@ -131,7 +135,7 @@ class MaxApiClient(AiohttpAsyncClient):
         self,
         url: str,
         destination: BinaryIO | pathlib.Path | str | None,
-        timeout: int,
+        timeout: float | ClientTimeout,
         chunk_size: int,
         seek: bool,
     ) -> BinaryIO | None:
@@ -158,10 +162,13 @@ class MaxApiClient(AiohttpAsyncClient):
         self,
         url: str,
         headers: dict[str, Any] | None = None,
-        timeout: int = 30,
+        timeout: float | ClientTimeout = 30,
         chunk_size: int = 65536,
         raise_for_status: bool = True,
     ) -> AsyncGenerator[bytes, None]:
+        if not isinstance(timeout, ClientTimeout):
+            timeout = ClientTimeout(total=timeout)
+
         async with self._session.get(
             url,
             timeout=timeout,

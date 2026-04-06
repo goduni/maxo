@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Any, BinaryIO, Self, TypeVar
 
 from adaptix import Retort
+from aiohttp import ClientTimeout
 from unihttp.bind_method import bind_method
 from unihttp.middlewares import AsyncMiddleware
 
@@ -162,7 +163,7 @@ class Bot:
         self,
         url: str | AttachmentPayload,
         destination: BinaryIO | pathlib.Path | str | None = None,
-        timeout: int = 30,
+        timeout: float | ClientTimeout = 30,
         chunk_size: int = 65536,
         seek: bool = True,
     ) -> BinaryIO | None:

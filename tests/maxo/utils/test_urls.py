@@ -1,6 +1,6 @@
 from maxo.enums import MessageLinkType
 from maxo.types import LinkedMessage, MessageBody
-from maxo.utils.urls import id_to_message_url, url_to_message_id
+from maxo.utils.link import id_to_message_url, url_to_message_id
 
 
 def test_id_to_message_url() -> None:

@@ -1,3 +1,5 @@
+from typing import Any
+
 from maxo.errors.base import MaxoError
 
 
@@ -7,6 +9,7 @@ class MaxBotApiError(MaxoError):
     code: str
     error: str
     message: str
+    raw_data: Any = None
 
 
 class MaxBotBadRequestError(MaxBotApiError): ...

@@ -24,7 +24,9 @@ async def test_render_list_group_with_url_button(mock_manager: DialogManager) ->
 
 
 @pytest.mark.asyncio
-async def test_render_list_group_with_callback_button(mock_manager: DialogManager) -> None:
+async def test_render_list_group_with_callback_button(
+    mock_manager: DialogManager,
+) -> None:
     list_group = ListGroup(
         Button(Format("Callback {item}"), "button"),
         id="list",

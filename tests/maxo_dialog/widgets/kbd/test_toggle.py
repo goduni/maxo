@@ -1,6 +1,6 @@
 import operator
 from typing import Any, cast
-from unittest.mock import Mock
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -26,7 +26,7 @@ async def test_render_toggle(mock_manager: DialogManager) -> None:
 
     assert keyboard[0][0].text == "Apple"
 
-    await toggle.set_checked(cast(ChatEvent, Mock()), "2", mock_manager)
+    await toggle.set_checked(cast(ChatEvent, AsyncMock()), "2", mock_manager)
 
     keyboard = await toggle.render_keyboard(
         data={},

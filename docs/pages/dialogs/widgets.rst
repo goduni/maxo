@@ -188,7 +188,65 @@ Radio
         # В геттере: return {"languages": [("ru", "Русский"), ("en", "English")]}
     )
 
+TimeSelect
+----------
 
+Виджет для выбора времени (часы и минуты). Представляет собой две отдельные клавиатуры для выбора часов и минут, что позволяет пользователю легко ввести нужное время.
+
+Использование
+^^^^^^^^^^^^
+
+.. code-block:: python
+
+    from maxo.dialogs import Dialog, Window
+    from maxo.dialogs.widgets.kbd import TimeSelect
+    from maxo.dialogs.widgets.text import Const
+    from maxo.fsm.state import State, StatesGroup
+    from datetime import time
+
+    class MySG(StatesGroup):
+        time_selection = State()
+
+    async def on_time_selected(event, widget, manager, selected_time: time):
+        # Здесь можно обработать выбранное время
+        facade: MessageCallbackFacade = manager.middleware_data["facade"]
+        await facade.answer_text(f"Вы выбрали время: {selected_time.strftime('%H:%M')}")
+        manager.dialog_data["selected_time"] = selected_time
+
+    dialog = Dialog(
+        Window(
+            Const("Выберите время:"),
+            TimeSelect(
+                id="time_selector",
+                on_value_changed=on_time_selected,
+            ),
+            state=MySG.time_selection,
+        )
+    )
+
+Параметры
+^^^^^^^^^
+
+*   **id** (:py:class:`str`): Уникальный идентификатор виджета.
+*   **when** (:py:class:`~maxo.dialogs.widgets.common.WhenCondition`, optional): Условие, при котором виджет будет отображаться.
+*   **hour_header** (:py:class:`~maxo.dialogs.widgets.text.TextWidget`, optional): Текст заголовка для выбора часов. По умолчанию "Hour".
+*   **minute_header** (:py:class:`~maxo.dialogs.widgets.text.TextWidget`, optional): Текст заголовка для выбора минут. По умолчанию "Minute".
+*   **button_text** (:py:class:`~maxo.dialogs.widgets.text.TextWidget`, optional): Формат текста для кнопок часов/минут, которые не выбраны. По умолчанию "{value}".
+*   **button_selected_text** (:py:class:`~maxo.dialogs.widgets.text.TextWidget`, optional): Формат текста для выбранных кнопок часов/минут. По умолчанию "[{value}]".
+*   **on_hour_click** (:py:class:`~maxo.dialogs.widgets.kbd.time.OnClick`, optional): Обработчик нажатия на кнопку часа.
+*   **on_minute_click** (:py:class:`~maxo.dialogs.widgets.kbd.time.OnClick`, optional): Обработчик нажатия на кнопку минуты.
+*   **on_value_changed** (:py:class:`~maxo.dialogs.widgets.kbd.time.OnValueChanged`, optional): Обработчик изменения выбранного времени. Принимает аргументы ``event``, ``widget``, ``manager``, ``value: datetime.time``.
+*   **hour_width** (:py:class:`int`, optional): Количество кнопок часов в одной строке. По умолчанию 6.
+*   **minute_precision** (:py:class:`int`, optional): Шаг для минут (например, 5 для 0, 5, 10... минут). По умолчанию 5.
+*   **minute_width** (:py:class:`int`, optional): Количество кнопок минут в одной строке. По умолчанию 6.
+
+Управление виджетом (ManagedTimeSelect)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Вы можете получить или установить выбранное время программно с помощью ``ManagedTimeSelect``, который доступен через ``widget`` в обработчиках, или через ``manager.find(widget_id).get_value()``.
+
+*   **get_value() -> datetime.time | None**: Возвращает выбранное время или ``None``, если ничего не выбрано.
+*   **set_value(value: datetime.time | None)**: Устанавливает выбранное время.
 
 Навигационные кнопки
 --------------------

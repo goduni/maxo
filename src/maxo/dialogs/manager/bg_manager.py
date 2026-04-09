@@ -1,8 +1,12 @@
+import asyncio
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Any
 
 from maxo import Bot, Dispatcher
+from maxo.dialogs import DialogManager
 from maxo.dialogs.api.entities import (
     DEFAULT_STACK_ID,
     AccessSettings,
@@ -15,6 +19,7 @@ from maxo.dialogs.api.entities import (
     ShowMode,
     StartMode,
 )
+from maxo.dialogs.api.entities.update_event import DialogFgEvent
 from maxo.dialogs.api.internal import FakeUser
 from maxo.dialogs.api.protocols import BaseDialogManager, BgManagerFactory
 from maxo.dialogs.manager.updater import Updater
@@ -187,18 +192,40 @@ class BgManager(BaseDialogManager):
 
     async def update(
         self,
-        data: dict,
+        data: dict | None = None,
         show_mode: ShowMode | None = None,
     ) -> None:
         await self._load()
         await self._notify(
             DialogUpdateEvent(
                 action=DialogAction.UPDATE,
-                data=data,
+                data=data or {},
                 show_mode=show_mode,
                 **self._base_event_params(),
             ),
         )
+
+    @asynccontextmanager
+    async def fg(self) -> AsyncIterator[DialogManager]:
+        event = DialogFgEvent(
+            data=None,
+            action=DialogAction.FG,
+            entered=asyncio.get_running_loop().create_future(),
+            exited=asyncio.get_running_loop().create_future(),
+            **self._base_event_params(),
+        )
+        bot = self._event_context.bot
+        task = self._updater.notify_task(update=event, bot=bot)
+        try:
+            manager = await event.entered
+            yield manager
+        except Exception as e:
+            event.exited.set_exception(e)
+            raise
+        else:
+            event.exited.set_result(None)
+        finally:
+            await task
 
 
 class BgManagerFactoryImpl(BgManagerFactory):

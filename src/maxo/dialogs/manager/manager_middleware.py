@@ -30,7 +30,7 @@ class ManagerMiddleware(BaseMiddleware[MaxUpdate]):
         self,
         update: MaxUpdate,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[MaxUpdate],
     ) -> Any:
         if self._is_event_supported(ctx):
             dialog_manager = self.dialog_manager_factory(
@@ -67,7 +67,7 @@ class BgFactoryMiddleware(BaseMiddleware[MaxUpdate]):
         self,
         update: MaxUpdate,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[MaxUpdate],
     ) -> Any:
         ctx[BG_FACTORY_KEY] = self.bg_manager_factory
         return await next(ctx)

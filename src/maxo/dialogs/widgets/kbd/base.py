@@ -3,6 +3,7 @@ from typing import Self
 
 from maxo.dialogs.api.internal import KeyboardWidget, RawKeyboard
 from maxo.dialogs.api.protocols import DialogManager, DialogProtocol
+from maxo.dialogs.utils import add_exception_note
 from maxo.dialogs.widgets.common import (
     Actionable,
     WhenCondition,
@@ -16,6 +17,7 @@ class Keyboard(Actionable, Whenable, KeyboardWidget):
         Actionable.__init__(self, id=id)
         Whenable.__init__(self, when=when)
 
+    @add_exception_note
     async def render_keyboard(
         self,
         data: dict,

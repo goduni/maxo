@@ -1,4 +1,6 @@
 import dataclasses
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Any
 
 from maxo.dialogs.api.entities import (
@@ -129,8 +131,13 @@ class SubManager(DialogManager):
     async def switch_to(self, state: State, show_mode: ShowMode | None = None) -> None:
         await self.manager.switch_to(state, show_mode)
 
-    async def update(self, data: dict, show_mode: ShowMode | None = None) -> None:
-        self.current_context().dialog_data.update(data)
+    async def update(
+        self,
+        data: dict | None = None,
+        show_mode: ShowMode | None = None,
+    ) -> None:
+        if data:
+            self.current_context().dialog_data.update(data)
         await self.show(show_mode)
 
     def bg(
@@ -146,3 +153,7 @@ class SubManager(DialogManager):
             stack_id=stack_id,
             load=load,
         )
+
+    @asynccontextmanager
+    async def fg(self) -> AsyncIterator[DialogManager]:
+        yield self

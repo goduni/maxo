@@ -1,4 +1,6 @@
+from collections.abc import Callable
 from logging import getLogger
+from typing import Any, ParamSpec, TypeVar
 
 from maxo.dialogs.api.internal import RawKeyboard
 from maxo.types import (
@@ -142,3 +144,18 @@ def remove_intent_id(payload: str) -> tuple[str | None, str]:
         intent_id, new_data = payload.split(CB_SEP, maxsplit=1)
         return intent_id, new_data
     return None, payload
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def add_exception_note(f: Callable[P, R]) -> Callable[P, R]:
+    async def inner(self: Any, *args: P.args, **kwargs: P.kwargs) -> R:
+        try:
+            return await f(self, *args, **kwargs)
+        except Exception as e:
+            e.add_note(f"at {self!r}")
+            raise
+
+    return inner

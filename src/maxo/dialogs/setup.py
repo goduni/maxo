@@ -6,8 +6,9 @@ from maxo.dialogs.api.entities import (
     DialogSwitchEvent,
     DialogUpdateEvent,
 )
+from maxo.dialogs.api.entities.update_event import DialogFgEvent
 from maxo.dialogs.api.exceptions import UnregisteredDialogError
-from maxo.dialogs.api.internal import DialogManagerFactory
+from maxo.dialogs.api.internal import DataGetter, DialogManagerFactory
 from maxo.dialogs.api.protocols import (
     BgManagerFactory,
     DialogProtocol,
@@ -41,15 +42,15 @@ from maxo.routing.observers import UpdateObserver
 
 
 def _setup_event_observer(router: Router) -> None:
-    router.observers[DialogUpdateEvent] = UpdateObserver()
-    router.observers[DialogStartEvent] = UpdateObserver()
-    router.observers[DialogSwitchEvent] = UpdateObserver()
+    dialog_events_observer = UpdateObserver()
+    router.observers[DialogUpdateEvent] = dialog_events_observer
+    router.observers[DialogStartEvent] = dialog_events_observer
+    router.observers[DialogSwitchEvent] = dialog_events_observer
+    router.observers[DialogFgEvent] = dialog_events_observer
 
 
 def _register_event_handler(router: Router, callback: Callable) -> None:
     router.observers[DialogUpdateEvent].handler(callback)
-    router.observers[DialogStartEvent].handler(callback)
-    router.observers[DialogSwitchEvent].handler(callback)
 
 
 class DialogRegistry(DialogRegistryProtocol):
@@ -124,9 +125,7 @@ def _register_middleware(
     # delayed configuration of middlewares
     router.after_startup.handler(_startup_callback(registry))
 
-    dialog_update_handler = router.observers[DialogUpdateEvent]
-    dialog_start_handler = router.observers[DialogStartEvent]
-    dialog_switch_handler = router.observers[DialogSwitchEvent]
+    dialog_updates_handler = router.observers[DialogUpdateEvent]
 
     router.exception.middleware.inner(
         IntentErrorMiddleware(
@@ -151,9 +150,7 @@ def _register_middleware(
     router.bot_removed_from_chat.middleware.outer(
         intent_middleware.process_bot_removed_from_chat,
     )
-    dialog_update_handler.middleware.outer(intent_middleware.process_aiogd_update)
-    dialog_start_handler.middleware.outer(intent_middleware.process_aiogd_update)
-    dialog_switch_handler.middleware.outer(intent_middleware.process_aiogd_update)
+    dialog_updates_handler.middleware.outer(intent_middleware.process_aiogd_update)
 
     router.message_created.middleware.outer(context_unlocker_middleware)
     router.message_callback.middleware.outer(context_unlocker_middleware)
@@ -163,9 +160,7 @@ def _register_middleware(
     router.user_removed_from_chat.middleware.outer(context_unlocker_middleware)
     router.bot_added_to_chat.middleware.outer(context_unlocker_middleware)
     router.bot_removed_from_chat.middleware.outer(context_unlocker_middleware)
-    dialog_update_handler.middleware.outer(context_unlocker_middleware)
-    dialog_start_handler.middleware.outer(context_unlocker_middleware)
-    dialog_switch_handler.middleware.outer(context_unlocker_middleware)
+    dialog_updates_handler.middleware.outer(context_unlocker_middleware)
 
     router.message_created.middleware.inner(manager_middleware)
     router.message_callback.middleware.inner(manager_middleware)
@@ -176,9 +171,7 @@ def _register_middleware(
     router.bot_added_to_chat.middleware.inner(manager_middleware)
     router.bot_removed_from_chat.middleware.inner(manager_middleware)
     router.exception.middleware.inner(manager_middleware)
-    dialog_update_handler.middleware.inner(manager_middleware)
-    dialog_start_handler.middleware.inner(manager_middleware)
-    dialog_switch_handler.middleware.inner(manager_middleware)
+    dialog_updates_handler.middleware.inner(manager_middleware)
 
     router.message_created.middleware.inner(context_saver_middleware)
     router.message_callback.middleware.inner(context_saver_middleware)
@@ -188,9 +181,7 @@ def _register_middleware(
     router.user_removed_from_chat.middleware.inner(context_saver_middleware)
     router.bot_added_to_chat.middleware.inner(context_saver_middleware)
     router.bot_removed_from_chat.middleware.inner(context_saver_middleware)
-    dialog_update_handler.middleware.inner(context_saver_middleware)
-    dialog_start_handler.middleware.inner(context_saver_middleware)
-    dialog_switch_handler.middleware.inner(context_saver_middleware)
+    dialog_updates_handler.middleware.inner(context_saver_middleware)
 
     bg_factory_middleware = BgFactoryMiddleware(bg_manager_factory)
     for observer in router.observers.values():
@@ -201,6 +192,7 @@ def _prepare_dialog_manager_factory(
     dialog_manager_factory: DialogManagerFactory | None,
     message_manager: MessageManagerProtocol | None,
     media_id_storage: MediaIdStorageProtocol | None,
+    getter: DataGetter | None,
 ) -> DialogManagerFactory:
     if dialog_manager_factory is not None:
         return dialog_manager_factory
@@ -211,6 +203,7 @@ def _prepare_dialog_manager_factory(
     return DefaultManagerFactory(
         message_manager=message_manager,
         media_id_storage=media_id_storage,
+        getter=getter,
     )
 
 
@@ -245,6 +238,7 @@ def setup_dialogs(
     media_id_storage: MediaIdStorageProtocol | None = None,
     stack_access_validator: StackAccessValidator | None = None,
     events_isolation: BaseEventIsolation | None = None,
+    getter: DataGetter | None = None,
 ) -> BgManagerFactory:
     _setup_event_observer(router)
     _register_event_handler(router, handle_aiogd_update)
@@ -253,6 +247,7 @@ def setup_dialogs(
         dialog_manager_factory=dialog_manager_factory,
         message_manager=message_manager,
         media_id_storage=media_id_storage,
+        getter=getter,
     )
     stack_access_validator = _prepare_stack_access_validator(
         stack_access_validator,

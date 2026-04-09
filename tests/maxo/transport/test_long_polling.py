@@ -1,11 +1,13 @@
 import asyncio
 from asyncio import CancelledError
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from unittest.mock import ANY, AsyncMock, call, patch
 
 import pytest
 from adaptix.load_error import LoadError
 
+from maxo.bot.api_client import MaxApiClient
 from maxo.bot.bot import Bot
 from maxo.bot.methods import GetUpdates
 from maxo.bot.state import RunningBotState
@@ -30,9 +32,9 @@ def mock_bot() -> Bot:
             first_name="test_bot",
             username="test_bot",
             is_bot=True,
-            last_activity_time=None,
+            last_activity_time=datetime.fromtimestamp(1234567890, tz=UTC),
         ),
-        api_client=AsyncMock(),
+        api_client=AsyncMock(spec=MaxApiClient),
     )
     return bot
 

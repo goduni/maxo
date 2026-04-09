@@ -4,6 +4,7 @@ from maxo.omit import Omittable, Omitted, is_defined
 from maxo.types.base import MaxoType
 from maxo.types.message_body import MessageBody
 from maxo.types.user import User
+from maxo.utils.link import id_to_message_url
 
 
 class LinkedMessage(MaxoType):
@@ -42,4 +43,38 @@ class LinkedMessage(MaxoType):
         raise AttributeIsEmptyError(
             obj=self,
             attr="sender",
+        )
+
+    @property
+    def generated_url(self) -> str | None:
+        """
+        Генерирует ссылку на сообщение.
+
+        Возвращает:
+            str | None: Ссылка на сообщение или `None`, если `chat_id` не определен.
+        """
+        if not is_defined(self.chat_id):
+            return None
+
+        return id_to_message_url(
+            sequence_id=self.message.seq,
+            chat_id=self.chat_id,
+        )
+
+    @property
+    def unsafe_generated_url(self) -> str:
+        """
+        Генерирует ссылку на сообщение.
+
+        Если `generated_url` не определен, вызывает :py:exc:`~maxo.errors.AttributeIsEmptyError`.
+
+        Возвращает:
+            str: Ссылка на сообщение.
+        """
+        if is_defined(self.generated_url):
+            return self.generated_url
+
+        raise AttributeIsEmptyError(
+            obj=self,
+            attr="generated_url",
         )

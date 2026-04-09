@@ -1,6 +1,7 @@
 import uuid
 from datetime import UTC, datetime
 from typing import Any
+from unittest.mock import AsyncMock
 
 from maxo import Bot, Dispatcher
 from maxo.bot.state import RunningBotState
@@ -38,9 +39,9 @@ class FakeBot(Bot):
             is_bot=True,
             last_activity_time=datetime.fromtimestamp(1234567890, tz=UTC),
         )
-        self._state = RunningBotState(info=info, api_client=None)
+        self._state = RunningBotState(info=info, api_client=AsyncMock())
 
-    def answer_on_callback(self, *_: Any, **__: Any) -> None:
+    async def answer_on_callback(self, *_: Any, **__: Any) -> None:
         pass
 
     def __hash__(self) -> int:
@@ -122,7 +123,7 @@ class BotClient:
         )
 
     async def send(self, text: str, reply_to: Message | None = None) -> Any:
-        return await self.dp.feed_max_update(
+        return await self.dp.feed_update(
             MaxoUpdate(
                 update=MessageCreated(
                     message=self._new_message(text, reply_to),
@@ -158,7 +159,7 @@ class BotClient:
             )
 
         callback = self._new_callback(button)
-        await self.dp.feed_max_update(
+        await self.dp.feed_update(
             MaxoUpdate(
                 update=MessageCallback(
                     timestamp=datetime.fromtimestamp(1234567890, tz=UTC),
@@ -172,7 +173,7 @@ class BotClient:
         return callback.callback_id
 
     async def user_added_to_chat(self) -> Any:
-        return await self.dp.feed_max_update(
+        return await self.dp.feed_update(
             MaxoUpdate(
                 update=UserAddedToChat(
                     chat_id=self.chat.chat_id,
@@ -185,7 +186,7 @@ class BotClient:
         )
 
     async def bot_added_to_chat(self) -> Any:
-        return await self.dp.feed_max_update(
+        return await self.dp.feed_update(
             MaxoUpdate(
                 update=BotAddedToChat(
                     chat_id=self.chat.chat_id,

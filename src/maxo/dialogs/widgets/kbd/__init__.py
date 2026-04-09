@@ -38,6 +38,7 @@ from .select import (
 )
 from .state import Back, Cancel, Next, Start, SwitchTo
 from .stub_scroll import StubScroll
+from .time import TimeSelect
 
 __all__ = (
     "Back",
@@ -79,6 +80,7 @@ __all__ = (
     "StubScroll",
     "SwitchPage",
     "SwitchTo",
+    "TimeSelect",
     "Toggle",
     "Url",
     "WebApp",

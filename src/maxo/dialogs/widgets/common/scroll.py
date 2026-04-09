@@ -5,6 +5,7 @@ from typing import Protocol
 from maxo.dialogs.api.entities import ChatEvent
 from maxo.dialogs.api.internal import Widget
 from maxo.dialogs.api.protocols import DialogManager
+from maxo.dialogs.utils import add_exception_note
 from maxo.dialogs.widgets.widget_event import (
     WidgetEventProcessor,
     ensure_event_processor,
@@ -38,6 +39,7 @@ class Scroll(Widget, Protocol):
 
 
 class ManagedScroll(ManagedWidget[Scroll]):
+    @add_exception_note
     async def get_page_count(self, data: dict) -> int:
         return await self.widget.get_page_count(data, self.manager)
 

@@ -71,27 +71,27 @@ class MaxApiClient(AiohttpAsyncClient):
         else:
             code = ""
             error = ""
-            message = data
+            message = ""
 
         if response.status_code == 400:
-            raise MaxBotBadRequestError(code, error, message)
+            raise MaxBotBadRequestError(code, error, message, data)
         if response.status_code == 401:
-            raise MaxBotUnauthorizedError(code, error, message)
+            raise MaxBotUnauthorizedError(code, error, message, data)
         if response.status_code == 403:
-            raise MaxBotForbiddenError(code, error, message)
+            raise MaxBotForbiddenError(code, error, message, data)
         if response.status_code == 404:
-            raise MaxBotNotFoundError(code, error, message)
+            raise MaxBotNotFoundError(code, error, message, data)
         if response.status_code == 405:
-            raise MaxBotMethodNotAllowedError(code, error, message)
+            raise MaxBotMethodNotAllowedError(code, error, message, data)
         if response.status_code == 415:
-            raise MaxBotUnsupportedMediaTypeError(code, error, message)
+            raise MaxBotUnsupportedMediaTypeError(code, error, message, data)
         if response.status_code == 429:
-            raise MaxBotTooManyRequestsError(code, error, message)
+            raise MaxBotTooManyRequestsError(code, error, message, data)
         if response.status_code == 500:
-            raise MaxBotUnknownServerError(code, error, message)
+            raise MaxBotUnknownServerError(code, error, message, data)
         if response.status_code == 503:
-            raise MaxBotServiceUnavailableError(code, error, message)
-        raise MaxBotApiError(code, error, message)
+            raise MaxBotServiceUnavailableError(code, error, message, data)
+        raise MaxBotApiError(code, error, message, data)
 
     def validate_response(
         self,

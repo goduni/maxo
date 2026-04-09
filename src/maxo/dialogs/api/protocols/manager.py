@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from contextlib import AbstractAsyncContextManager
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional, Protocol
 
@@ -30,6 +31,7 @@ class BaseDialogManager(Protocol):
         result: Any = None,
         show_mode: ShowMode | None = None,
     ) -> None:
+        """Закрыть текущий диалог и показать нижележащий в стеке."""
         raise NotImplementedError
 
     @abstractmethod
@@ -41,6 +43,7 @@ class BaseDialogManager(Protocol):
         show_mode: ShowMode | None = None,
         access_settings: AccessSettings | None = None,
     ) -> None:
+        """Добавить новый диалог в стек и показать его."""
         raise NotImplementedError
 
     @abstractmethod
@@ -49,14 +52,16 @@ class BaseDialogManager(Protocol):
         state: State,
         show_mode: ShowMode | None = None,
     ) -> None:
+        """Переключить активное окно в текущем диалоге."""
         raise NotImplementedError
 
     @abstractmethod
     async def update(
         self,
-        data: dict,
+        data: Data | None = None,
         show_mode: ShowMode | None = None,
     ) -> None:
+        """Обновить данные диалога и перерисовать текущее окно."""
         raise NotImplementedError
 
     @abstractmethod
@@ -67,6 +72,12 @@ class BaseDialogManager(Protocol):
         stack_id: str | None = None,
         load: bool = False,  # load chat and user
     ) -> "BaseDialogManager":
+        """Получить фоновый менеджер для указанного чата."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def fg(self) -> AbstractAsyncContextManager["DialogManager"]:
+        """Получить полнофункциональный менеджер диалога."""
         raise NotImplementedError
 
 
@@ -81,6 +92,7 @@ class BgManagerFactory(Protocol):
         load: bool = False,  # load chat and user
         chat_type: ChatType = ChatType.CHAT,
     ) -> "BaseDialogManager":
+        """Получить фоновый менеджер для указанного чата."""
         raise NotImplementedError
 
 

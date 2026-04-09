@@ -57,7 +57,7 @@ class Controller:
         self.renderer = Renderer(app_module, dialogs_router)
 
     async def preview(self, _request: web.Request) -> web.Response:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         with ProcessPoolExecutor(max_workers=1) as executor:
             text = await loop.run_in_executor(
                 executor,
@@ -69,7 +69,7 @@ class Controller:
         )
 
     async def transitions(self, _request: web.Request) -> web.Response:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         with NamedTemporaryFile(suffix=".png") as f:
             with ProcessPoolExecutor(max_workers=1) as executor:
                 await loop.run_in_executor(

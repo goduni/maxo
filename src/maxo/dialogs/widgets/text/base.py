@@ -3,6 +3,7 @@ from typing import Optional, Self, Union
 
 from maxo.dialogs.api.internal import TextWidget
 from maxo.dialogs.api.protocols import DialogManager
+from maxo.dialogs.utils import add_exception_note
 from maxo.dialogs.widgets.common import (
     BaseWidget,
     WhenCondition,
@@ -15,6 +16,7 @@ class Text(Whenable, BaseWidget, TextWidget):
     def __init__(self, when: WhenCondition = None) -> None:
         super().__init__(when=when)
 
+    @add_exception_note
     async def render_text(
         self,
         data: dict,

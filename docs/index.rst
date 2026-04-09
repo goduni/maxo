@@ -161,3 +161,10 @@ Contributors
    :hidden:
 
    pages/useful_notes
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Утилиты (maxo.utils)
+   :hidden:
+
+   pages/utils/link

@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -18,7 +18,7 @@ async def test_render_media_scroll(mock_manager: DialogManager) -> None:
     assert len(res) == 1
     assert res[0].path == "/0.png"
 
-    await media.set_page(event=Mock(), page=2, manager=mock_manager)
+    await media.set_page(event=AsyncMock(), page=2, manager=mock_manager)
     res = await media.render_media(data={}, manager=mock_manager)
     assert len(res) == 1
     assert res[0].path == "/2.png"

@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, cast
+from typing import Any
 
 from maxo.dialogs.api.entities import (
     DEFAULT_STACK_ID,
@@ -300,7 +300,7 @@ class IntentMiddlewareFactory:
         self,
         update: MessageCreated,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[MessageCreated],
     ) -> Any:
         event_context = event_context_from_message(update, ctx)
         ctx[EVENT_CONTEXT_KEY] = event_context
@@ -311,7 +311,7 @@ class IntentMiddlewareFactory:
         self,
         update: DialogUpdateEvent,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[DialogUpdateEvent],
     ) -> Any:
         event_context = event_context_from_aiogd(update)
         ctx[EVENT_CONTEXT_KEY] = event_context
@@ -336,7 +336,7 @@ class IntentMiddlewareFactory:
         self,
         update: MessageCallback,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[MessageCallback],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -360,7 +360,7 @@ class IntentMiddlewareFactory:
             await self._load_default_context(update, ctx, event_context)
         result = await next(ctx)
         if result is UNHANDLED and ctx.get(FORBIDDEN_STACK_KEY):
-            facade = cast(MessageCallbackFacade, ctx[FACADE_KEY])
+            facade: MessageCallbackFacade = ctx[FACADE_KEY]
             await facade.callback_answer(notification="")
         return result
 
@@ -368,7 +368,7 @@ class IntentMiddlewareFactory:
         self,
         update: BotStarted,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[BotStarted],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -382,7 +382,7 @@ class IntentMiddlewareFactory:
         self,
         update: BotStopped,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[BotStopped],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -396,7 +396,7 @@ class IntentMiddlewareFactory:
         self,
         update: UserAddedToChat,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[UserAddedToChat],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -410,7 +410,7 @@ class IntentMiddlewareFactory:
         self,
         update: UserRemovedFromChat,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[UserRemovedFromChat],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -424,7 +424,7 @@ class IntentMiddlewareFactory:
         self,
         update: BotAddedToChat,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[BotAddedToChat],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -438,7 +438,7 @@ class IntentMiddlewareFactory:
         self,
         update: BotRemovedFromChat,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[BotRemovedFromChat],
     ) -> Any:
         if UPDATE_CONTEXT_KEY not in ctx:
             return await next(ctx)
@@ -466,7 +466,7 @@ SUPPORTED_ERROR_EVENTS = (
 async def context_saver_middleware(
     update: MaxUpdate,
     ctx: Ctx,
-    next: NextMiddleware,
+    next: NextMiddleware[MaxUpdate],
 ) -> Any:
     result = await next(ctx)
     proxy: StorageProxy = ctx.get(STORAGE_KEY)
@@ -479,7 +479,7 @@ async def context_saver_middleware(
 async def context_unlocker_middleware(
     update: MaxUpdate,
     ctx: Ctx,
-    next: NextMiddleware,
+    next: NextMiddleware[MaxUpdate],
 ) -> Any:
     proxy: StorageProxy = ctx.get(STORAGE_KEY)
     try:
@@ -556,7 +556,7 @@ class IntentErrorMiddleware(BaseMiddleware[ErrorEvent]):
         self,
         update: ErrorEvent,
         ctx: Ctx,
-        next: NextMiddleware,
+        next: NextMiddleware[ErrorEvent[Any, Any]],
     ) -> Any:
         error = update.error
         if not self._is_error_supported(update, ctx):

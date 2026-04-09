@@ -4,6 +4,7 @@ from typing import Self
 from maxo.dialogs.api.entities import MediaAttachment
 from maxo.dialogs.api.internal import MediaWidget
 from maxo.dialogs.api.protocols import DialogManager
+from maxo.dialogs.utils import add_exception_note
 from maxo.dialogs.widgets.common import (
     BaseWidget,
     WhenCondition,
@@ -16,6 +17,7 @@ class Media(Whenable, BaseWidget, MediaWidget):
     def __init__(self, when: WhenCondition = None) -> None:
         super().__init__(when=when)
 
+    @add_exception_note
     async def render_media(
         self,
         data: dict,

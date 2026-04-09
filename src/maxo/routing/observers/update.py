@@ -29,6 +29,8 @@ class UpdateObserver(
 
         return handler_fn
 
+    register = handler  # Подражание aiogram
+
     if TYPE_CHECKING:
 
         async def execute_handler(

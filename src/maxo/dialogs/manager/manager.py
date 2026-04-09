@@ -1,4 +1,6 @@
 import itertools
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from copy import deepcopy
 from datetime import UTC, datetime
 from logging import getLogger
@@ -31,6 +33,7 @@ from maxo.dialogs.api.internal import (
     EVENT_SIMULATED,
     STACK_KEY,
     STORAGE_KEY,
+    DataGetter,
     FakeUser,
     Widget,
 )
@@ -45,14 +48,13 @@ from maxo.dialogs.api.protocols import (
     MessageNotModified,
 )
 from maxo.dialogs.context.storage import StorageProxy
+from maxo.dialogs.manager.bg_manager import BgManager
 from maxo.enums import ChatStatus, ChatType
 from maxo.fsm import State
 from maxo.routing.interfaces import BaseRouter
 from maxo.routing.middlewares.update_context import UPDATE_CONTEXT_KEY
 from maxo.routing.updates import ErrorEvent, MessageCallback, MessageCreated
 from maxo.types import Message, MessageButton, Recipient, User
-
-from .bg_manager import BgManager
 
 logger = getLogger(__name__)
 
@@ -66,6 +68,7 @@ class ManagerImpl(DialogManager):
         registry: DialogRegistryProtocol,
         router: BaseRouter,
         ctx: Ctx,
+        getter: DataGetter | None,
     ) -> None:
         self.disabled = False
         self.message_manager = message_manager
@@ -75,6 +78,7 @@ class ManagerImpl(DialogManager):
         self._show_mode: ShowMode = ShowMode.AUTO
         self._registry = registry
         self._router = router
+        self._getter = getter
 
     @property
     def show_mode(self) -> ShowMode:
@@ -115,11 +119,16 @@ class ManagerImpl(DialogManager):
 
     async def load_data(self) -> dict:
         context = self.current_context()
+        if self._getter:
+            data = await self._getter(**self.middleware_data)
+        else:
+            data = {}
         return {
             "dialog_data": context.dialog_data,
             "start_data": context.start_data,
             "middleware_data": self.middleware_data,
             "event": self.event,
+            **data,
         }
 
     def is_preview(self) -> bool:
@@ -487,10 +496,11 @@ class ManagerImpl(DialogManager):
 
     async def update(
         self,
-        data: dict,
+        data: dict | None = None,
         show_mode: ShowMode | None = None,
     ) -> None:
-        self.current_context().dialog_data.update(data)
+        if data:
+            self.current_context().dialog_data.update(data)
         await self.show(show_mode)
 
     def find(self, widget_id: str) -> Widget | None:
@@ -583,6 +593,10 @@ class ManagerImpl(DialogManager):
             load=load,
             chat_type=new_event_context.chat_type,
         )
+
+    @asynccontextmanager
+    async def fg(self) -> AsyncIterator[DialogManager]:
+        yield self
 
     async def close_manager(self) -> None:
         self.check_disabled()

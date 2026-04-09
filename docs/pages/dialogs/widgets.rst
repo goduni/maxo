@@ -102,6 +102,18 @@ Url
 
     Url(Const("Открыть сайт"), Const("https://example.com"))
 
+Clipboard
+---------
+
+Кнопка, при нажатии на которую в буфер обмена пользователя копируется переданный текст.
+
+.. code-block:: python
+
+    from maxo.dialogs.widgets.kbd import Clipboard
+    from maxo.dialogs.widgets.text import Const
+
+    Clipboard(Const("Скопировать"), Const("Текст для копирования"))
+
 Row, Column, Group
 ------------------
 
@@ -175,6 +187,8 @@ Radio
         items="languages",
         # В геттере: return {"languages": [("ru", "Русский"), ("en", "English")]}
     )
+
+
 
 Навигационные кнопки
 --------------------

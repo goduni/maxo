@@ -3,6 +3,7 @@ from .button import (
     Button,
     Url,
     WebApp,
+    Clipboard,
 )
 from .calendar_kbd import (
     Calendar,
@@ -42,6 +43,7 @@ __all__ = (
     "Back",
     "Button",
     "Calendar",
+    "Clipboard",
     "CalendarConfig",
     "CalendarScope",
     "CalendarUserConfig",

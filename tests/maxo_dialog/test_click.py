@@ -1,6 +1,6 @@
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from typing import Any
-from unittest.mock import Mock
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -29,7 +29,7 @@ async def on_click(
     _button: Button,
     manager: DialogManager,
 ) -> None:
-    manager.middleware_data["usecase"]()
+    await manager.middleware_data["usecase"]()
     await manager.next()
 
 
@@ -42,10 +42,10 @@ async def on_finish(
 
 
 async def second_getter(
-    user_getter: Callable[[], str],
+    user_getter: Callable[[], Awaitable[str]],
     **_kwargs: Any,
 ) -> dict[str, Any]:
-    return {"user": user_getter()}
+    return {"user": await user_getter()}
 
 
 dialog = Dialog(
@@ -69,8 +69,8 @@ async def start(message: MessageCreated, dialog_manager: DialogManager) -> None:
 
 @pytest.mark.asyncio
 async def test_click() -> None:
-    usecase = Mock()
-    user_getter = Mock(side_effect=["Username"])
+    usecase = AsyncMock()
+    user_getter = AsyncMock(side_effect=["Username"])
     key_builder = DefaultKeyBuilder(with_destiny=True)
     event_isolation = SimpleEventIsolation(key_builder=key_builder)
     dp = Dispatcher(

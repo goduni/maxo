@@ -70,7 +70,7 @@ async def test_save_load_stack_with_all_attachments():
             buttons=[[CallbackButton(text="test", payload="test_payload")]],
         ),
         ShareAttachment.factory(
-            url="http://example.com",
+            url="https://example.com",
             token="share_token",  # noqa: S106
         ),
         LocationAttachment(latitude=55.7558, longitude=37.6173),

@@ -1189,40 +1189,6 @@
                         "$ref": "#/components/responses/InternalError"
                     }
                 }
-            },
-            "delete": {
-                "tags": [
-                    "messages"
-                ],
-                "operationId": "deleteMessage",
-                "summary": "Удалить сообщение",
-                "description": "Удаляет сообщение в диалоге или чате, если бот имеет разрешение на удаление сообщений\n\n> С помощью метода можно удалять сообщения, которые отправлены менее 24 часов назад\n\nПример запроса:\n```bash\ncurl -X DELETE \"https://platform-api.max.ru/messages?message_id={message_id}\" \\\n  -H \"Authorization: {access_token}\"\n```",
-                "parameters": [
-                    {
-                        "name": "message_id",
-                        "description": "ID удаляемого сообщения",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "$ref": "#/components/responses/SuccessResponse"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthorized"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/Forbidden"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/InternalError"
-                    }
-                }
             }
         },
         "/messages/{messageId}": {
@@ -1714,7 +1680,7 @@
                         "format": "int64"
                     },
                     "type": {
-                        "description": "Тип чата:\n - `\"chat\"` — Групповой чат.",
+                        "description": "Тип чата:\n - `\"chat\"` — Групповой чат\n - `\"channel\"` — Канал\n - `\"dialog\"` — Диалог",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/ChatType"
@@ -1722,7 +1688,7 @@
                         ]
                     },
                     "status": {
-                        "description": "Статус чата:\n- `\"active\"` — Бот является активным участником чата.\n- `\"removed\"` — Бот был удалён из чата.\n- `\"left\"` — Бот покинул чат.\n- `\"closed\"` — Чат был закрыт.",
+                        "description": "Статус чата:\n- `\"active\"` — Бот является активным участником чата\n- `\"removed\"` — Бот был удалён из чата\n- `\"left\"` — Бот покинул чат\n- `\"closed\"` — Чат был закрыт",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/ChatStatus"
@@ -3994,14 +3960,13 @@
                 ]
             },
             "SenderAction": {
-                "description": "Действие, отправляемое участникам чата. Возможные значения:\n- `\"typing_on\"` — Бот набирает сообщение.\n- `\"sending_photo\"` — Бот отправляет фото.\n- `\"sending_video\"` — Бот отправляет видео.\n- `\"sending_audio\"` — Бот отправляет аудиофайл.\n-  `\"sending_file\"` — Бот отправляет файл.\n- `\"mark_seen\"` — Бот помечает сообщения как прочитанные.\n",
+                "description": "Действие, отправляемое участникам чата. Возможные значения:\n- `\"typing_on\"` — Бот набирает сообщение\n- `\"sending_photo\"` — Бот отправляет фото\n- `\"sending_video\"` — Бот отправляет видео\n- `\"sending_audio\"` — Бот отправляет аудиофайл\n-  `\"sending_file\"` — Бот отправляет файл\n",
                 "enum": [
                     "typing_on",
                     "sending_photo",
                     "sending_video",
                     "sending_audio",
-                    "sending_file",
-                    "mark_seen"
+                    "sending_file"
                 ]
             },
             "UpdateList": {

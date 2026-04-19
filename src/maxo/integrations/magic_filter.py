@@ -19,7 +19,7 @@ class MagicData(BaseFilter[Any]):
         magic_filter: OriginMagicFilter,
         result_key: str | None = None,
     ) -> None:
-        self._magic_filter = magic_filter.cast(bool)
+        self._magic_filter = magic_filter
         self._result_key = result_key
 
     async def __call__(self, update: Any, ctx: Ctx) -> bool:
@@ -42,7 +42,7 @@ class MagicFilter(BaseFilter[Any]):
         magic_filter: OriginMagicFilter,
         result_key: str | None = None,
     ) -> None:
-        self._magic_filter = magic_filter.cast(bool)
+        self._magic_filter = magic_filter
         self._result_key = result_key
 
     async def __call__(self, update: Any, ctx: Ctx) -> bool:

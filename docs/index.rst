@@ -4,11 +4,11 @@
    .. image:: _static/maxo-logo.png
       :width: 200px
       :height: 200px
-      :alt: maxo — асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru)
+      :alt: maxo - асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru)
       :align: center
 
 ==========================================================
-maxo — асинхронный Python-фреймворк для ботов MAX (max.ru)
+maxo - асинхронный Python-фреймворк для ботов MAX (max.ru)
 ==========================================================
 
 .. rst-class:: center
@@ -45,7 +45,7 @@ maxo — асинхронный Python-фреймворк для ботов MAX 
 
 .. rst-class:: lead
 
-   Асинхронный Python-фреймворк для разработки `ботов <https://dev.max.ru/docs>`_ в `MAX <https://max.ru>`_ — мессенджере от VK (max.ru).
+   Асинхронный Python-фреймворк для разработки `ботов <https://dev.max.ru/docs>`_ в `MAX <https://max.ru>`_ - мессенджере от VK (max.ru).
 
 .. container:: buttons
 

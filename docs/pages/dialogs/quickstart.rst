@@ -3,7 +3,7 @@
 =============
 
 .. meta::
-   :description: Быстрый старт с maxo.dialogs — диалоги для ботов MAX (max.ru): создание окон, виджетов, состояний и переходов на основе aiogram_dialog.
+   :description: Быстрый старт с maxo.dialogs - диалоги для ботов MAX (max.ru): создание окон, виджетов, состояний и переходов на основе aiogram_dialog.
    :keywords: maxo dialogs, диалоги бот max, aiogram_dialog max.ru, окна и состояния, виджеты бот, FSM диалоги
 
 Чтобы начать использовать ``maxo.dialogs``, давайте создадим простое эхо-меню с кнопкой.

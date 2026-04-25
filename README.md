@@ -1,10 +1,10 @@
 <p align="center">
   <a href="https://github.com/K1rL3s/maxo">
-    <img width="200px" height="200px" alt="maxo — асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru)" src="https://raw.githubusercontent.com/K1rL3s/maxo/refs/heads/master/docs/_static/maxo-logo.png">
+    <img width="200px" height="200px" alt="maxo - асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru)" src="https://raw.githubusercontent.com/K1rL3s/maxo/refs/heads/master/docs/_static/maxo-logo.png">
   </a>
 </p>
 <h1 align="center">
-  maxo — асинхронный Python-фреймворк для ботов MAX (max.ru)
+  maxo - асинхронный Python-фреймворк для ботов MAX (max.ru)
 </h1>
 
 <div align="center">
@@ -23,7 +23,7 @@
 
 <p align="center">
     <b>
-        Асинхронный Python-фреймворк для разработки <a href="https://dev.max.ru/docs">ботов</a> в <a href="https://max.ru">MAX</a> — мессенджере от VK (max.ru).
+        Асинхронный Python-фреймворк для разработки <a href="https://dev.max.ru/docs">ботов</a> в <a href="https://max.ru">MAX</a> - мессенджере от VK (max.ru).
     </b>
 </p>
 
@@ -211,15 +211,15 @@ if __name__ == "__main__":
 
 ### Что такое MAX?
 
-[MAX](https://max.ru) — российский мессенджер от VK (домен `max.ru`), наследник проекта ТамТам. У него есть открытое [Bot API](https://dev.max.ru/docs-api), для работы с которым и создан `maxo`.
+[MAX](https://max.ru) - российский мессенджер от VK (домен `max.ru`), наследник проекта ТамТам. У него есть открытое [Bot API](https://dev.max.ru/docs-api), для работы с которым и создан `maxo`.
 
 ### Чем maxo отличается от aiogram?
 
-`maxo` — отдельный фреймворк именно для ботов MAX (max.ru), но интерфейс намеренно близок к [aiogram](https://github.com/aiogram/aiogram), чтобы переход был максимально безболезненным. Диалоги (`maxo.dialogs`) портированы из [aiogram_dialog](https://github.com/Tishka17/aiogram_dialog), вебхуки (`maxo.transport.webhook`) — из [aiogram-webhook](https://github.com/m-xim/aiogram-webhook).
+`maxo` - отдельный фреймворк именно для ботов MAX (max.ru), но интерфейс намеренно близок к [aiogram](https://github.com/aiogram/aiogram), чтобы переход был максимально безболезненным. Диалоги (`maxo.dialogs`) портированы из [aiogram_dialog](https://github.com/Tishka17/aiogram_dialog), вебхуки (`maxo.transport.webhook`) - из [aiogram-webhook](https://github.com/m-xim/aiogram-webhook).
 
 ### Поддерживает ли maxo вебхуки?
 
-Да. Поддерживается и long-polling, и webhook через `aiohttp` или `fastapi` — см. примеры выше.
+Да. Поддерживается и long-polling, и webhook через `aiohttp` или `fastapi` - см. примеры выше.
 
 ### Какой Python нужен?
 
@@ -231,7 +231,7 @@ Python 3.12, 3.13 или 3.14.
 
 ### Как добавить FSM?
 
-FSM встроена в `maxo` — есть `MemoryStorage` из коробки и опциональное хранилище в Redis (`maxo[redis]`). Подробности — в [документации](https://maxo.readthedocs.io).
+FSM встроена в `maxo` - есть `MemoryStorage` из коробки и опциональное хранилище в Redis (`maxo[redis]`). Подробности - в [документации](https://maxo.readthedocs.io).
 
 ## Связь
 Если у вас есть вопросы, вы можете задать их в Телеграме [\@maxo_py](https://t.me/maxo_py) или [Максе](https://max.ru/join/rwJmWA4B5AipBiJdWRkORGjxFmqnJPUhJbQxxmscrnc)

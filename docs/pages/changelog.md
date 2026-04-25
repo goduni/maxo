@@ -3,7 +3,7 @@
 История релизов автоматически собирается из [GitHub Releases](https://github.com/K1rL3s/maxo/releases) при каждой сборке документации.
 
 
-## [0.5.3](https://github.com/K1rL3s/maxo/releases/tag/v0.5.3) — 2026-04-11
+## [0.5.3](https://github.com/K1rL3s/maxo/releases/tag/v0.5.3) - 2026-04-11
 
 ### What's Changed
 
@@ -18,7 +18,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.5.2...v0.5.3
 
 
-## [0.5.2](https://github.com/K1rL3s/maxo/releases/tag/v0.5.2) — 2026-04-03
+## [0.5.2](https://github.com/K1rL3s/maxo/releases/tag/v0.5.2) - 2026-04-03
 
 ### What's Changed
 * Исправление порядка обхода роутеров при срабатывании фильтра by @begezyan in https://github.com/K1rL3s/maxo/pull/90
@@ -29,7 +29,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.5.1...v0.5.2
 
 
-## [0.5.1](https://github.com/K1rL3s/maxo/releases/tag/v0.5.1) — 2026-03-31
+## [0.5.1](https://github.com/K1rL3s/maxo/releases/tag/v0.5.1) - 2026-03-31
 
 ### What's Changed
 
@@ -49,7 +49,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.5.0...v0.5.1
 
 
-## [0.5.0](https://github.com/K1rL3s/maxo/releases/tag/v0.5.0) — 2026-03-19
+## [0.5.0](https://github.com/K1rL3s/maxo/releases/tag/v0.5.0) - 2026-03-19
 
 ### What's Changed
 
@@ -177,7 +177,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.4.1...v0.5.0
 
 
-## [0.4.1](https://github.com/K1rL3s/maxo/releases/tag/v0.4.1) — 2026-02-25
+## [0.4.1](https://github.com/K1rL3s/maxo/releases/tag/v0.4.1) - 2026-02-25
 
 ### What's Changed
 * Новые объекты по обновлению `dev.max.ru` by @K1rL3s in https://github.com/K1rL3s/maxo/pull/60
@@ -186,7 +186,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.4.0...v0.4.1
 
 
-## [0.4.0](https://github.com/K1rL3s/maxo/releases/tag/v0.4.0) — 2026-02-25
+## [0.4.0](https://github.com/K1rL3s/maxo/releases/tag/v0.4.0) - 2026-02-25
 
 ## What's Changed
 
@@ -224,8 +224,8 @@
   - Расширен тип `UpdateContext` полями `chat: Chat | None` и `user: User | None`; при обогащении заполняется также `type` из `chat.type`.
   - В `_resolve_update_context` добавлены все типы апдейтов
   - В `_resolve_user` добавлены все апдейты с пользователем в payload.
-  - Обогащение включается параметром конструктора `UpdateContextMiddleware(enrich=True)` или ключом в `workflow_data` — `enrich_update_context=True` (например, `LongPolling.run(bot, enrich_update_context=True)`). По умолчанию выключено, чтобы не нагружать Bot API.
-  - Добавлен логгер `maxo.routing.update_context`; при обогащении — `debug`, при ошибках API — `warning` с `exc_info`.
+  - Обогащение включается параметром конструктора `UpdateContextMiddleware(enrich=True)` или ключом в `workflow_data` - `enrich_update_context=True` (например, `LongPolling.run(bot, enrich_update_context=True)`). По умолчанию выключено, чтобы не нагружать Bot API.
+  - Добавлен логгер `maxo.routing.update_context`; при обогащении - `debug`, при ошибках API - `warning` с `exc_info`.
 
 - dishka examples by @biradrags in https://github.com/K1rL3s/maxo/pull/51
 
@@ -248,7 +248,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.3.0...v0.4.0
 
 
-## [0.3.0](https://github.com/K1rL3s/maxo/releases/tag/v0.3.0) — 2026-02-17
+## [0.3.0](https://github.com/K1rL3s/maxo/releases/tag/v0.3.0) - 2026-02-17
 
 ### What's Changed
 * CI workflow, тесты, покрытие by @begezyan in https://github.com/K1rL3s/maxo/pull/33
@@ -275,7 +275,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.2.1...v0.3.0
 
 
-## [0.2.1](https://github.com/K1rL3s/maxo/releases/tag/v0.2.1) — 2026-02-12
+## [0.2.1](https://github.com/K1rL3s/maxo/releases/tag/v0.2.1) - 2026-02-12
 
 ### What's Changed
 * Исправил кодген под реалии документации и починил загрузку файлов by @K1rL3s in https://github.com/K1rL3s/maxo/pull/29
@@ -288,7 +288,7 @@
 **Full Changelog**: https://github.com/K1rL3s/maxo/compare/v0.2.0...v0.2.1
 
 
-## [0.2.0](https://github.com/K1rL3s/maxo/releases/tag/v0.2.0) — 2026-02-04
+## [0.2.0](https://github.com/K1rL3s/maxo/releases/tag/v0.2.0) - 2026-02-04
 
 ### Что изменилось
 * Refactor upload logic to support all attachment types by @hakkiai in https://github.com/K1rL3s/maxo/pull/19

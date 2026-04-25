@@ -2,12 +2,12 @@
 
 > Асинхронный Python-фреймворк для разработки ботов мессенджера MAX (max.ru, бывш. ТамТам, мессенджер от VK) с поддержкой long-polling, вебхуков, FSM, диалогов, фильтров и Dependency Injection. Интерфейс намеренно близок к aiogram.
 
-`maxo` распространяется через PyPI (`pip install maxo`), требует Python 3.12–3.14, использует `aiohttp`/`unihttp` для сети и `adaptix` для валидации данных. Поддерживает интеграции с `dishka` (DI), `magic_filter` (фильтры) и `redis` (FSM-хранилище). Диалоги (`maxo.dialogs`) — порт `aiogram_dialog`, вебхуки (`maxo.transport.webhook`) — порт `aiogram-webhook`.
+`maxo` распространяется через PyPI (`pip install maxo`), требует Python 3.12-3.14, использует `aiohttp`/`unihttp` для сети и `adaptix` для валидации данных. Поддерживает интеграции с `dishka` (DI), `magic_filter` (фильтры) и `redis` (FSM-хранилище). Диалоги (`maxo.dialogs`) - порт `aiogram_dialog`, вебхуки (`maxo.transport.webhook`) - порт `aiogram-webhook`.
 
 ## Документация
 
-- [Начало работы](https://maxo.readthedocs.io/ru/latest/pages/getting-started.html): Установка через uv/poetry/pip, требования, быстрый старт — эхо-бот, команды, клавиатуры, вебхук.
-- [Обработка событий — обзор](https://maxo.readthedocs.io/ru/latest/pages/event-handling/index.html): Архитектура цепочки обработки апдейтов в maxo.
+- [Начало работы](https://maxo.readthedocs.io/ru/latest/pages/getting-started.html): Установка через uv/poetry/pip, требования, быстрый старт - эхо-бот, команды, клавиатуры, вебхук.
+- [Обработка событий - обзор](https://maxo.readthedocs.io/ru/latest/pages/event-handling/index.html): Архитектура цепочки обработки апдейтов в maxo.
 - [Роутеры](https://maxo.readthedocs.io/ru/latest/pages/event-handling/routers.html): Структура бота через `Dispatcher` и `Router`, вложенность, масштабирование.
 - [Фильтры](https://maxo.readthedocs.io/ru/latest/pages/event-handling/filters.html): Встроенные фильтры (`Command`, `CommandStart`), кастомные фильтры, комбинирование, интеграция с `magic_filter`.
 - [Мидлвари](https://maxo.readthedocs.io/ru/latest/pages/event-handling/middlewares.html): Outer/Inner middleware, поток выполнения, типичные сценарии.

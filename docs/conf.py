@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import sys
 import tomllib
@@ -89,14 +90,14 @@ ogp_enable_meta_description = True
 ogp_social_cards = {"enable": False}
 ogp_custom_meta_tags = [
     '<meta name="twitter:card" content="summary_large_image" />',
-    '<meta name="twitter:title" content="maxo — асинхронный Python-фреймворк для ботов MAX (max.ru)" />',
+    '<meta name="twitter:title" content="maxo - асинхронный Python-фреймворк для ботов MAX (max.ru)" />',
     '<meta name="twitter:description" content="Асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru): long-polling, вебхуки, FSM, диалоги, фильтры, DI." />',
     '<meta name="twitter:image" content="https://raw.githubusercontent.com/K1rL3s/maxo/master/docs/_static/maxo-logo.png" />',
 ]
 
 rst_prolog = """
 .. meta::
-   :description: maxo — асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru): long-polling, вебхуки, FSM, диалоги, фильтры, DI.
+   :description: maxo - асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru): long-polling, вебхуки, FSM, диалоги, фильтры, DI.
    :keywords: maxo, max.ru, max messenger, бот max, python фреймворк, asyncio, aiohttp, fsm, диалоги, long-polling, webhook
 """
 
@@ -123,6 +124,7 @@ autodoc_default_options = {
 def setup(app):
     app.connect("autodoc-process-docstring", fix_docstring, priority=400)
     app.connect("build-finished", _strip_modules_from_sitemap)
+    app.connect("builder-inited", _refresh_changelog_from_github)
 
 
 def fix_docstring(app, what, name, obj, options, lines):
@@ -251,31 +253,61 @@ html_extra_path = ["_extra"]
 
 # ----- Changelog: pull from GitHub Releases at build time -----
 
-def _refresh_changelog_from_github() -> None:
+def _refresh_changelog_from_github(app=None) -> None:
     """Перегенерировать ``pages/changelog.md`` из GitHub Releases.
 
-    Вызывается при импорте ``conf.py`` — то есть при каждой сборке доков
+    Вызывается из Sphinx-события ``builder-inited`` один раз за билд
     (RTD, локальный ``sphinx-build``). При сетевой ошибке / rate limit
-    оставляет уже закоммиченный файл как фолбэк.
+    оставляет уже закоммиченный файл как фолбэк. Авторизация подхватывается
+    из ``GITHUB_TOKEN`` или ``READTHEDOCS_TOKEN``, если они заданы.
     """
     target = Path(__file__).parent / "pages" / "changelog.md"
-    api_url = "https://api.github.com/repos/K1rL3s/maxo/releases?per_page=100"
-    try:
-        req = urllib.request.Request(
-            api_url,
-            headers={"Accept": "application/vnd.github+json"},
+    api_url = (
+        "https://api.github.com/repos/K1rL3s/maxo/releases?per_page=100"
+    )
+    headers = {"Accept": "application/vnd.github+json"}
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get(
+        "READTHEDOCS_TOKEN",
+    )
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    def _fallback(reason: str) -> None:
+        if target.exists():
+            print(f"[changelog] {reason}; using committed file")
+            return
+        target.write_text(
+            "# Changelog\n\n_(нет данных)_\n", encoding="utf-8",
         )
+
+    try:
+        req = urllib.request.Request(api_url, headers=headers)
         with urllib.request.urlopen(req, timeout=10) as resp:  # noqa: S310
             releases = json.load(resp)
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
-        if target.exists():
-            print(f"[changelog] fetch failed ({exc}); using committed file")
-            return
-        target.write_text("# Changelog\n\n_(нет данных)_\n", encoding="utf-8")
+        _fallback(f"fetch failed ({exc})")
+        return
+
+    if not isinstance(releases, list):
+        _fallback(
+            f"unexpected GitHub response: {type(releases).__name__}",
+        )
         return
 
     def _shift(text: str) -> str:
-        return re.sub(r"(?m)^(#{1,5})(\s)", lambda m: "#" + m.group(1) + m.group(2), text)
+        return re.sub(
+            r"(?m)^(#{1,5})(\s)",
+            lambda m: "#" + m.group(1) + m.group(2),
+            text,
+        )
+
+    # Гайдлайн репо: только ASCII `-`.
+    # Em dash (U+2014) и en dash (U+2013) запрещены даже в исходниках,
+    # поэтому literals задаём через unicode escapes.
+    _DASH_TRANSLATE = {0x2014: "-", 0x2013: "-"}
+
+    def _normalize_dashes(text: str) -> str:
+        return text.translate(_DASH_TRANSLATE)
 
     parts = [
         "# Changelog\n",
@@ -291,16 +323,14 @@ def _refresh_changelog_from_github() -> None:
         published = (r.get("published_at") or "")[:10]
         html_url = r.get("html_url", "")
         body = (r.get("body") or "").strip()
-        body = _shift(body) if body else "_(нет описания)_"
-        title = name if name and name != tag else tag
-        parts.append(f"\n## [{title}]({html_url}) — {published}\n")
+        body = _normalize_dashes(_shift(body)) if body else "_(нет описания)_"
+        title = _normalize_dashes(name if name and name != tag else tag)
+        parts.append(f"\n## [{title}]({html_url}) - {published}\n")
         parts.append(body)
         parts.append("")
     target.write_text("\n".join(parts), encoding="utf-8")
     print(f"[changelog] wrote {len(releases)} releases -> {target.name}")
 
-
-_refresh_changelog_from_github()
 html_logo = "_static/maxo-logo.png"
 
 html_favicon = "_static/maxo-logo.png"

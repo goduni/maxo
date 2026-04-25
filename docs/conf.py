@@ -1,6 +1,9 @@
+import json
 import re
 import sys
 import tomllib
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import cast
 
@@ -47,7 +50,55 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx_iconify",
     "sphinxcontrib.mermaid",
+    "sphinx_sitemap",
+    "sphinxext.opengraph",
 ]
+
+# ----- SEO / canonical / sitemap / Open Graph -----
+
+html_baseurl = "https://maxo.readthedocs.io/ru/latest/"
+sitemap_url_scheme = "{link}"
+sitemap_excludes = [
+    "search.html",
+    "genindex.html",
+    "py-modindex.html",
+    "_modules/index.html",
+]
+
+
+def _strip_modules_from_sitemap(app, exception):
+    """Пост-фильтр: удаляет все ``_modules/*`` URL из ``sitemap.xml``."""
+    if exception is not None:
+        return
+    sitemap_path = Path(app.outdir) / "sitemap.xml"
+    if not sitemap_path.exists():
+        return
+    text = sitemap_path.read_text(encoding="utf-8")
+    text = re.sub(
+        r"<url><loc>[^<]*?/_modules/[^<]*?</loc></url>",
+        "",
+        text,
+    )
+    sitemap_path.write_text(text, encoding="utf-8")
+
+ogp_site_url = "https://maxo.readthedocs.io/ru/latest/"
+ogp_site_name = "maxo"
+ogp_image = "https://raw.githubusercontent.com/K1rL3s/maxo/master/docs/_static/maxo-logo.png"
+ogp_type = "website"
+ogp_enable_meta_description = True
+ogp_social_cards = {"enable": False}
+ogp_custom_meta_tags = [
+    '<meta name="twitter:card" content="summary_large_image" />',
+    '<meta name="twitter:title" content="maxo — асинхронный Python-фреймворк для ботов MAX (max.ru)" />',
+    '<meta name="twitter:description" content="Асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru): long-polling, вебхуки, FSM, диалоги, фильтры, DI." />',
+    '<meta name="twitter:image" content="https://raw.githubusercontent.com/K1rL3s/maxo/master/docs/_static/maxo-logo.png" />',
+]
+
+rst_prolog = """
+.. meta::
+   :description: maxo — асинхронный Python-фреймворк для ботов мессенджера MAX (max.ru): long-polling, вебхуки, FSM, диалоги, фильтры, DI.
+   :keywords: maxo, max.ru, max messenger, бот max, python фреймворк, asyncio, aiohttp, fsm, диалоги, long-polling, webhook
+"""
 
 # Napoleon:
 napoleon_google_docstring = True
@@ -71,6 +122,7 @@ autodoc_default_options = {
 
 def setup(app):
     app.connect("autodoc-process-docstring", fix_docstring, priority=400)
+    app.connect("build-finished", _strip_modules_from_sitemap)
 
 
 def fix_docstring(app, what, name, obj, options, lines):
@@ -194,12 +246,67 @@ language = "ru"
 html_theme = "shibuya"
 
 html_static_path = ["_static"]
+html_extra_path = ["_extra"]
+
+
+# ----- Changelog: pull from GitHub Releases at build time -----
+
+def _refresh_changelog_from_github() -> None:
+    """Перегенерировать ``pages/changelog.md`` из GitHub Releases.
+
+    Вызывается при импорте ``conf.py`` — то есть при каждой сборке доков
+    (RTD, локальный ``sphinx-build``). При сетевой ошибке / rate limit
+    оставляет уже закоммиченный файл как фолбэк.
+    """
+    target = Path(__file__).parent / "pages" / "changelog.md"
+    api_url = "https://api.github.com/repos/K1rL3s/maxo/releases?per_page=100"
+    try:
+        req = urllib.request.Request(
+            api_url,
+            headers={"Accept": "application/vnd.github+json"},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:  # noqa: S310
+            releases = json.load(resp)
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        if target.exists():
+            print(f"[changelog] fetch failed ({exc}); using committed file")
+            return
+        target.write_text("# Changelog\n\n_(нет данных)_\n", encoding="utf-8")
+        return
+
+    def _shift(text: str) -> str:
+        return re.sub(r"(?m)^(#{1,5})(\s)", lambda m: "#" + m.group(1) + m.group(2), text)
+
+    parts = [
+        "# Changelog\n",
+        "История релизов автоматически собирается из "
+        "[GitHub Releases](https://github.com/K1rL3s/maxo/releases) "
+        "при каждой сборке документации.\n",
+    ]
+    for r in releases:
+        if r.get("draft"):
+            continue
+        tag = r.get("tag_name", "")
+        name = r.get("name") or tag
+        published = (r.get("published_at") or "")[:10]
+        html_url = r.get("html_url", "")
+        body = (r.get("body") or "").strip()
+        body = _shift(body) if body else "_(нет описания)_"
+        title = name if name and name != tag else tag
+        parts.append(f"\n## [{title}]({html_url}) — {published}\n")
+        parts.append(body)
+        parts.append("")
+    target.write_text("\n".join(parts), encoding="utf-8")
+    print(f"[changelog] wrote {len(releases)} releases -> {target.name}")
+
+
+_refresh_changelog_from_github()
 html_logo = "_static/maxo-logo.png"
 
 html_favicon = "_static/maxo-logo.png"
 
 html_theme_options = {
-    "github_url": "https://github.com/k1rl3s/maxo",
+    "github_url": "https://github.com/K1rL3s/maxo",
     "readthedocs_url": "https://maxo.readthedocs.io",
     "globaltoc_expand_depth": 2,
     "nav_links": [
@@ -209,7 +316,7 @@ html_theme_options = {
         },
         {
             "title": "DeepWiki",
-            "url": "https://deepwiki.com/k1rl3s/maxo",
+            "url": "https://deepwiki.com/K1rL3s/maxo",
         },
     ],
     "accent_color": "green",
@@ -218,7 +325,7 @@ html_theme_options = {
 
 html_context = {
     "source_type": "github",
-    "source_user": "k1rl3s",
+    "source_user": "K1rL3s",
     "source_repo": "maxo",
     "source_version": "master",
 }

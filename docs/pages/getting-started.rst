@@ -1,6 +1,10 @@
 Начало работы
 =============
 
+.. meta::
+   :description: Установка maxo через uv, poetry или pip и быстрый старт: эхо-бот, обработка команд и клавиатуры. Async-фреймворк для ботов MAX (max.ru) на Python 3.12+.
+   :keywords: maxo установка, max.ru бот python, эхо-бот max, быстрый старт maxo, pip install maxo, uv add maxo
+
 Установка
 ---------
 
